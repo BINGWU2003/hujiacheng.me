@@ -1,36 +1,259 @@
 ---
-title: monorepo
-date: 2024-08-13
+title: 搭建monorepo项目
+date: 2025-08-31
 duration: 3min
 type: notes
 art: random
-draft: true
 ---
 
-## 什么是 monorepo
+[[toc]]
+### 开发环境搭建
 
-`monorepo` 是一种项目代码管理方式，指单个仓库中管理多个项目，有助于简化代码共享、版本控制、构建和部署等方面的复杂性，并提供更好的可重用性和协作性。这种方法也被许多著名开源项目所使用，比如 `Vue`、`React`、`Babel` 和 `Laravel` 等。
+- 初始化项目
 
-## 为什么用
+  ```bash
+  pnpm init
+  ```
 
-你可以设想一下：一个大型项目，其中包含了 `electron` 端项目、 `web` 端项目和一个管理后台，两个C端项目的UI相差无几，并且三个项目都是共用同一套api，那么如果按照常规方法，分别建立三个仓库分别管理三个项目，并且复用的逻辑代码全部重新复制一遍，如果有改动则需要修改三个仓库代码。
+- 根目录新增`.npmrc`文件
 
-听上去就觉得累了吧，我也觉得。我之前在公司就有碰到同样的问题，所以我也对公司项目进行了迁移。这个灵感我也是来自于最新的 `vben-admin v5.0`，它也采用了monorepo的方式进行管理，并将项目的功能原子化，将组件库、工具库、通用业务、以及代码规范和提交规范都提取成单独的模块，这样就大大避免了耦合度过高的问题。
+  内容如下
 
-## 优缺点
+  ```
+  shamefully-hoist=true
+  ```
 
-通过上面的小例子我们就能得知monorepo的优点，并能知道它的缺点：
+  `shamefully-hoist=true`不扁平化`node_modules`目录，方便依赖引入（使用pnpm安装的话，会默认扁平化安装目录）
 
-优点：
+- 根目录新增`pnpm-workspace.yaml`文件
 
-- 代码共享和复用
-- 统一的版本控制和构建过程
-- 更好的代码可见性和管理
-- 提高开发效率和减少构建时间
+  内容如下
 
-缺点：
+  ```
+  # 包管理在packages目录下
+  packages:
+    - 'packages/*'
+  ```
 
-- 代码仓库过大
-- 复杂的依赖关系和构建配置
-- 团队协作难道增加
-- 部署和发布复杂度增加
+  表示包所在的目录
+
+  ![image-20250830230627486](https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/typora/image-20250830230627486.png)
+
+- 配置ts和打包
+
+  ```bash
+  pnpm install typescript esbuild minist -D -w
+  ```
+
+  `-D` 开发依赖
+
+  `-w` 安装在根目录的`package.json`中，所有的包都可以共享此依赖
+
+- 初始化`tsconfig.json`配置
+
+  ```
+  npx tsc --init
+  ```
+
+  配置内容如下
+
+  ```json
+  {
+    "compilerOptions": {
+      "outDir": "dist", // 输出的目录
+      "sourceMap": true, // 采用sourcemap
+      "target": "es2016", // 目标语法
+      "module": "esnext", // 模块格式
+      "moduleResolution": "node", // 模块解析方式
+      "strict": false, // 严格模式
+      "resolveJsonModule": true, // 解析json模块
+      "esModuleInterop": true, // 允许通过es6语法引入commonjs模块
+      "jsx": "preserve", // jsx 不转义
+      "lib": ["esnext", "dom"], // 支持的类库 esnext及dom
+      "baseUrl": ".", // 基础路径
+      "paths": {
+        "@vue/*": ["packages/*/src"] // 路径别名 支持在ts文件中通过@vue/reactivity引入reactivity包
+      }
+    }
+  }
+  ```
+
+- 配置打包脚本
+
+  1.配置`package.json`文件
+
+  package文件字段解读：[地址](https://juejin.cn/post/7145001740696289317)
+  
+  ![image-20250830231615852](https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/typora/image-20250830231615852.png)
+
+​	`private:true`发布npm包的时候，不发布此包
+
+​	`type:module`使用esm模块规范  （支持import xxx from xxx）
+
+​	`dev`配置打包脚本。参数说明：`reactivity `包名， `-f esm` 打包格式
+
+```json
+{
+  "name": "monorepo-vue",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.js reactivity -f esm"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.15.0",
+  "dependencies": {
+    "vue": "^3.5.20"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.9",
+    "minimist": "^1.2.8",
+    "typescript": "^5.9.2"
+  }
+}
+```
+
+2.配置`dev.js`脚本
+
+新增`scripts`文件夹，在文件夹新增`dev.js`文件
+
+内容如下
+
+```js
+// 打包的脚本
+// node scripts/dev.js reactivity -f esm
+// reactivity 包名
+// -f esm 打包的格式
+
+// 使用esm模块规范  
+// package.json =>  "type": "module",
+import minimist from "minimist"
+import { fileURLToPath } from 'url'
+import { dirname, resolve } from 'path'
+import { createRequire } from 'module'
+// process.argv.slice(2) => 获取命令行参数  => ['reactivity', '-f', 'esm']
+const args = minimist(process.argv.slice(2))
+const target = args._[0] || 'reactivity' // 包名
+const format = args.f || 'esm' // 打包的格式
+// import.meta.url 获取当前文件的url
+// fileURLToPath 将url转换为路径
+// __filename 当前文件的路径
+const __filename = fileURLToPath(import.meta.url)
+// __dirname 当前文件的目录
+const __dirname = dirname(__filename)
+// createRequire 创建一个require函数
+const require = createRequire(import.meta.url)
+// 入口文件
+const entry = resolve(__dirname, `../packages/${target}/src/index.ts`)
+```
+- 配置`packages`包
+
+  其中文件名为包名，每个包都有自己的`package.json`文件，入口文件`index.ts`
+
+![image-20250830233059958](https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/typora/image-20250830233059958.png)
+
+注意：`package.json`的文件名命名为`@xxx1/xxx2`，其中`xxx1`代表项目名称，`xxx2`代表包名称。例如`@vue/reactivity`
+
+为了使导入包的支持这种格式，`tsconfig.json`新增配置：
+
+```json
+{
+	// ...其他配置项
+    "baseUrl": ".", // 基础路径
+    "paths": {
+      "@vue/*": ["packages/*/src"] // 路径别名 支持在ts文件中通过@vue/reactivity引入reactivity包
+    }
+  }
+}
+```
+
+现在可以在某个包导入`packages`里的其他包
+
+![image-20250830233631927](https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/typora/image-20250830233631927.png)
+
+如果要在某个里包安装`packages`里的其他包，使用命令行
+
+```bash
+pnpm install @vue/shared --workspace --filter @vue/reactivity
+```
+
+![image-20250830233937701](https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/typora/image-20250830233937701.png)
+
+![image-20250830234138741](https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/typora/image-20250830234138741.png)
+
+`pnpm-workspace`[地址](https://pnpm.io/zh/workspaces)
+
+包`reactivity`的`node_moudles`里新增了安装的包
+
+- 配置`esbuild`
+
+  更新`dev.js`文件
+
+  ```js
+  // 打包的脚本
+  // node scripts/dev.js reactivity -f esm
+  // reactivity 包名
+  // -f esm打包的格式
+  
+  // 使用esm模块规范  
+  // package.json =>  "type": "module",
+  import minimist from "minimist"
+  import { fileURLToPath } from 'url'
+  import { dirname, resolve } from 'path'
+  import { createRequire } from 'module'
+  import esbuild from 'esbuild'
+  // process.argv.slice(2) => 获取命令行参数  => ['reactivity', '-f', 'esm']
+  const args = minimist(process.argv.slice(2))
+  const target = args._[0] || 'reactivity' // 包名
+  const format = args.f || 'esm' // 打包的格式
+  // import.meta.url 获取当前文件的url
+  // fileURLToPath 将url转换为路径
+  // __filename 当前文件的路径
+  const __filename = fileURLToPath(import.meta.url)
+  // __dirname 当前文件的目录
+  const __dirname = dirname(__filename)
+  // createRequire 创建一个require函数
+  const require = createRequire(import.meta.url)
+  // 入口文件
+  const entry = resolve(__dirname, `../packages/${target}/src/index.ts`)
+  const pkg = require(resolve(__dirname, `../packages/${target}/package.json`))
+  // esbuild打包
+  esbuild.build({
+    // 入口文件
+    entryPoints: [entry],
+    // 输出文件
+    outfile: resolve(__dirname, `../packages/${target}/dist/${target}.js`),
+    // 依赖的包会打包到一起
+    bundle: true,
+    // 给浏览器使用
+    platform: 'browser',
+    // 生成sourcemap 可以调试
+    sourcemap: true,
+    // 打包的格式
+    format, // esm cjs iife(立即执行函数)
+    // 全局变量
+    globalName: pkg.buildOptions?.name
+  }).then(() => {
+    console.log('打包成功');
+  }).catch(() => {
+    console.log('打包失败');
+  })
+  
+  ```
+
+  运行打包命令：
+
+  ```bash
+  pnpm dev
+  ```
+
+​	`dist`为输出目录，里面有输出文件，如果此包依赖`packages`里其他的包，会同时打包进来
+
+<img src="https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/typora/image-20250831000227399.png" alt="image-20250831000227399" style="zoom: 50%;" />
+
+![image-20250831000356223](https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/typora/image-20250831000356223.png)

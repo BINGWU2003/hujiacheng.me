@@ -1,7 +1,7 @@
 ---
 title: TypeScript 类型打包配置指南
 date: 2025-09-18
-duration: 310in
+duration: 30min
 art: random
 ---
 
