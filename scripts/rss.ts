@@ -6,10 +6,10 @@ import MarkdownIt from 'markdown-it'
 import type { FeedOptions, Item } from 'feed'
 import { Feed } from 'feed'
 
-const DOMAIN = 'https://leetme.netlify.app'
+const DOMAIN = 'https://hujiacheng.netlify.app'
 const AUTHOR = {
-  name: 'Leet',
-  email: '1414395519@qq.com',
+  name: 'hujiacheng',
+  email: 'hujiacheng2003@163.com',
   link: DOMAIN,
 }
 const markdown = MarkdownIt({
@@ -26,15 +26,15 @@ async function buildBlogRSS() {
   const files = await fg('pages/posts/**/*.md')
 
   const options = {
-    title: 'Leet',
-    description: 'Leet\' Blog',
-    id: 'https://leetme.netlify.app',
-    link: 'https://leetme.netlify.app',
-    copyright: 'CC BY-NC-SA 4.0 2023 © Leet',
+    title: 'hujiacheng',
+    description: 'hujiacheng\' Blog',
+    id: 'https://hujiacheng.netlify.app',
+    link: 'https://hujiacheng.netlify.app',
+    copyright: 'CC BY-NC-SA 4.0 2024 © hujiacheng',
     feedLinks: {
-      json: 'https://leetme.netlify.app/feed.json',
-      atom: 'https://leetme.netlify.app/feed.atom',
-      rss: 'https://leetme.netlify.app/feed.xml',
+      json: 'https://hujiacheng.netlify.app/feed.json',
+      atom: 'https://hujiacheng.netlify.app/feed.atom',
+      rss: 'https://hujiacheng.netlify.app/feed.xml',
     },
   }
   const posts: any[] = (
@@ -68,8 +68,8 @@ async function buildBlogRSS() {
 
 async function writeFeed(name: string, options: FeedOptions, items: Item[]) {
   options.author = AUTHOR
-  options.image = 'https://leetme.netlify.app/avatar.png'
-  options.favicon = 'https://leetme.netlify.app/logo.png'
+  options.image = 'https://hujiacheng.netlify.app/avatar.png'
+  options.favicon = 'https://hujiacheng.netlify.app/logo.png'
 
   const feed = new Feed(options)
 

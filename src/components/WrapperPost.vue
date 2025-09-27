@@ -149,7 +149,7 @@ const hasGiscus = computed(() => {
       category="Announcements"
       category-id="DIC_kwDOP33u0M4Cv86m"
       mapping="og:title"
-      term="Welcome to leet.me"
+      term="Welcome to hujiacheng.me"
       strict="1"
       reactions-enabled="1"
       emit-metadata="0"

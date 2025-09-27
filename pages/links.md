@@ -1,5 +1,5 @@
 ---
-title: Links - Leet
+title: Links - hujiacheng
 display: ''
 wrapperClass: 'text-center w-80ch'
 art: random
@@ -104,8 +104,7 @@ links:
 - 本站友链信息如下：
 
 ```yml
-- title: Leet
+- title: hujiacheng
   subtitle: 喂我花生啊.
-  logo: https://leetme.netlify.app/logo.svg
-  link: https://leetme.netlify.app
+  link: https://hujiacheng.me
 ```
