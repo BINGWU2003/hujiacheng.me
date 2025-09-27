@@ -42,6 +42,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/Vue-Router': RouteRecordInfo<'/notes/Vue-Router', '/notes/Vue-Router', Record<never, never>, Record<never, never>>,
     '/notes/Vue常用的Api': RouteRecordInfo<'/notes/Vue常用的Api', '/notes/Vue常用的Api', Record<never, never>, Record<never, never>>,
     '/posts/': RouteRecordInfo<'/posts/', '/posts', Record<never, never>, Record<never, never>>,
+    '/posts/博客迁移': RouteRecordInfo<'/posts/博客迁移', '/posts/博客迁移', Record<never, never>, Record<never, never>>,
     '/posts/使用Netlify自动化部署Vitepress': RouteRecordInfo<'/posts/使用Netlify自动化部署Vitepress', '/posts/使用Netlify自动化部署Vitepress', Record<never, never>, Record<never, never>>,
     '/posts/使用vercel自动化部署express项目': RouteRecordInfo<'/posts/使用vercel自动化部署express项目', '/posts/使用vercel自动化部署express项目', Record<never, never>, Record<never, never>>,
     '/posts/canvas-ecg': RouteRecordInfo<'/posts/canvas-ecg', '/posts/canvas-ecg', Record<never, never>, Record<never, never>>,
