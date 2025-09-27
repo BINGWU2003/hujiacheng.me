@@ -276,7 +276,7 @@ server: {
 
 创建 `.env.development` 文件：
 
-```env
+```
 VITE_API_URL=http://localhost:8080/api
 VITE_DEBUG=true
 ```
