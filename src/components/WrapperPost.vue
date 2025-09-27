@@ -144,10 +144,10 @@ const hasGiscus = computed(() => {
   <div v-if="hasGiscus" class="prose m-auto slide-enter">
     <Giscus
       v-if="hasGiscus"
-      repo="skyline523/leet.me"
-      repo-id="R_kgDOMV5mBg"
+      repo="BINGWU2003/hujiacheng.me"
+      repo-id="R_kgDOP33u0A"
       category="Announcements"
-      category-id="DIC_kwDOMV5mBs4ChjO0"
+      category-id="DIC_kwDOP33u0M4Cv86m"
       mapping="og:title"
       term="Welcome to leet.me"
       strict="1"
