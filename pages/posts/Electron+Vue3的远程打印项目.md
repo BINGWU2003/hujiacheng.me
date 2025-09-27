@@ -70,19 +70,19 @@ Mqtt:
 
 - 安装依赖
 
-```Bash
+```bash
 npm i
 ```
 
 - 启动项目
 
-```Bash
+```bash
 npm run dev
 ```
 
 - 打包项目
 
-```Bash
+```bash
 npm run electron:build
 ```
 
@@ -90,7 +90,7 @@ npm run electron:build
 
 ## 项目文件资源目录
 
-```Bash
+```bash
 |-- print_client_service项目
     |-- .gitignore # 忽略要被git跟踪的文件
     |-- .npmrc # 配置electron的安装源
@@ -166,7 +166,7 @@ npm run electron:build
 
 在获取到打印数据列表时,需要给列表的每一个item项新增一个printTime字段,值为当前的时间.web端配置打印模板的时候也需把时间字段设置为printTime
 
-```JavaScript
+```javascript
 resData.data.workOrderTicketPrintVOS = resData.data.workOrderTicketPrintVOS.map((item) => {
   const now = new Date()
   item.printTime = now.toLocaleDateString('zh-CN', {
@@ -191,7 +191,7 @@ resData.data.workOrderTicketPrintVOS = resData.data.workOrderTicketPrintVOS.map(
 
 因此在构建html之前要先把模板的高度增加1mm再去构建.
 
-```JavaScript
+```javascript
 // hipirnt构建的html有高度误差,要重新构建加1
 const modifyHeight = (jsonString) => {
   // 解析 JSON 字符串为对象
@@ -233,7 +233,7 @@ const modifyHeight = (jsonString) => {
 
 配置路由的`history`为createWebHashHistory模式
 
-```JavaScript
+```javascript
 const router = createRouter({
     // 使用hash(createWebHashHistory)模式，(createWebHistory是HTML5历史模式，支持SEO)
     history: createWebHashHistory(),
@@ -247,7 +247,7 @@ const router = createRouter({
 
 后端配置响应头的内容
 
-```JSON
+```json
 Access-Control-Expose-Headers: authorization
 ```
 
