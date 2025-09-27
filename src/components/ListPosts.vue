@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router/auto'
+import { useRouter } from 'vue-router'
 import { formatDate } from '~/logics'
 import type { Post } from '~/types'
 
@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const router = useRouter()
 const routes: Post[] = router.getRoutes()
-  .filter(i => /^(?:\/posts|\/workflow|\/notes)/.test(i.path) && i.meta.frontmatter.date && !i.meta.frontmatter.draft)
+  .filter(i => /^(?:\/posts|\/workflow|\/notes|\/interview)/.test(i.path) && i.meta.frontmatter.date && !i.meta.frontmatter.draft)
   .filter(i => !i.path.endsWith('.html') && (props.type === 'all' || (i.meta.frontmatter.type || 'blog').split('+').includes(props.type)))
   .map(i => ({
     path: i.meta.frontmatter.redirect || i.path,

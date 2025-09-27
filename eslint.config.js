@@ -7,6 +7,7 @@ export default antfu(
     formatters: true,
   },
   {
+
     rules: {
       'format/prettier': 'off',
       'no-labels': 'off',
@@ -21,5 +22,10 @@ export default antfu(
       'ts/no-unnecessary-type-constraint': 'off',
       'vue/no-template-shadow': 'off',
     },
+  },
+  {
+    ignores: [
+      '**/*.md',
+    ],
   },
 )

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router/auto'
+import { useRoute } from 'vue-router'
 
 const inactiveStyle = 'opacity-20 hover:opacity-50'
 const activeStyle = 'opacity-100 underline'
@@ -19,8 +19,11 @@ const route = useRoute()
       <RouterLink to="/notes" class="!border-none" :class="route.path === '/notes' ? activeStyle : inactiveStyle">
         Notes
       </RouterLink>
-      <RouterLink to="/todo" class="!border-none" :class="route.path === '/todo' ? activeStyle : inactiveStyle">
+      <!-- <RouterLink to="/todo" class="!border-none" :class="route.path === '/todo' ? activeStyle : inactiveStyle">
         TODO
+      </RouterLink> -->
+      <RouterLink to="/interview" class="!border-none" :class="route.path === '/interview' ? activeStyle : inactiveStyle">
+        Interview
       </RouterLink>
     </div>
   </div>

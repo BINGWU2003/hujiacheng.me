@@ -57,14 +57,11 @@ const { y: scroll } = useWindowScroll()
           <div i-ri-links-line md:hidden />
         </RouterLink>
         <div id="docsearch" class="lt-md:hidden" />
-        <a href="https://www.travellings.cn/go.html" target="_blank" title="Travelling">
+        <!-- <a href="https://www.travellings.cn/go.html" target="_blank" title="Travelling">
           <div i-ri-train-line />
-        </a>
-        <a href="https://github.com/skyline523" target="_blank" title="GitHub" class="lt-md:hidden">
+        </a> -->
+        <a href="https://github.com/BINGWU2003" target="_blank" title="GitHub" class="lt-md:hidden">
           <div i-uil-github-alt />
-        </a>
-        <a href="/feed.xml" target="_blank" title="RSS" class="lt-md:hidden">
-          <div i-la-rss-square style="font-size:1.25rem; margin: 0 -0.125rem;" />
         </a>
         <ToggleTheme />
       </div>

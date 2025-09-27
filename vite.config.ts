@@ -142,6 +142,8 @@ export default defineConfig({
             Netlify: { link: 'https://netlify.com', imageUrl: 'https://github.com/netlify.png' },
             Vercel: { link: 'https://vercel.com', imageUrl: 'https://github.com/vercel.png' },
             JavaScript: 'https://www.javascript.com/',
+            Html: 'https://www.w3.org/html/',
+            Css: 'https://www.w3.org/Style/CSS/Overview.en.html',
             TypeScript: 'https://github.com/microsoft/TypeScript',
             NodeJS: 'https://github.com/nodejs/node',
             Java: 'https://www.java.com/zh-CN/',
@@ -158,6 +160,8 @@ export default defineConfig({
             ['https://github.com/nuxt/nuxt', 'https://nuxt.com/assets/design-kit/icon-green.svg'],
             ['https://github.com/vitejs/vite', 'https://vitejs.dev/logo.svg'],
             ['https://github.com/facebook/react', 'https://react.dev/favicon-32x32.png'],
+            ['https://www.w3.org/html/', 'https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/icon/material-icon-theme--html.svg'],
+            ['https://www.w3.org/Style/CSS/Overview.en.html', 'https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/icon/vscode-icons--file-type-css%20%281%29.svg'],
           ],
         })
 
