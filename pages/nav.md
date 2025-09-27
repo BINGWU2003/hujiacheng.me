@@ -58,7 +58,10 @@ navs:
       link: 'https://icones.js.org/'
       desc: 'iconify 所有图标'
       icon: 'https://icones.js.org/favicon.svg'
-
+    - name: 'clash'
+      link: 'https://github.com/clashdownload/Clash'
+      desc: 'Clash是一款跨平台的代理工具'
+      icon: 'https://clash.top/wp-content/uploads/2024/01/Clash-150x150.png'
   博客:
     - name: 'antfu'
       link: 'https://antfu.me/'
