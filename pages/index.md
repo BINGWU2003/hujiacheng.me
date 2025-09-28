@@ -9,8 +9,8 @@ art: random
 🧑‍💻 前端工程师 / Front-end Developer<br/>
 💪 努力变得更好 / Strive To Become Better
 
-Skills: {Html} {Css} {JavaScript} {TypeScript} {Vue}<br>
-Learning: {React} {Vite} <br>
+Skills: {Html} {Css} {JavaScript} {TypeScript} {Vue} <br>
+Learning: {React} {Vite} {Vitest} <br>
 
 <div flex-auto />
 
