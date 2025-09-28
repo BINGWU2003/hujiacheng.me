@@ -82,6 +82,10 @@ navs:
       link: 'https://nodejs.cn/'
       desc: 'Nodejs相关的文档合集（中文）'
       icon: 'https://nodejs.cn/favicon.svg'
+    - name: 'excalidraw'
+      link: 'https://excalidraw.com/'
+      desc: '手绘风格的在线流程图工具'
+      icon: 'https://excalidraw.com/favicon-32x32.png'
   博客:
     - name: 'antfu'
       link: 'https://antfu.me/'
