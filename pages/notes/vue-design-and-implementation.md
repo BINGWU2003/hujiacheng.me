@@ -1705,6 +1705,131 @@ const effectFn = effect(
   )
 ```
 
+过期的副作用：
+
+类似于请求竞态问题， 当快速切换tab页的时候（A->B），如果tabA页的数据的接口响应时间比较长，但tabB页的数据的接口响应时间比较短就会出现竞态问题，导致tab页展示的数据出现问题。
+
+新增一个`onInvalidate`清理过期副作用，使用`cleanup`来储存`onInvalidate`过期回调，`job`执行之前都会执行`cleanup`，并在`cb`执行之后给`valid`构成闭包，来确保每一次执行`cleanup`是清理上一次的`valid`
+
+代码实现：
+
+```js
+function watch(source, cb, options = {}) {
+  let getter
+  if (typeof source === 'function') {
+    getter = source
+  } else {
+    getter = () => traverse(source)
+  }
+
+  let oldValue, newValue
+
+  let cleanup
+  function onInvalidate(fn) {
+    cleanup = fn
+  }
+
+  const job = () => {
+    newValue = effectFn()
+    // 清理上一次的副作用
+    if (cleanup) {
+      cleanup()
+    }
+    cb(oldValue, newValue, onInvalidate)
+    oldValue = newValue
+  }
+
+  const effectFn = effect(
+    // 执行 getter
+    () => getter(),
+    {
+      lazy: true,
+      scheduler: () => {
+        if (options.flush === 'post') {
+          const p = Promise.resolve()
+          p.then(job)
+        } else {
+          job()
+        }
+      }
+    }
+  )
+  
+  if (options.immediate) {
+    job()
+  } else {
+    oldValue = effectFn()
+  }
+}
+
+
+watch(() => obj.foo, async (newVal, oldVal, onInvalidate) => {
+  let valid = true
+  onInvalidate(() => {
+    valid = false
+  })
+  const res = await fetch()
+
+  if (!valid) return
+
+  finallyData = res
+  console.log(finallyData)
+})
+```
+
+流程图：
+
+```mermaid
+%%{init: {'theme': 'dark'}}%%
+graph TD
+    subgraph "watch 函数初始化"
+        A["watch(source, cb, options) 被调用"] --> B{初始化 cleanup = undefined};
+        B --> C["创建 effectFn, 设置 scheduler"];
+    end
+
+    subgraph "数据变化 -> job 任务调度"
+        D["数据变化, scheduler 触发 job"] --> E["job 函数开始"];
+        E --> F["计算 newValue"];
+        F --> G{"检查 cleanup 是否存在?"};
+        G -- "存在 (是)" --> H["执行 cleanup() <br/> (调用上一次的闭包, 令其失效)"];
+        H --> I["执行当前 watch 回调 cb()"];
+        G -- "不存在 (否)" --> I;
+    end
+
+    subgraph "回调函数 cb() 内部"
+        I --> J["定义 let valid = true"];
+        J --> K["调用 onInvalidate(fn), <br> 将 fn (闭包) 赋值给 cleanup"];
+        K --> L["执行异步任务 (如 fetch)"];
+    end
+
+    subgraph "异步竞态处理示例"
+        direction LR
+        subgraph "第一次触发 (请求 A, 耗时 1000ms)"
+            P1["cb 执行, cleanup = 清理函数A"];
+            P2["请求 A 开始"];
+        end
+        
+        subgraph "第二次触发 (请求 B, 耗时 100ms)"
+            S1["job 执行, 调用 cleanup() -> 清理函数A执行"];
+            S2["请求 A 的 valid 标志位被设为 false"];
+            S3["cb 执行, cleanup = 清理函数B"];
+            S4["请求 B 开始"];
+            S5["请求 B 完成, valid 为 true, 结果被采纳 ✅"];
+        end
+
+        P2 --> S1;
+        S5 --> P3["请求 A 完成, valid 为 false, 结果被丢弃 ❌"];
+    end
+
+    C --> D;
+    L --> P1;
+
+    style H fill:#5e3d5e, stroke:#c599c5
+    style S2 fill:#5e3d5e, stroke:#c599c5
+    style S5 fill:#2c5c2c, stroke:#8fbc8f
+    style P3 fill:#702c2c, stroke:#f08080
+```
+
 最终代码实现：
 
 ```js
@@ -1830,9 +1955,17 @@ function watch(source, cb, options = {}) {
 
   let oldValue, newValue
 
+  let cleanup
+  function onInvalidate(fn) {
+    cleanup = fn
+  }
+
   const job = () => {
     newValue = effectFn()
-    cb(oldValue, newValue)
+    if (cleanup) {
+      cleanup()
+    }
+    cb(oldValue, newValue, onInvalidate)
     oldValue = newValue
   }
 
@@ -1859,15 +1992,35 @@ function watch(source, cb, options = {}) {
   }
 }
 
-watch(() => obj.foo, (newVal, oldVal) => {
-  console.log(newVal, oldVal)
-}, {
-  immediate: true,
-  flush: 'post'
+let count = 0
+function fetch() {
+  count++
+  const res = count === 1 ? 'A' : 'B'
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(res)
+    }, count === 1 ? 1000 : 100);
+  })
+}
+
+let finallyData
+
+watch(() => obj.foo, async (newVal, oldVal, onInvalidate) => {
+  let valid = true
+  onInvalidate(() => {
+    valid = false
+  })
+  const res = await fetch()
+
+  if (!valid) return
+
+  finallyData = res
+  console.log(finallyData)
 })
 
+obj.foo++
 setTimeout(() => {
   obj.foo++
-}, 1000)
+}, 200);
 ```
 
