@@ -26,5 +26,17 @@ url：https://api.thecatapi.com/v1/images/search
   }
 ]
 ```
-## api1
+## 随机图片
+
+请求方式：get
+
+url：https://picsum.photos/800/600
+
+800,600表示长宽大小
+
+结果示例：
+
+随机返回一张图片
+
+
 
