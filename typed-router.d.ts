@@ -57,6 +57,7 @@ declare module 'vue-router/auto-routes' {
     '/posts/deploy-vitepress-automatically-with-netlify': RouteRecordInfo<'/posts/deploy-vitepress-automatically-with-netlify', '/posts/deploy-vitepress-automatically-with-netlify', Record<never, never>, Record<never, never>>,
     '/posts/electron-vue3-remote-printing-project': RouteRecordInfo<'/posts/electron-vue3-remote-printing-project', '/posts/electron-vue3-remote-printing-project', Record<never, never>, Record<never, never>>,
     '/posts/eslint-prettier-husky-commitlint-guide': RouteRecordInfo<'/posts/eslint-prettier-husky-commitlint-guide', '/posts/eslint-prettier-husky-commitlint-guide', Record<never, never>, Record<never, never>>,
+    '/posts/express-cloud-server-deployment-guide': RouteRecordInfo<'/posts/express-cloud-server-deployment-guide', '/posts/express-cloud-server-deployment-guide', Record<never, never>, Record<never, never>>,
     '/posts/garbage-collection': RouteRecordInfo<'/posts/garbage-collection', '/posts/garbage-collection', Record<never, never>, Record<never, never>>,
     '/posts/module': RouteRecordInfo<'/posts/module', '/posts/module', Record<never, never>, Record<never, never>>,
     '/posts/package-manager': RouteRecordInfo<'/posts/package-manager', '/posts/package-manager', Record<never, never>, Record<never, never>>,
