@@ -32,6 +32,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/': RouteRecordInfo<'/notes/', '/notes', Record<never, never>, Record<never, never>>,
     '/notes/Axios': RouteRecordInfo<'/notes/Axios', '/notes/Axios', Record<never, never>, Record<never, never>>,
     '/notes/common-code-snippets': RouteRecordInfo<'/notes/common-code-snippets', '/notes/common-code-snippets', Record<never, never>, Record<never, never>>,
+    '/notes/cursor-config': RouteRecordInfo<'/notes/cursor-config', '/notes/cursor-config', Record<never, never>, Record<never, never>>,
     '/notes/git': RouteRecordInfo<'/notes/git', '/notes/git', Record<never, never>, Record<never, never>>,
     '/notes/git-tortoisegit': RouteRecordInfo<'/notes/git-tortoisegit', '/notes/git-tortoisegit', Record<never, never>, Record<never, never>>,
     '/notes/monorepo': RouteRecordInfo<'/notes/monorepo', '/notes/monorepo', Record<never, never>, Record<never, never>>,
