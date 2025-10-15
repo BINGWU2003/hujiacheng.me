@@ -66,6 +66,7 @@ declare module 'vue-router/auto-routes' {
     '/posts/react-quick-start': RouteRecordInfo<'/posts/react-quick-start', '/posts/react-quick-start', Record<never, never>, Record<never, never>>,
     '/posts/sharp-install-failed': RouteRecordInfo<'/posts/sharp-install-failed', '/posts/sharp-install-failed', Record<never, never>, Record<never, never>>,
     '/posts/sse-stream-solution': RouteRecordInfo<'/posts/sse-stream-solution', '/posts/sse-stream-solution', Record<never, never>, Record<never, never>>,
+    '/posts/stream-process': RouteRecordInfo<'/posts/stream-process', '/posts/stream-process', Record<never, never>, Record<never, never>>,
     '/posts/streaming-chart': RouteRecordInfo<'/posts/streaming-chart', '/posts/streaming-chart', Record<never, never>, Record<never, never>>,
     '/posts/typescript-types-packaging': RouteRecordInfo<'/posts/typescript-types-packaging', '/posts/typescript-types-packaging', Record<never, never>, Record<never, never>>,
     '/posts/vitest-testing-guide': RouteRecordInfo<'/posts/vitest-testing-guide', '/posts/vitest-testing-guide', Record<never, never>, Record<never, never>>,
