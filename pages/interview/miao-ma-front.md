@@ -13,3 +13,4 @@ art: random
 直播回放：https://bcsnv.xetlk.com/sl/4ky4eh
 飞书链接：https://u19tul1sz9g.feishu.cn/docx/JXmydE044okvLZxKKZvcka1zn5e   密码：P#184283
 
+前端高薪求职面试专题：飞书文档，https://u19tul1sz9g.feishu.cn/wiki/XvaZw0NxCi8lzxk8Ho3c6Rp7nVh
