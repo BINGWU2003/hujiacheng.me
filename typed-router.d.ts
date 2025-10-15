@@ -61,6 +61,8 @@ declare module 'vue-router/auto-routes' {
     '/posts/eslint-prettier-husky-commitlint-guide': RouteRecordInfo<'/posts/eslint-prettier-husky-commitlint-guide', '/posts/eslint-prettier-husky-commitlint-guide', Record<never, never>, Record<never, never>>,
     '/posts/express-cloud-server-deployment-guide': RouteRecordInfo<'/posts/express-cloud-server-deployment-guide', '/posts/express-cloud-server-deployment-guide', Record<never, never>, Record<never, never>>,
     '/posts/garbage-collection': RouteRecordInfo<'/posts/garbage-collection', '/posts/garbage-collection', Record<never, never>, Record<never, never>>,
+    '/posts/https-support-check': RouteRecordInfo<'/posts/https-support-check', '/posts/https-support-check', Record<never, never>, Record<never, never>>,
+    '/posts/logging-system': RouteRecordInfo<'/posts/logging-system', '/posts/logging-system', Record<never, never>, Record<never, never>>,
     '/posts/module': RouteRecordInfo<'/posts/module', '/posts/module', Record<never, never>, Record<never, never>>,
     '/posts/package-manager': RouteRecordInfo<'/posts/package-manager', '/posts/package-manager', Record<never, never>, Record<never, never>>,
     '/posts/react-quick-start': RouteRecordInfo<'/posts/react-quick-start', '/posts/react-quick-start', Record<never, never>, Record<never, never>>,
