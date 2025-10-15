@@ -1,5 +1,5 @@
 ---
-title: Blog - Leet
+title: Blog
 display: ''
 art: plum
 ---
