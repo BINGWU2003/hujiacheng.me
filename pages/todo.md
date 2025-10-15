@@ -1,5 +1,5 @@
 ---
-title: Todo List - Leet
+title: Todo List
 display: ''
 art: random
 ---

@@ -1,5 +1,5 @@
 ---
-title: Archive - Leet
+title: Archive
 display: ''
 art: plum
 ---

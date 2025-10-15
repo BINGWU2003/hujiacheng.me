@@ -1,5 +1,5 @@
 ---
-title: Bugs - Leet
+title: Bugs
 display: ''
 art: random
 ---

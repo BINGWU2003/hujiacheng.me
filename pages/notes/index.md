@@ -1,5 +1,5 @@
 ---
-title: Notes - Leet
+title: Notes
 display: ''
 art: plum
 ---

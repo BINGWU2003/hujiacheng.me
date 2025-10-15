@@ -1,5 +1,5 @@
 ---
-title: 导航 - Leet
+title: 导航
 display: Nav
 description: 常用页面快速导航
 wrapperClass: 'text-center'

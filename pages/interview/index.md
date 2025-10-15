@@ -1,5 +1,5 @@
 ---
-title: Interview - Leet
+title: Interview
 display: ''
 art: plum
 ---
