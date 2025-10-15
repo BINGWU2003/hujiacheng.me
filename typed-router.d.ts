@@ -41,6 +41,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/programming-standard': RouteRecordInfo<'/notes/programming-standard', '/notes/programming-standard', Record<never, never>, Record<never, never>>,
     '/notes/public-api': RouteRecordInfo<'/notes/public-api', '/notes/public-api', Record<never, never>, Record<never, never>>,
     '/notes/typescript': RouteRecordInfo<'/notes/typescript', '/notes/typescript', Record<never, never>, Record<never, never>>,
+    '/notes/uniapp-intranet-traversal': RouteRecordInfo<'/notes/uniapp-intranet-traversal', '/notes/uniapp-intranet-traversal', Record<never, never>, Record<never, never>>,
     '/notes/vue-common-apis': RouteRecordInfo<'/notes/vue-common-apis', '/notes/vue-common-apis', Record<never, never>, Record<never, never>>,
     '/notes/vue-design-and-implementation': RouteRecordInfo<'/notes/vue-design-and-implementation', '/notes/vue-design-and-implementation', Record<never, never>, Record<never, never>>,
     '/notes/vue-router': RouteRecordInfo<'/notes/vue-router', '/notes/vue-router', Record<never, never>, Record<never, never>>,
