@@ -49,6 +49,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/Vue-Router': RouteRecordInfo<'/notes/Vue-Router', '/notes/Vue-Router', Record<never, never>, Record<never, never>>,
     '/posts/': RouteRecordInfo<'/posts/', '/posts', Record<never, never>, Record<never, never>>,
     '/posts/blog-migration': RouteRecordInfo<'/posts/blog-migration', '/posts/blog-migration', Record<never, never>, Record<never, never>>,
+    '/posts/browser-rendering-principles': RouteRecordInfo<'/posts/browser-rendering-principles', '/posts/browser-rendering-principles', Record<never, never>, Record<never, never>>,
     '/posts/build-server-side-with-express-ts-sequelize': RouteRecordInfo<'/posts/build-server-side-with-express-ts-sequelize', '/posts/build-server-side-with-express-ts-sequelize', Record<never, never>, Record<never, never>>,
     '/posts/canvas-ecg': RouteRecordInfo<'/posts/canvas-ecg', '/posts/canvas-ecg', Record<never, never>, Record<never, never>>,
     '/posts/code-style-standard': RouteRecordInfo<'/posts/code-style-standard', '/posts/code-style-standard', Record<never, never>, Record<never, never>>,
