@@ -30,6 +30,7 @@ declare module 'vue-router/auto-routes' {
     '/links': RouteRecordInfo<'/links', '/links', Record<never, never>, Record<never, never>>,
     '/nav': RouteRecordInfo<'/nav', '/nav', Record<never, never>, Record<never, never>>,
     '/notes/': RouteRecordInfo<'/notes/', '/notes', Record<never, never>, Record<never, never>>,
+    '/notes/ai-tools': RouteRecordInfo<'/notes/ai-tools', '/notes/ai-tools', Record<never, never>, Record<never, never>>,
     '/notes/Axios': RouteRecordInfo<'/notes/Axios', '/notes/Axios', Record<never, never>, Record<never, never>>,
     '/notes/common-code-snippets': RouteRecordInfo<'/notes/common-code-snippets', '/notes/common-code-snippets', Record<never, never>, Record<never, never>>,
     '/notes/cursor-config': RouteRecordInfo<'/notes/cursor-config', '/notes/cursor-config', Record<never, never>, Record<never, never>>,
