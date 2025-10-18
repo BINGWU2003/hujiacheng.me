@@ -46,12 +46,12 @@ art: random
 
 ## 小鸟
 
-![image-20251017234745307](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20251017234745307.png)
+![image-20251017234745307](https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/typora/image-20251017234745307.png)
 
 地址：https://huruji.github.io/FE-Interview/#/
 
 ## 前端面试派
 
-![image-20251017234924246](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20251017234924246.png)
+![image-20251017234924246](https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/typora/image-20251017234924246.png)
 
 地址：https://www.mianshipai.com/
