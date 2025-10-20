@@ -24,4 +24,4 @@ art: random
 
 ![image-20251019182536626](https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/typora/image-20251019182536626.png)
 
-地址：https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/typora/image-20251019182536626.png
+地址：https://developers.openai.com/codex
