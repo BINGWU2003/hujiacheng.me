@@ -132,14 +132,10 @@ playwright：
 添加如下内容：
 
 ```bash
- [mcp_servers.mcp-router]
- command = "C:\\Node\\node.exe"
- args = ["C:\\Users\\Jack\\AppData\\Roaming\\npm\\node_modules\\mcpr-cli\\dist\\mcpr.js", "connect"]
- env = { 
-   SystemRoot = 'C:\WINDOWS',
-   COMSPEC = 'C:\WINDOWS\system32\cmd.exe',
-   MCPR_TOKEN = "你的KEY"
- }
+[mcp_servers.mcp-router]
+command = "C:\\Program Files\\nodejs\\npx.cmd" # 必须是完整路径
+args = ["-y", "mcpr-cli@latest", "connect"]
+env = { SystemRoot = 'C:\WINDOWS', COMSPEC = 'C:\WINDOWS\system32\cmd.exe', MCPR_TOKEN = "粘贴你刚才复制的MCPR_TOKEN" }
 ```
 
 ### command
