@@ -152,6 +152,7 @@ export default defineConfig({
             Electron: 'https://github.com/electron/electron',
             D3: 'https://github.com/d3/d3',
             Next: 'https://github.com/vercel/next.js',
+            UniApp: 'https://uniapp.dcloud.net.cn',
           },
           imageOverrides: [
             ['https://www.javascript.com/', 'https://cdn-icons-png.flaticon.com/64/5968/5968292.png'],
@@ -162,6 +163,7 @@ export default defineConfig({
             ['https://github.com/facebook/react', 'https://react.dev/favicon-32x32.png'],
             ['https://www.w3.org/html/', 'https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/icon/material-icon-theme--html.svg'],
             ['https://www.w3.org/Style/CSS/Overview.en.html', 'https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/icon/vscode-icons--file-type-css%20%281%29.svg'],
+            ['https://uniapp.dcloud.net.cn', 'https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/icon.png?v=1556263038788'],
           ],
         })
 
