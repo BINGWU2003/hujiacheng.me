@@ -10,7 +10,7 @@ art: random
 💪 努力变得更好 / Strive To Become Better
 
 Skills: {Html} {Css} {JavaScript} {TypeScript} {Vue} {UniApp} <br>
-Learning: {React} {Vite} {Vitest} <br>
+Learning: {React} {Vite} {Vitest} {NodeJS} <br>
 
 <div flex-auto />
 
