@@ -33,6 +33,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/ai-tools': RouteRecordInfo<'/notes/ai-tools', '/notes/ai-tools', Record<never, never>, Record<never, never>>,
     '/notes/common-code-snippets': RouteRecordInfo<'/notes/common-code-snippets', '/notes/common-code-snippets', Record<never, never>, Record<never, never>>,
     '/notes/css-computed-style': RouteRecordInfo<'/notes/css-computed-style', '/notes/css-computed-style', Record<never, never>, Record<never, never>>,
+    '/notes/css-functions': RouteRecordInfo<'/notes/css-functions', '/notes/css-functions', Record<never, never>, Record<never, never>>,
     '/notes/css-specificity': RouteRecordInfo<'/notes/css-specificity', '/notes/css-specificity', Record<never, never>, Record<never, never>>,
     '/notes/cursor-config': RouteRecordInfo<'/notes/cursor-config', '/notes/cursor-config', Record<never, never>, Record<never, never>>,
     '/notes/event-loop': RouteRecordInfo<'/notes/event-loop', '/notes/event-loop', Record<never, never>, Record<never, never>>,
