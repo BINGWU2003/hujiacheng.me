@@ -22,7 +22,7 @@ art: random
 
 *https://developer.mozilla.org/zh-CN/docs/Web/CSS/env*
 
-作用：是一个 CSS 函数，用于插入由用户代理（通常是浏览器）定义的**环境变量**的值。（小程序适配使用比较频繁）
+作用：插入由用户代理（通常是浏览器）定义的**环境变量**的值。（小程序适配使用比较频繁）
 
 使用方法：
 
@@ -135,3 +135,64 @@ https://developer.mozilla.org/zh-CN/docs/Web/CSS/:root
 文档地址：
 
 *https://developer.mozilla.org/zh-CN/docs/Web/CSS/calc*
+
+作用：允许在声明 CSS 属性值时执行一些计算。
+
+使用方法：
+
+```css
+/* 语法 */
+property: calc(expression);
+```
+
+`calc()` 函数支持四种基本的数学运算符：
+
+- `+` (加法)
+- `-` (减法)
+- `*` (乘法)
+- `/` (除法)
+
+::: tip
+
+使用运算符的时候，推荐运算符两侧添加空格，如果不加空格，对于+ 和 - 是无效语法。
+
+:::
+
+代码示例：
+
+```css
+.element {
+  /* 宽度为父容器的 100%，再减去 50px */
+  width: calc(100% - 50px);
+}
+
+/* 1. 在 :root 定义变量 */
+:root {
+  --header-height: 70px;
+  --base-padding: 1rem;
+  --base-font-size: 16px;
+}
+
+/* 2. 在组件中使用 calc() 和 var() */
+.main-content {
+  height: calc(100vh - var(--header-height));
+}
+
+.container {
+  /* 计算内边距：基础内边距的两倍 */
+  padding: calc(var(--base-padding) * 2);
+}
+
+body {
+  /* 响应式字体大小：基础大小 + 随视口变化的增量 */
+  font-size: calc(var(--base-font-size) + 0.5vw);
+}
+```
+
+## calc()&var()&env()的区别
+
+| **函数**     | **主要目的**                         | **示例**                                       |
+| ------------ | ------------------------------------ | ---------------------------------------------- |
+| **`calc()`** | **执行数学计算** (混合单位)          | `width: calc(100% - 20px);`                    |
+| **`var()`**  | **获取 CSS 变量** (由开发者定义)     | `color: var(--main-color);`                    |
+| **`env()`**  | **获取环境变量** (由浏览器/设备定义) | `padding-bottom: env(safe-area-inset-bottom);` |
