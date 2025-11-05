@@ -249,6 +249,8 @@ release版本
 
 ## demo
 
-https://bing-wu-vue-sentry.netlify.app/
+在线地址：https://bing-wu-vue-sentry.netlify.app/
 
-https://github.com/BINGWU2003/vue-project-sentry
+源代码：https://github.com/BINGWU2003/vue-project-sentry
+
+配置文档：https://docs.sentry.io/platforms/javascript/guides/vue/
