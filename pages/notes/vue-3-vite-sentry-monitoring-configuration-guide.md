@@ -45,9 +45,7 @@ pnpm add -D @sentry/vite-plugin
 
 
 
-## 步骤三：配置环境变量 (区分构建时与运行时)
-
-这是非常关键的一步。你需要创建两个 `.env` 文件。
+## 步骤三：配置环境变量
 
 1.创建 .env 文件 (用于构建时)
 
@@ -79,8 +77,6 @@ VITE_APP_VERSION = 1.0.0
 
 2.(必须) 更新 .gitignore
 
-绝对不要将你的 SENTRY_AUTH_TOKEN 提交到 Git。
-
 代码段
 
 ```bash
@@ -94,8 +90,6 @@ VITE_APP_VERSION = 1.0.0
 ```
 
 ## 步骤四：核心配置 `vite.config.js` (注入版本号)
-
-这是你的 `vite.config.js`，但**增加了一个关键的 `define` 块**。这是确保 `main.ts` 能获取到版本号的核心。
 
 ```ts
 // vite.config.js
@@ -153,8 +147,6 @@ export default defineConfig({
 
 
 ## 步骤五：核心配置 `main.ts` (使用版本号)
-
-这是你的 `main.ts` 文件。**它无需任何修改**，因为上一步的 `define` 已经为它准备好了 `VITE_APP_VERSION` 变量。
 
 ```ts
 // main.ts
@@ -220,7 +212,7 @@ app.mount('#app')
    - 访问 Sentry "Issues"，等待新错误上报。
    - 点开错误详情，堆栈跟踪 (Stack Trace) 应该已**精确映射到你的 `.vue` 或 `.ts` 源码行号**。
 
-release版本
+release版本：
 
 ![image-20251105135701052](https://bing-wu-doc-1318477772.cos.ap-nanjing.myqcloud.com/typora/image-20251105135701052.png)
 
