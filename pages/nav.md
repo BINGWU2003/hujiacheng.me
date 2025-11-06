@@ -215,6 +215,10 @@ navs:
       link: 'https://wot-design-uni.cn/'
       desc: '高颜值、轻量化的uni-app组件库'
       icon: 'https://wot-design-uni.cn/favicon.ico'
+    - name: 'Electron Vite'
+      link: 'https://cn.electron-vite.org/'
+      desc: 'Electron 开发构建工具'
+      icon: 'https://cn.electron-vite.org/favicon.svg'
 
   React Ecosystem:
     - name: 'React'
