@@ -38,9 +38,28 @@ Vue3源码深度剖析
 
 飞书链接：https://u19tul1sz9g.feishu.cn/docx/UdN8d6YJ3oQmG4xeFpxcMaP4nQe
 
-密码15g6819#
+密码：15g6819#
 
 ------
 
+Typescript5 极速进阶与高级应用
+
+直播回放：https://bcsnv.xetslk.com/sl/4505d1
+
+飞书链接：https://u19tul1sz9g.feishu.cn/docx/BByHdN4shovP6UxazHLc0veJnvf?from=from_copylink
+
+密码：21295M#7
+
+------
+
+ESLint规范化实践
+
+直播回放： https://bcsnv.xetlk.com/sl/2eZ0Uc
+
+飞书链接：https://u19tul1sz9g.feishu.cn/docx/Mev7dswq4oQ9KkxpjarcYqnXnUe  
+
+密码：2V1@2391
+
+------
 
 前端高薪求职面试专题：飞书文档，https://u19tul1sz9g.feishu.cn/wiki/XvaZw0NxCi8lzxk8Ho3c6Rp7nVh
