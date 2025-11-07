@@ -1,5 +1,5 @@
 ---
-title: stylelint配置选项
+title: stylelint 配置选项
 date: 2025-11-06
 duration: 60min
 type: notes

@@ -1,5 +1,5 @@
 ---
-title: tsconfig.json配置选项
+title: tsconfig.json 配置选项
 date: 2025-11-06
 duration: 120min
 type: notes

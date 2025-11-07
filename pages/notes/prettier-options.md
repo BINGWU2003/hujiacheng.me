@@ -1,5 +1,5 @@
 ---
-title: prettier配置选项
+title: prettier 配置选项
 date: 2025-11-06
 duration: 120min
 type: notes
