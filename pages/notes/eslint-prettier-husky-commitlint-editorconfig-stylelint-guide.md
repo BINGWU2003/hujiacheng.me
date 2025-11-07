@@ -15,6 +15,7 @@ art: random
 ### 工具介绍
 
 **必须配置的工具**：
+
 - **ESLint**：JavaScript/TypeScript 代码检查工具
 - **Prettier**：代码格式化工具
 - **Husky**：Git hooks 管理工具
@@ -144,7 +145,8 @@ npm install --save-dev eslint@8
 npm install --save-dev eslint@8 \
   eslint-plugin-vue \
   @typescript-eslint/parser \
-  @typescript-eslint/eslint-plugin
+  @typescript-eslint/eslint-plugin \
+  vue-eslint-parser
 
 # React 项目
 npm install --save-dev eslint@8 \
@@ -221,7 +223,7 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    'plugin:vue/vue3-recommended',
+    'plugin:vue/recommended',
     'plugin:@typescript-eslint/recommended'
   ],
   parser: 'vue-eslint-parser',
@@ -438,7 +440,7 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    'plugin:vue/vue3-recommended',  // 或 'plugin:react/recommended'
+    'plugin:vue/recommended',  // 或 'plugin:react/recommended'
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended'  // ⭐ 必须放在最后
   ],
@@ -942,7 +944,7 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    'plugin:vue/vue3-recommended',
+    'plugin:vue/recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended'
   ],
