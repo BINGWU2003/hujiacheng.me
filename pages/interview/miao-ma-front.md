@@ -62,7 +62,7 @@ ESLint规范化实践
 
 ------
 
-ESLint规范化实践
+工程规范工具链
 
 直播回放： https://e2gaa.xetslk.com/sl/2BnoQQ 
 
