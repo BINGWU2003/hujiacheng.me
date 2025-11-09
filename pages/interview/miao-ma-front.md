@@ -1,7 +1,7 @@
 ---
 title: 妙码前端资料
-date: 2025-11-5
-duration: 5min
+date: 2025-11-9
+duration: 10min
 type: interview
 art: random
 ---
@@ -59,6 +59,16 @@ ESLint规范化实践
 飞书链接：https://u19tul1sz9g.feishu.cn/docx/Mev7dswq4oQ9KkxpjarcYqnXnUe  
 
 密码：2V1@2391
+
+------
+
+ESLint规范化实践
+
+直播回放： https://e2gaa.xetslk.com/sl/2BnoQQ 
+
+飞书链接：https://u19tul1sz9g.feishu.cn/docx/J04ld12eDoIoH3xYoC5caqgHnyf
+
+密码：8379#25F
 
 ------
 
