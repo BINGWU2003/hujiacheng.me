@@ -70,6 +70,14 @@ ESLint规范化实践
 
 密码：8379#25F
 
+------前端单测、集成测试与端到端测试方案全面解析
+
+直播回放：https://bcsnv.xetlk.com/sl/1ogOPS
+
+飞书链接：https://u19tul1sz9g.feishu.cn/docx/CAyOdUDvBorZyKxdsXbcNgbTnTf
+
+密码：&J543136
+
 ------
 
 前端高薪求职面试专题：飞书文档，https://u19tul1sz9g.feishu.cn/wiki/XvaZw0NxCi8lzxk8Ho3c6Rp7nVh
