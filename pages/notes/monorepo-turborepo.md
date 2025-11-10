@@ -876,17 +876,27 @@ npx lint-staged
 
 ### 7.2 各包继承根配置
 
-在各个包的 `tsconfig.json` 中：
+在`packages`的 `tsconfig.json` 中：
 
 ```json
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "moduleResolution": "bundler",
+    "lib": [
+      "ES2020",
+      "DOM"
+    ]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
 ```
 
