@@ -56,6 +56,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/public-api': RouteRecordInfo<'/notes/public-api', '/notes/public-api', Record<never, never>, Record<never, never>>,
     '/notes/stylelint-options': RouteRecordInfo<'/notes/stylelint-options', '/notes/stylelint-options', Record<never, never>, Record<never, never>>,
     '/notes/tsconfig-options': RouteRecordInfo<'/notes/tsconfig-options', '/notes/tsconfig-options', Record<never, never>, Record<never, never>>,
+    '/notes/turborepo-options': RouteRecordInfo<'/notes/turborepo-options', '/notes/turborepo-options', Record<never, never>, Record<never, never>>,
     '/notes/typescript': RouteRecordInfo<'/notes/typescript', '/notes/typescript', Record<never, never>, Record<never, never>>,
     '/notes/uniapp-intranet-traversal': RouteRecordInfo<'/notes/uniapp-intranet-traversal', '/notes/uniapp-intranet-traversal', Record<never, never>, Record<never, never>>,
     '/notes/uniapp-system-info': RouteRecordInfo<'/notes/uniapp-system-info', '/notes/uniapp-system-info', Record<never, never>, Record<never, never>>,
