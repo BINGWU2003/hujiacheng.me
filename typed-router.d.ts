@@ -31,6 +31,7 @@ declare module 'vue-router/auto-routes' {
     '/nav': RouteRecordInfo<'/nav', '/nav', Record<never, never>, Record<never, never>>,
     '/notes/': RouteRecordInfo<'/notes/', '/notes', Record<never, never>, Record<never, never>>,
     '/notes/ai-tools': RouteRecordInfo<'/notes/ai-tools', '/notes/ai-tools', Record<never, never>, Record<never, never>>,
+    '/notes/changesets-cli-options': RouteRecordInfo<'/notes/changesets-cli-options', '/notes/changesets-cli-options', Record<never, never>, Record<never, never>>,
     '/notes/commitlint-options': RouteRecordInfo<'/notes/commitlint-options', '/notes/commitlint-options', Record<never, never>, Record<never, never>>,
     '/notes/common-code-snippets': RouteRecordInfo<'/notes/common-code-snippets', '/notes/common-code-snippets', Record<never, never>, Record<never, never>>,
     '/notes/css-computed-style': RouteRecordInfo<'/notes/css-computed-style', '/notes/css-computed-style', Record<never, never>, Record<never, never>>,
