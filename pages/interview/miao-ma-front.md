@@ -70,13 +70,24 @@ ESLint规范化实践
 
 密码：8379#25F
 
-------前端单测、集成测试与端到端测试方案全面解析
+------
+
+前端单测、集成测试与端到端测试方案全面解析
 
 直播回放：https://bcsnv.xetlk.com/sl/1ogOPS
 
 飞书链接：https://u19tul1sz9g.feishu.cn/docx/CAyOdUDvBorZyKxdsXbcNgbTnTf
 
 密码：&J543136
+
+------
+vite、rollup、tsup、tsc 打包构建工具详解
+
+直播回放：https://bcsnv.xetlk.com/sl/3jXMB4
+
+飞书链接：https://u19tul1sz9g.feishu.cn/docx/II7adFsltoA2QdxSVgacTgUknoc 
+
+密码：12e8742@
 
 ------
 
