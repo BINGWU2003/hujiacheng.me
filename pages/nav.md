@@ -133,6 +133,10 @@ navs:
       link: 'https://xlog.app/'
       desc: '书写在区块链上的开源创作社区。'
       icon: 'https://xlog.app/assets/logo.svg'
+    - name: 'NodeSeek'
+      link: 'https://www.nodeseek.com'
+      desc: '技术问答开发者社区'
+      icon: 'https://www.nodeseek.com/static/image/favicon/android-chrome-192x192.png'
 
   Vue Ecosystem:
     - name: 'Vue 3'
