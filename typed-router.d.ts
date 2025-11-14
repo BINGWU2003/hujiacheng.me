@@ -54,6 +54,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/prettier-options': RouteRecordInfo<'/notes/prettier-options', '/notes/prettier-options', Record<never, never>, Record<never, never>>,
     '/notes/programming-standard': RouteRecordInfo<'/notes/programming-standard', '/notes/programming-standard', Record<never, never>, Record<never, never>>,
     '/notes/public-api': RouteRecordInfo<'/notes/public-api', '/notes/public-api', Record<never, never>, Record<never, never>>,
+    '/notes/rollup-options': RouteRecordInfo<'/notes/rollup-options', '/notes/rollup-options', Record<never, never>, Record<never, never>>,
     '/notes/stylelint-options': RouteRecordInfo<'/notes/stylelint-options', '/notes/stylelint-options', Record<never, never>, Record<never, never>>,
     '/notes/tsconfig-options': RouteRecordInfo<'/notes/tsconfig-options', '/notes/tsconfig-options', Record<never, never>, Record<never, never>>,
     '/notes/tsup-options': RouteRecordInfo<'/notes/tsup-options', '/notes/tsup-options', Record<never, never>, Record<never, never>>,
