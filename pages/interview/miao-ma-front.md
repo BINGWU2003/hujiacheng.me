@@ -91,4 +91,14 @@ vite、rollup、tsup、tsc 打包构建工具详解
 
 ------
 
+脚手架/CLI 工具原理与开发实践
+
+直播回放：https://bcsnv.xetlk.com/sl/2IevYR
+
+飞书链接：https://u19tul1sz9g.feishu.cn/docx/BLp4dZKN1o3KCVx4rOgcCG8anah
+
+密码：521311J&
+
+------
+
 前端高薪求职面试专题：飞书文档，https://u19tul1sz9g.feishu.cn/wiki/XvaZw0NxCi8lzxk8Ho3c6Rp7nVh
