@@ -1,12 +1,31 @@
 ---
 title: Rollup 配置选项
-date: 2025-11-14
+date: 2025-11-27
 duration: 120min
 type: notes
 art: random
 ---
 
 [[toc]]
+
+:::tip 版本说明
+本文档基于 **Rollup 4.x** 编写，包含最新的配置选项和最佳实践。如果你使用旧版本 Rollup，某些选项可能不可用。
+
+**主要更新**：
+- ✅ 新增 `treeshake.preset`（'smallest' | 'safest' | 'recommended'）预设配置
+- ✅ 新增 `preserveModules`、`manualChunks`、`interop` 等高级输出选项
+- ✅ 新增 Watch 模式详细配置和编程式 API
+- ✅ 新增性能优化章节（缓存、并行处理、插件顺序）
+- ✅ 补充 `@rollup/plugin-alias` 等常用插件配置
+- ✅ 提供 JavaScript/TypeScript/Vue 3 组件库的完整配置模板
+:::
+
+:::warning 注意事项
+- 配置选项会随 Rollup 版本更新而变化
+- 不同的项目类型（库/应用）需要不同的配置策略
+- Vite 在生产环境使用 Rollup，可参考 `vite.config.ts` 中的 `build.rollupOptions`
+- 建议使用官方插件（`@rollup/plugin-*`），社区插件需注意维护状态
+:::
 
 ## 什么是 Rollup
 
@@ -420,16 +439,34 @@ export default {
   treeshake: false
 };
 
+// 使用预设
+export default {
+  treeshake: {
+    preset: 'recommended'  // 'smallest' | 'safest' | 'recommended'
+  }
+};
+
 // 详细配置
 export default {
   treeshake: {
-    moduleSideEffects: true,           // 保留模块副作用
-    propertyReadSideEffects: false,    // 属性读取无副作用
-    tryCatchDeoptimization: true,      // try-catch 块优化
-    unknownGlobalSideEffects: true     // 未知全局变量有副作用
+    preset: 'smallest',                        // 预设配置
+    annotations: true,                         // 使用注释判断副作用
+    correctVarValueBeforeDeclaration: false,   // 变量声明前的值优化
+    moduleSideEffects: true,                   // 保留模块副作用
+    propertyReadSideEffects: false,            // 属性读取无副作用
+    tryCatchDeoptimization: true,              // try-catch 块优化
+    unknownGlobalSideEffects: true             // 未知全局变量有副作用
   }
 };
 ```
+
+**预设说明**：
+
+| 预设 | 说明 | 适用场景 |
+|------|------|----------|
+| `recommended` | 推荐配置（默认） | 平衡体积和兼容性 |
+| `smallest` | 最激进的优化 | 追求最小体积 |
+| `safest` | 最保守的优化 | 确保兼容性 |
 
 **影响对比**：
 
@@ -464,6 +501,10 @@ function unused() {
 }
 used();
 // ✗ unused 函数保留（未移除）
+
+// treeshake: { preset: 'smallest' }
+// 最激进的优化，移除更多未使用代码
+function used(){console.log('used')}used();
 ```
 
 ## 二、输出选项（Output Options）
@@ -766,27 +807,38 @@ export default {
 | 值 | 说明 | 适用场景 |
 |---|---|---|
 | `auto` | 自动检测 | 默认（推荐） |
-| `default` | 仅默认导出 | `export default` |
-| `named` | 仅命名导出 | `export { a, b }` |
-| `none` | 无导出 | IIFE 格式 |
+| `default` | 仅默认导出 | 单一默认导出 `export default` |
+| `named` | 仅命名导出 | 多个命名导出 `export { a, b }` |
+| `none` | 无导出 | IIFE 格式，不导出任何内容 |
 
 **影响对比**：
 
 ```javascript
-// 源码：混合导出
+// 源码 1：仅默认导出
+export default 42;
+
+// exports: 'auto' 或 'default'（CJS 输出）
+module.exports = 42;
+
+// exports: 'named'（CJS 输出）
+Object.defineProperty(exports, '__esModule', { value: true });
+exports.default = 42;
+
+// 源码 2：混合导出
 export default function main() {}
 export const util = {};
 
-// exports: 'auto'
-// CJS 输出
+// exports: 'auto'（CJS 输出）
+Object.defineProperty(exports, '__esModule', { value: true });
 exports.default = main;
 exports.util = util;
 
-// exports: 'default'
-module.exports = main;  // 只有默认导出
+// exports: 'default'（CJS 输出）
+module.exports = main;  // 只导出默认值，util 被忽略
 
-// exports: 'named'
-exports.main = main;
+// exports: 'named'（CJS 输出）
+Object.defineProperty(exports, '__esModule', { value: true });
+exports.default = main;
 exports.util = util;
 ```
 
@@ -886,21 +938,23 @@ export default {
 export default {
   output: {
     dir: 'dist',
-    entryFileNames: '[name].[hash].js',      // 入口文件
-    chunkFileNames: 'chunks/[name].[hash].js' // 代码分割文件
+    entryFileNames: '[name].[hash].js',         // 入口文件
+    chunkFileNames: 'chunks/[name].[hash].js',  // 代码分割文件
+    assetFileNames: 'assets/[name].[hash][extname]'  // 资源文件
   }
 };
 ```
 
 **占位符**：
 
-| 占位符 | 说明 | 示例 |
-|--------|------|------|
-| `[name]` | 文件名 | `main` |
-| `[hash]` | 内容哈希 | `abc123` |
-| `[format]` | 输出格式 | `es`, `cjs` |
-| `[ext]` | 扩展名 | `js` |
-| `[extname]` | 带点扩展名 | `.js` |
+| 占位符 | 说明 | 示例 | 适用 |
+|--------|------|------|------|
+| `[name]` | 文件名（不含扩展名） | `main` | 全部 |
+| `[hash]` | 内容哈希（完整） | `abc123def456` | 全部 |
+| `[chunkhash]` | 仅 chunk 内容哈希 | `abc123` | chunk/entry |
+| `[format]` | 输出格式 | `es`, `cjs` | entry/chunk |
+| `[ext]` | 扩展名（不带点） | `js` | 全部 |
+| `[extname]` | 扩展名（带点） | `.js` | 全部 |
 
 **示例**：
 
@@ -921,13 +975,138 @@ export default {
 // 输出
 dist/
 ├── js/
-│   ├── main.abc123.js
-│   ├── vendor.def456.js
+│   ├── main.abc123def456.js
+│   ├── vendor.def456ghi789.js
 │   └── chunks/
-│       └── shared.ghi789.js
+│       └── shared.ghi789jkl012.js
 └── assets/
-    └── logo.jkl012.png
+    └── logo.jkl012mno345.png
+
+// 使用函数动态命名
+export default {
+  output: {
+    dir: 'dist',
+    entryFileNames: (chunkInfo) => {
+      return chunkInfo.name === 'main' 
+        ? 'app.js' 
+        : '[name]-[hash].js';
+    },
+    chunkFileNames: (chunkInfo) => {
+      // 根据模块来源分组
+      if (chunkInfo.moduleIds.some(id => id.includes('node_modules'))) {
+        return 'vendor/[name].[hash].js';
+      }
+      return 'chunks/[name].[hash].js';
+    }
+  }
+};
 ```
+
+### 2.10 preserveModules（保留模块结构）
+
+**作用**：保留原始模块结构，不合并文件。
+
+```javascript
+export default {
+  input: ['src/main.js', 'src/utils.js'],
+  output: {
+    dir: 'dist',
+    format: 'es',
+    preserveModules: true,           // 保留模块结构
+    preserveModulesRoot: 'src'       // 指定根目录
+  }
+};
+```
+
+**影响对比**：
+
+```bash
+# preserveModules: false（默认）
+dist/
+└── main.js（所有代码合并）
+
+# preserveModules: true
+dist/
+├── main.js
+├── utils.js
+└── components/
+    ├── Button.js
+    └── Input.js
+```
+
+**适用场景**：
+
+```javascript
+// 适合发布库时保留模块结构
+// 用户可以按需导入
+import { Button } from 'my-lib/components/Button';
+import { formatDate } from 'my-lib/utils/date';
+```
+
+### 2.11 manualChunks（手动代码分割）
+
+**作用**：手动控制代码分割。
+
+```javascript
+export default {
+  output: {
+    dir: 'dist',
+    manualChunks: {
+      vendor: ['react', 'react-dom'],
+      utils: ['lodash', 'axios']
+    }
+  }
+};
+
+// 或使用函数
+export default {
+  output: {
+    dir: 'dist',
+    manualChunks(id) {
+      // 将 node_modules 分离到 vendor
+      if (id.includes('node_modules')) {
+        return 'vendor';
+      }
+      // 将 utils 目录分离
+      if (id.includes('src/utils')) {
+        return 'utils';
+      }
+    }
+  }
+};
+```
+
+**输出结果**：
+
+```bash
+dist/
+├── main.js
+├── vendor.js      # react, react-dom
+└── utils.js       # lodash, axios
+```
+
+### 2.12 interop（互操作性）
+
+**作用**：控制 ES modules 和 CommonJS 的互操作方式。
+
+```javascript
+export default {
+  output: {
+    format: 'cjs',
+    interop: 'auto'  // 'auto' | 'esModule' | 'default' | 'defaultOnly' | false
+  }
+};
+```
+
+**可选值**：
+
+| 值 | 说明 | 使用场景 |
+|---|---|---|
+| `auto` | 自动检测（默认） | 推荐 |
+| `esModule` | 添加 `__esModule` 标记 | 标准 ES module 互操作 |
+| `default` | 使用 default 互操作 | 仅有默认导出 |
+| `defaultOnly` | 仅处理 default 导出 | 优化场景 |
+| `false` | 不处理互操作 | 纯 ES modules |
 
 ## 三、常用插件
 
@@ -1230,7 +1409,8 @@ export default {
       filename: 'stats.html',   // 输出文件名
       open: true,               // 自动打开浏览器
       gzipSize: true,           // 显示 gzip 大小
-      brotliSize: true          // 显示 brotli 大小
+      brotliSize: true,         // 显示 brotli 大小
+      template: 'treemap'       // 'treemap' | 'sunburst' | 'network'
     })
   ]
 };
@@ -1246,6 +1426,44 @@ npx rollup -c
 # - 各模块大小占比
 # - 依赖关系图
 # - gzip/brotli 压缩大小
+# - 模块依赖树状图
+```
+
+### 3.9 @rollup/plugin-alias
+
+**作用**：配置模块路径别名。
+
+```bash
+pnpm add -D @rollup/plugin-alias
+```
+
+```javascript
+import alias from '@rollup/plugin-alias';
+import { fileURLToPath } from 'url';
+
+export default {
+  plugins: [
+    alias({
+      entries: [
+        { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
+        { find: '@components', replacement: fileURLToPath(new URL('./src/components', import.meta.url)) },
+        { find: '@utils', replacement: fileURLToPath(new URL('./src/utils', import.meta.url)) }
+      ]
+    })
+  ]
+};
+```
+
+**使用示例**：
+
+```javascript
+// 使用别名前
+import Button from '../../../components/Button.vue';
+import { formatDate } from '../../../utils/date.js';
+
+// 使用别名后
+import Button from '@components/Button.vue';
+import { formatDate } from '@utils/date.js';
 ```
 
 ## 四、完整推荐配置
@@ -1516,9 +1734,177 @@ export default {
 };
 ```
 
-## 五、常见问题
+## 五、Watch 模式（监听模式）
 
-### 5.1 如何处理 CSS
+### 5.1 基础配置
+
+```javascript
+export default {
+  input: 'src/main.js',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'es'
+  },
+  watch: {
+    include: 'src/**',           // 监听的文件
+    exclude: 'node_modules/**',  // 排除的文件
+    clearScreen: false           // 不清空控制台
+  }
+};
+```
+
+### 5.2 Watch 选项
+
+```javascript
+export default {
+  // ...
+  watch: {
+    buildDelay: 1000,         // 延迟构建（ms）
+    chokidar: {               // chokidar 选项
+      usePolling: true,       // 使用轮询（某些系统需要）
+      interval: 100           // 轮询间隔（ms）
+    },
+    clearScreen: false,       // 不清空屏幕
+    skipWrite: false,         // 不跳过写入
+    include: ['src/**'],      // 包含的文件
+    exclude: ['node_modules/**']  // 排除的文件
+  }
+};
+```
+
+### 5.3 使用 Watch 模式
+
+```bash
+# 命令行
+npx rollup -c -w
+# 或
+npx rollup -c --watch
+
+# package.json
+{
+  "scripts": {
+    "dev": "rollup -c -w",
+    "build": "rollup -c"
+  }
+}
+```
+
+### 5.4 编程式 Watch
+
+```javascript
+import { watch } from 'rollup';
+
+const watchOptions = {
+  input: 'src/main.js',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'es'
+  },
+  watch: {
+    include: 'src/**'
+  }
+};
+
+const watcher = watch(watchOptions);
+
+watcher.on('event', event => {
+  switch (event.code) {
+    case 'START':
+      console.log('Rollup is starting...');
+      break;
+    case 'BUNDLE_START':
+      console.log('Building bundle...');
+      break;
+    case 'BUNDLE_END':
+      console.log('Bundle built in', event.duration, 'ms');
+      break;
+    case 'END':
+      console.log('Watching for changes...');
+      break;
+    case 'ERROR':
+      console.error('Error:', event.error);
+      break;
+  }
+});
+
+// 停止监听
+// watcher.close();
+```
+
+## 六、性能优化
+
+### 6.1 缓存配置
+
+```javascript
+export default {
+  cache: true,  // 启用缓存
+  // ...
+};
+
+// 编程式使用缓存
+let cache;
+
+async function build() {
+  const bundle = await rollup({
+    input: 'src/main.js',
+    cache  // 使用之前的缓存
+  });
+  
+  cache = bundle.cache;  // 保存缓存供下次使用
+}
+```
+
+### 6.2 并行处理
+
+```javascript
+export default {
+  maxParallelFileOps: 20  // 最大并行文件操作数（默认 20）
+};
+```
+
+### 6.3 优化插件顺序
+
+```javascript
+export default {
+  plugins: [
+    // 1. 首先解析路径
+    resolve(),
+    
+    // 2. 转换 CommonJS
+    commonjs(),
+    
+    // 3. 转换代码
+    typescript(),
+    
+    // 4. 压缩（最后）
+    terser()
+  ]
+};
+```
+
+### 6.4 使用 external 减少打包体积
+
+```javascript
+import pkg from './package.json';
+
+export default {
+  external: [
+    // 不打包依赖
+    ...Object.keys(pkg.dependencies || {}),
+    ...Object.keys(pkg.peerDependencies || {}),
+    
+    // 不打包 Node.js 内置模块
+    /^node:/,
+    'path',
+    'fs',
+    'url'
+  ]
+};
+```
+
+## 七、常见问题
+
+### 7.1 如何处理 CSS
 
 **方案一：使用 rollup-plugin-postcss**
 
@@ -1557,7 +1943,7 @@ export default {
 };
 ```
 
-### 5.2 循环依赖警告
+### 7.2 循环依赖警告
 
 **问题**：
 
@@ -1599,7 +1985,7 @@ export default {
 };
 ```
 
-### 5.3 未使用的外部导入
+### 7.3 未使用的外部导入
 
 **问题**：
 
@@ -1630,7 +2016,7 @@ export function add(a, b) {
 }
 ```
 
-### 5.4 this is undefined
+### 7.4 this is undefined
 
 **问题**：
 
@@ -1659,7 +2045,7 @@ export function getGlobal() {
 }
 ```
 
-### 5.5 打包体积过大
+### 7.5 打包体积过大
 
 **问题**：打包后的文件太大。
 
@@ -1705,9 +2091,92 @@ export default {
 };
 ```
 
-## 六、最佳实践
+### 7.6 处理环境变量
 
-### 1. 多格式输出
+**问题**：如何在代码中使用环境变量？
+
+**方案一：使用 @rollup/plugin-replace**
+
+```javascript
+import replace from '@rollup/plugin-replace';
+
+export default {
+  plugins: [
+    replace({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
+      'process.env.API_URL': JSON.stringify(process.env.API_URL),
+      preventAssignment: true
+    })
+  ]
+};
+```
+
+**方案二：使用 dotenv**
+
+```javascript
+import dotenv from 'dotenv';
+import replace from '@rollup/plugin-replace';
+
+dotenv.config();
+
+export default {
+  plugins: [
+    replace({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+      'process.env.API_URL': JSON.stringify(process.env.API_URL),
+      'process.env.API_KEY': JSON.stringify(process.env.API_KEY),
+      preventAssignment: true
+    })
+  ]
+};
+```
+
+### 7.7 TypeScript 路径映射问题
+
+**问题**：TypeScript 的 `paths` 配置不生效。
+
+**解决方案**：
+
+```bash
+# 安装插件
+pnpm add -D @rollup/plugin-alias
+```
+
+```javascript
+// rollup.config.js
+import alias from '@rollup/plugin-alias';
+import { fileURLToPath } from 'url';
+
+export default {
+  plugins: [
+    alias({
+      entries: [
+        { 
+          find: '@', 
+          replacement: fileURLToPath(new URL('./src', import.meta.url)) 
+        }
+      ]
+    }),
+    typescript()
+  ]
+};
+```
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}
+```
+
+## 八、最佳实践
+
+### 8.1 多格式输出
 
 ```javascript
 // 为不同场景提供不同格式
@@ -1727,7 +2196,7 @@ export default [
 ];
 ```
 
-### 2. 正确配置 external
+### 8.2 正确配置 external
 
 ```javascript
 import pkg from './package.json';
@@ -1742,7 +2211,7 @@ export default {
 };
 ```
 
-### 3. 生成 Source Map
+### 8.3 生成 Source Map
 
 ```javascript
 export default {
@@ -1752,7 +2221,7 @@ export default {
 };
 ```
 
-### 4. 生成类型声明
+### 8.4 生成类型声明
 
 ```javascript
 import typescript from '@rollup/plugin-typescript';
@@ -1767,7 +2236,7 @@ export default {
 };
 ```
 
-### 5. 配置 package.json
+### 8.5 配置 package.json
 
 ```json
 {
@@ -1787,19 +2256,267 @@ export default {
 }
 ```
 
-### 6. 使用 NPM Scripts
+### 8.6 使用 NPM Scripts
 
 ```json
 {
   "scripts": {
     "build": "rollup -c",
     "build:watch": "rollup -c -w",
-    "build:prod": "NODE_ENV=production rollup -c"
+    "build:prod": "NODE_ENV=production rollup -c",
+    "build:analyze": "rollup -c --environment ANALYZE:true"
   }
 }
 ```
 
-## 七、与其他工具对比
+### 8.7 日志和调试
+
+```javascript
+export default {
+  // 配置日志级别
+  logLevel: 'info',  // 'silent' | 'error' | 'warn' | 'info' | 'debug'
+  
+  // 自定义日志处理
+  onLog(level, log, handler) {
+    if (log.code === 'CIRCULAR_DEPENDENCY') {
+      return; // 忽略循环依赖警告
+    }
+    if (level === 'warn') {
+      console.warn('警告:', log.message);
+    }
+    handler(level, log);
+  },
+  
+  // 自定义警告处理（已弃用，使用 onLog）
+  onwarn(warning, warn) {
+    if (warning.code === 'UNUSED_EXTERNAL_IMPORT') return;
+    warn(warning);
+  }
+};
+```
+
+### 8.8 条件配置
+
+```javascript
+// rollup.config.js
+import { defineConfig } from 'rollup';
+
+const isProduction = process.env.NODE_ENV === 'production';
+const shouldAnalyze = process.env.ANALYZE === 'true';
+
+export default defineConfig({
+  input: 'src/main.js',
+  output: {
+    dir: 'dist',
+    format: 'es',
+    sourcemap: !isProduction  // 只在开发环境生成 sourcemap
+  },
+  plugins: [
+    resolve(),
+    commonjs(),
+    typescript(),
+    isProduction && terser(),  // 只在生产环境压缩
+    shouldAnalyze && visualizer()  // 按需分析
+  ].filter(Boolean)  // 过滤掉 false 值
+});
+```
+
+### 8.9 使用 defineConfig 获得类型提示
+
+```javascript
+// rollup.config.js
+import { defineConfig } from 'rollup';
+import typescript from '@rollup/plugin-typescript';
+
+export default defineConfig({
+  input: 'src/main.ts',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'es'
+  },
+  plugins: [typescript()]
+});
+
+// 或使用 JSDoc
+/** @type {import('rollup').RollupOptions} */
+export default {
+  input: 'src/main.js',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'es'
+  }
+};
+```
+
+### 8.10 Monorepo 中的配置共享
+
+```javascript
+// packages/shared/rollup.config.base.js
+export function createConfig(input, output) {
+  return {
+    input,
+    output,
+    external: ['vue', 'react'],
+    plugins: [
+      resolve(),
+      commonjs(),
+      typescript()
+    ]
+  };
+}
+
+// packages/package-a/rollup.config.js
+import { createConfig } from '../shared/rollup.config.base.js';
+
+export default createConfig('src/index.ts', {
+  file: 'dist/index.js',
+  format: 'es'
+});
+
+// packages/package-b/rollup.config.js
+import { createConfig } from '../shared/rollup.config.base.js';
+
+export default createConfig('src/index.ts', {
+  file: 'dist/index.js',
+  format: 'es'
+});
+```
+
+### 8.11 错误处理和恢复
+
+```javascript
+// rollup.config.js
+export default {
+  input: 'src/main.js',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'es'
+  },
+  onLog(level, log, handler) {
+    // 记录所有错误
+    if (level === 'error') {
+      console.error('构建错误:', log);
+    }
+    handler(level, log);
+  },
+  plugins: [
+    {
+      name: 'error-handler',
+      buildEnd(error) {
+        if (error) {
+          console.error('构建失败:', error);
+          // 发送通知、记录日志等
+        }
+      }
+    }
+  ]
+};
+
+// 编程式错误处理
+import { rollup } from 'rollup';
+
+async function build() {
+  try {
+    const bundle = await rollup({
+      input: 'src/main.js'
+    });
+    
+    await bundle.write({
+      file: 'dist/bundle.js',
+      format: 'es'
+    });
+    
+    console.log('✅ 构建成功');
+  } catch (error) {
+    console.error('❌ 构建失败:', error.message);
+    if (error.loc) {
+      console.error(`  位置: ${error.loc.file}:${error.loc.line}:${error.loc.column}`);
+    }
+    process.exit(1);
+  }
+}
+
+build();
+```
+
+### 8.12 性能监控
+
+```javascript
+export default {
+  input: 'src/main.js',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'es'
+  },
+  // 启用性能分析
+  perf: true,
+  plugins: [
+    {
+      name: 'perf-monitor',
+      buildStart() {
+        this.startTime = Date.now();
+        console.log('🚀 开始构建...');
+      },
+      buildEnd() {
+        const duration = Date.now() - this.startTime;
+        console.log(`✅ 构建完成，耗时: ${duration}ms`);
+      },
+      renderStart() {
+        console.log('📝 开始生成代码...');
+      },
+      renderEnd() {
+        console.log('✅ 代码生成完成');
+      }
+    }
+  ]
+};
+```
+
+### 8.13 自定义插件示例
+
+```javascript
+// rollup.config.js
+
+// 简单的横幅插件
+function bannerPlugin(text) {
+  return {
+    name: 'banner',
+    renderChunk(code) {
+      return `/* ${text} */\n${code}`;
+    }
+  };
+}
+
+// 文件大小报告插件
+function sizeReportPlugin() {
+  return {
+    name: 'size-report',
+    generateBundle(options, bundle) {
+      console.log('\n📊 文件大小报告:');
+      for (const [fileName, chunk] of Object.entries(bundle)) {
+        if (chunk.type === 'chunk') {
+          const size = (chunk.code.length / 1024).toFixed(2);
+          console.log(`  ${fileName}: ${size} KB`);
+        }
+      }
+    }
+  };
+}
+
+export default {
+  input: 'src/main.js',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'es'
+  },
+  plugins: [
+    bannerPlugin('My Library v1.0.0'),
+    sizeReportPlugin()
+  ]
+};
+```
+
+## 九、与其他工具对比
 
 ### Rollup vs Webpack
 
@@ -1884,15 +2601,137 @@ export default {
 };
 ```
 
-## 八、总结
+## 十、快速配置模板
+
+### 10.1 纯 JavaScript 库
+
+```javascript
+// rollup.config.js
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import terser from '@rollup/plugin-terser';
+
+export default [
+  // ES Module
+  {
+    input: 'src/index.js',
+    output: {
+      file: 'dist/index.esm.js',
+      format: 'es',
+      sourcemap: true
+    },
+    external: ['vue', 'react'],
+    plugins: [resolve(), commonjs()]
+  },
+  // CommonJS
+  {
+    input: 'src/index.js',
+    output: {
+      file: 'dist/index.cjs.js',
+      format: 'cjs',
+      sourcemap: true,
+      exports: 'auto'
+    },
+    external: ['vue', 'react'],
+    plugins: [resolve(), commonjs()]
+  },
+  // UMD（压缩）
+  {
+    input: 'src/index.js',
+    output: {
+      file: 'dist/index.umd.min.js',
+      format: 'umd',
+      name: 'MyLib',
+      sourcemap: true,
+      globals: { vue: 'Vue', react: 'React' }
+    },
+    external: ['vue', 'react'],
+    plugins: [resolve(), commonjs(), terser()]
+  }
+];
+```
+
+### 10.2 TypeScript 库
+
+```javascript
+// rollup.config.js
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import typescript from '@rollup/plugin-typescript';
+import terser from '@rollup/plugin-terser';
+import { defineConfig } from 'rollup';
+
+export default defineConfig([
+  {
+    input: 'src/index.ts',
+    output: [
+      { file: 'dist/index.esm.js', format: 'es', sourcemap: true },
+      { file: 'dist/index.cjs.js', format: 'cjs', sourcemap: true, exports: 'auto' }
+    ],
+    external: ['vue'],
+    plugins: [
+      resolve(),
+      commonjs(),
+      typescript({
+        declaration: true,
+        declarationDir: 'dist/types',
+        rootDir: 'src'
+      })
+    ]
+  },
+  {
+    input: 'src/index.ts',
+    output: {
+      file: 'dist/index.umd.min.js',
+      format: 'umd',
+      name: 'MyLib',
+      sourcemap: true,
+      globals: { vue: 'Vue' }
+    },
+    external: ['vue'],
+    plugins: [resolve(), commonjs(), typescript(), terser()]
+  }
+]);
+```
+
+### 10.3 Vue 3 组件库
+
+```javascript
+// rollup.config.js
+import vue from 'rollup-plugin-vue';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import typescript from '@rollup/plugin-typescript';
+import postcss from 'rollup-plugin-postcss';
+import { defineConfig } from 'rollup';
+
+export default defineConfig({
+  input: 'src/index.ts',
+  output: [
+    { file: 'dist/index.esm.js', format: 'es', sourcemap: true },
+    { file: 'dist/index.cjs.js', format: 'cjs', sourcemap: true, exports: 'named' }
+  ],
+  external: ['vue'],
+  plugins: [
+    resolve(),
+    commonjs(),
+    vue({ target: 'browser', preprocessStyles: true }),
+    typescript({ declaration: true, declarationDir: 'dist/types' }),
+    postcss({ extract: true, minimize: true })
+  ]
+});
+```
+
+## 十一、总结
 
 ### 核心优势
 
-1. **输出干净**：接近源码的输出
-2. **Tree-shaking**：最好的无用代码消除
-3. **多格式支持**：ES/CJS/UMD/IIFE
-4. **专注库打包**：适合打包 JavaScript 库
-5. **插件丰富**：强大的插件生态
+1. **输出干净**：接近源码的输出，无冗余代码
+2. **Tree-shaking**：业界最好的无用代码消除
+3. **多格式支持**：ES/CJS/UMD/IIFE/AMD/System
+4. **专注库打包**：适合打包 JavaScript 库和工具
+5. **插件丰富**：强大的插件生态系统
+6. **配置简单**：相比 Webpack 更易上手
 
 ### 最小配置
 
@@ -1907,10 +2746,7 @@ export default {
     file: 'dist/bundle.js',
     format: 'es'
   },
-  plugins: [
-    resolve(),
-    commonjs()
-  ]
+  plugins: [resolve(), commonjs()]
 };
 ```
 
@@ -1920,16 +2756,17 @@ export default {
 # 1. 安装依赖
 pnpm add -D rollup @rollup/plugin-node-resolve @rollup/plugin-commonjs
 
-# 2. 创建配置文件
-# rollup.config.js
+# 2. 创建配置文件 rollup.config.js
 
 # 3. 配置 package.json
 {
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
   },
   "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js"
+  "module": "dist/index.esm.js",
+  "types": "dist/types/index.d.ts"
 }
 
 # 4. 打包
@@ -1938,19 +2775,49 @@ pnpm build
 
 ### 关键要点
 
-1. **正确配置 external**：不打包运行时依赖
-2. **多格式输出**：提供 ES + CJS + UMD
-3. **生成类型声明**：TypeScript 项目必需
-4. **启用 Source Map**：方便调试
-5. **使用合适的插件**：根据需求选择插件
+1. **正确配置 external**：不打包运行时依赖和 peerDependencies
+2. **多格式输出**：提供 ES + CJS + UMD 满足不同场景
+3. **生成类型声明**：TypeScript 项目必需生成 .d.ts 文件
+4. **启用 Source Map**：方便调试和错误追踪
+5. **使用合适的插件**：根据项目需求选择必要插件
+6. **启用 Tree-shaking**：充分利用 Rollup 的优势
+7. **配置 watch 模式**：开发时提高效率
+8. **性能优化**：使用缓存、并行处理
+
+### 适用场景
+
+✅ **推荐使用 Rollup**：
+- 打包 JavaScript/TypeScript 库
+- 打包 Vue/React 组件库
+- Monorepo 子包构建
+- 工具库和插件
+
+❌ **不推荐使用 Rollup**：
+- 复杂的 Web 应用（推荐 Vite/Webpack）
+- 需要 HMR 开发服务器（推荐 Vite）
+- 大量静态资源处理
 
 ### 学习路径
 
-1. **基础**：理解 ES modules 和打包概念
-2. **实践**：打包简单的库
-3. **进阶**：配置多格式输出
-4. **优化**：Tree-shaking、代码分割
-5. **集成**：TypeScript、Vue、React
+1. **基础**（1-2 天）
+   - 理解 ES modules
+   - 掌握基础配置
+   - 了解常用插件
+
+2. **实践**（3-5 天）
+   - 打包简单库
+   - 配置多格式输出
+   - 处理常见问题
+
+3. **进阶**（1-2 周）
+   - Tree-shaking 优化
+   - 代码分割策略
+   - 自定义插件开发
+
+4. **精通**（持续学习）
+   - 性能优化
+   - 复杂场景处理
+   - 与其他工具集成
 
 ## 参考资源
 
