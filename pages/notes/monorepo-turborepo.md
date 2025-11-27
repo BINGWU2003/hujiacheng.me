@@ -1,12 +1,40 @@
 ---
 title: monorepo + turborepo 搭建项目
-date: 2025-11-10
+date: 2025-11-27
 duration: 60min
 type: notes
 art: random
 ---
 
 [[toc]]
+
+:::tip 版本说明
+本文档基于以下版本编写：
+
+**核心工具版本**：
+- **Turborepo**: v2.6.1 (2024 年 11 月发布)
+- **pnpm**: v9.15.0 (2024 年 12 月发布)
+- **Node.js**: 18.0.0+ (推荐 20.18.1 LTS)
+
+**重要里程碑**：
+- ✅ **Turborepo 2.0** (2024-06-04)：新终端 UI、Watch 模式、MIT 许可证
+- ✅ **Turborepo 2.1** (2024-07)：改进的任务依赖和缓存
+- ✅ **Turborepo 2.4** (2024-09)：性能优化和稳定性改进
+- ✅ **Turborepo 2.6** (2024-11)：最新稳定版本
+
+**配置变更（v1.x → v2.x）**：
+- 🔄 `pipeline` → `tasks`：配置键名变更
+- 🔄 `$schema` URL 更新为 v2
+- ⚠️ **必须配置** `packageManager` 字段
+- ✅ 环境变量配置稳定化
+:::
+
+:::warning 注意事项
+- **Turborepo 2.x** 相比 1.x 有重大变更，建议新项目直接使用 2.x
+- **packageManager 字段**：Turborepo 2.0+ 要求在根 package.json 中定义（如 `"packageManager": "pnpm@9.15.0"`）
+- **迁移工具**：可使用 `npx @turbo/codemod migrate` 自动迁移 1.x 配置到 2.x
+- **pnpm 9.x**：引入了新的依赖解析算法，性能更优
+:::
 
 ## 什么是 Monorepo
 
@@ -235,11 +263,66 @@ packages:
   - 'packages/*'
   # 所有在 apps 目录下的应用
   - 'apps/*'
+  # 排除测试目录
+  - '!**/test/**'
+  - '!**/node_modules/**'
 ```
 
-**说明**：
-- `packages/*` - 通常存放可复用的包（库、组件、工具）
-- `apps/*` - 通常存放应用程序（网站、服务）
+**配置说明**：
+- ✅ `packages/*` - 通常存放可复用的包（库、组件、工具）
+- ✅ `apps/*` - 通常存放应用程序（网站、服务）
+- ✅ `!**/test/**` - 排除测试目录（避免作为独立包）
+- ✅ `!**/node_modules/**` - 排除依赖目录
+
+**高级配置示例**：
+
+```yaml
+packages:
+  # 精确匹配单个包
+  - 'my-app'
+
+  # packages 目录下的直接子目录
+  - 'packages/*'
+
+  # packages 目录下的所有子目录（递归）
+  - 'packages/**'
+
+  # 多个目录
+  - 'apps/*'
+  - 'packages/*'
+  - 'tools/*'
+
+  # 排除模式
+  - '!**/test/**'
+  - '!**/*.test.ts'
+  - '!**/node_modules/**'
+```
+
+**pnpm 9.x 新特性**：
+
+```yaml
+# pnpm-workspace.yaml
+packages:
+  - 'packages/*'
+  - 'apps/*'
+
+# catalog（pnpm 9.0+）：统一管理依赖版本
+catalog:
+  react: ^18.3.0
+  typescript: ^5.3.3
+  vite: ^5.0.0
+```
+
+使用 catalog：
+
+```json
+{
+  "dependencies": {
+    "react": "catalog:",
+    "typescript": "catalog:"
+  }
+}
+```
 
 ### 1.3 创建目录结构
 
@@ -666,15 +749,16 @@ pnpm add -D turbo
 
 ### 4.2 创建 turbo.json
 
-在根目录创建 `turbo.json`：
+在根目录创建 `turbo.json`（**Turborepo 2.x 语法**）：
 
 ```json
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "ui": "tui",
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "dev": {
       "cache": false,
@@ -694,15 +778,47 @@ pnpm add -D turbo
 }
 ```
 
-**说明**：
-- `dependsOn: ["^build"]` - 先构建依赖的包
-- `outputs` - 指定缓存的输出目录
-- `cache: false` - 不缓存（适用于 dev 和 clean）
-- `persistent: true` - 持续运行的任务（如 dev server）
+**Turborepo 2.x 配置说明**：
+- ✅ `tasks` 替代了 v1.x 的 `pipeline`
+- ✅ `ui: "tui"` - 启用新的终端 UI（v2.0 新特性）
+- ✅ `dependsOn: ["^build"]` - `^` 表示先构建上游依赖的包
+- ✅ `outputs` - 指定缓存的输出目录，支持排除模式（`!` 前缀）
+- ✅ `cache: false` - 禁用缓存（适用于 dev 和 clean）
+- ✅ `persistent: true` - 标记为持续运行的任务（如 dev server）
+
+**v1.x → v2.x 迁移**：
+
+```json
+// ❌ Turborepo 1.x（旧语法）
+{
+  "pipeline": {
+    "build": { ... }
+  }
+}
+
+// ✅ Turborepo 2.x（新语法）
+{
+  "tasks": {
+    "build": { ... }
+  }
+}
+```
+
+**自动迁移命令**：
+
+```bash
+# 自动迁移配置到 Turborepo 2.x
+npx @turbo/codemod migrate
+
+# 单独迁移特定项
+npx @turbo/codemod update-schema-json-url    # 更新 schema URL
+npx @turbo/codemod migrate-dot-env            # 迁移 dotEnv 配置
+npx @turbo/codemod migrate-env-var-dependencies  # 迁移环境变量依赖
+```
 
 ### 4.3 更新根目录脚本
 
-编辑根目录 `package.json`：
+编辑根目录 `package.json`（**Turborepo 2.x 要求**）：
 
 ```json
 {
@@ -717,14 +833,30 @@ pnpm add -D turbo
     "clean": "turbo run clean && rm -rf node_modules .turbo"
   },
   "devDependencies": {
-    "turbo": "^1.11.0"
+    "turbo": "^2.6.1"
   },
   "engines": {
     "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
+    "pnpm": ">=9.0.0"
   },
-  "packageManager": "pnpm@8.15.0"
+  "packageManager": "pnpm@9.15.0"
 }
+```
+
+**重要配置项**：
+
+- ✅ **`packageManager`**（**Turborepo 2.0+ 必需**）：指定包管理器和精确版本
+  - 格式：`"<manager>@<version>"`
+  - 示例：`"pnpm@9.15.0"` 或 `"npm@10.9.2"`
+  - **作用**：确保团队使用相同的包管理器版本，提高构建一致性
+
+- ✅ **`turbo: "^2.6.1"`**：使用 Turborepo 2.x 最新稳定版
+  - v2.0+：新 UI、Watch 模式、MIT 许可证
+  - v2.6.1：最新性能优化和 bug 修复
+
+- ✅ **`engines`**：指定运行环境要求
+  - Node.js 18+ 是 Turborepo 2.x 推荐版本
+  - pnpm 9.0+ 支持最新特性
 ```
 
 ## 第五步：配置代码规范
@@ -1036,6 +1168,10 @@ turbo run build
 # 开发模式
 turbo run dev
 
+# Watch 模式（Turborepo 2.0 新特性）
+turbo watch dev
+# 自动检测文件变化并重新运行任务
+
 # 只构建特定包及其依赖
 turbo run build --filter=@my-monorepo/web
 
@@ -1044,6 +1180,48 @@ turbo run build --force
 
 # 查看依赖图
 turbo run build --graph
+
+# 查看任务执行摘要
+turbo run build --summarize
+```
+
+**Turborepo 2.0 新功能**：
+
+**1. Watch 模式**：
+
+```bash
+# 监听文件变化，自动重新运行
+turbo watch dev
+turbo watch build
+turbo watch lint
+
+# 等价于传统的 nodemon/chokidar，但使用 Turborepo 的依赖图
+```
+
+**2. 新终端 UI**：
+
+```bash
+# 启用交互式 TUI（默认启用）
+turbo run dev --ui=tui
+
+# 使用传统流式输出
+turbo run dev --ui=stream
+```
+
+**3. 任务过滤**：
+
+```bash
+# 只运行指定包
+turbo run build --filter=@my-monorepo/web
+
+# 运行多个包
+turbo run build --filter=@my-monorepo/web --filter=@my-monorepo/docs
+
+# 运行包及其依赖
+turbo run build --filter=@my-monorepo/web...
+
+# 运行包及其依赖者
+turbo run build --filter=...@my-monorepo/shared
 ```
 
 ### 清理
@@ -1137,14 +1315,36 @@ pnpm changeset publish
 
 ### 3. 构建顺序
 
-确保依赖的包先构建：
+确保依赖的包先构建（**Turborepo 2.x 语法**）：
 
 ```json
 // turbo.json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"]  // ^ 表示依赖的包
+    }
+  }
+}
+```
+
+**依赖语法说明**：
+
+```json
+{
+  "tasks": {
+    "build": {
+      // ✅ ^build - 先运行依赖包的 build
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      // ✅ build - 先运行当前包的 build
+      // ✅ ^build - 然后运行依赖包的 build
+      "dependsOn": ["build", "^build"]
+    },
+    "deploy": {
+      // ✅ build, test - 按顺序运行当前包的任务
+      "dependsOn": ["build", "test"]
     }
   }
 }
@@ -1217,14 +1417,34 @@ jobs:
 
 ### 7. 性能优化
 
-**使用 Turborepo 缓存**：
+**使用 Turborepo 缓存（v2.x 语法）**：
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
-      "outputs": ["dist/**"],        // 缓存输出
-      "dependsOn": ["^build"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"]
+    }
+  }
+}
+```
+
+**缓存优化技巧**：
+
+- ✅ **精确的 outputs**：只缓存必要的文件，减少缓存体积
+- ✅ **排除模式**：使用 `!` 排除不需要缓存的文件（如 `.next/cache/**`）
+- ✅ **inputs 配置**：指定影响缓存的输入文件
+- ✅ **环境变量**：使用 `env` 配置影响缓存的环境变量
+
+```json
+{
+  "tasks": {
+    "build": {
+      "outputs": ["dist/**"],
+      "env": ["DATABASE_URL", "API_KEY"],  // 环境变量影响缓存
+      "inputs": ["src/**/*.ts", "!src/**/*.test.ts"]  // 测试文件不影响构建缓存
     }
   }
 }
@@ -1236,13 +1456,40 @@ jobs:
 pnpm install --parallel
 ```
 
-**配置 .npmrc**：
+**配置 .npmrc（pnpm 9.x 推荐）**：
 
-```
+```ini
 # .npmrc
-shamefully-hoist=true          # 提升依赖到根 node_modules
-strict-peer-dependencies=false # 不严格检查 peer 依赖
+# 提升依赖到根 node_modules（提高兼容性）
+shamefully-hoist=true
+
+# 不严格检查 peer 依赖（避免冲突）
+strict-peer-dependencies=false
+
+# 自动安装 peer dependencies（pnpm 9.x）
+auto-install-peers=true
+
+# 使用符号链接（节省空间）
+symlink=true
 ```
+
+**Turborepo 远程缓存**：
+
+```bash
+# 登录 Vercel（免费提供远程缓存）
+npx turbo login
+
+# 链接项目
+npx turbo link
+
+# 之后所有构建都会使用远程缓存
+turbo run build
+```
+
+**远程缓存优势**：
+- ✅ 团队成员共享缓存
+- ✅ CI/CD 加速构建
+- ✅ 跨设备一致性
 
 ## 常见问题
 
@@ -1295,11 +1542,86 @@ pnpm install
 **解决方案**：
 
 ```bash
-# 清理缓存
+# 清理本地缓存
 rm -rf .turbo
 
-# 强制重新构建
+# 强制重新构建（忽略缓存）
 turbo run build --force
+
+# 清理所有缓存和输出
+turbo run clean
+pnpm clean
+```
+
+**缓存调试**：
+
+```bash
+# 查看缓存命中情况
+turbo run build --summarize
+
+# 生成缓存摘要文件
+turbo run build --summarize=summary.json
+
+# 查看为什么任务被执行（未命中缓存）
+turbo run build --dry-run
+```
+
+### 5. Turborepo 2.x 迁移问题
+
+**问题**：从 Turborepo 1.x 升级到 2.x 后配置不工作
+
+**解决方案**：
+
+```bash
+# 自动迁移配置
+npx @turbo/codemod migrate
+
+# 检查迁移后的配置
+cat turbo.json
+
+# 验证配置正确性
+turbo run build --dry-run
+```
+
+**主要变更检查清单**：
+
+- ✅ `pipeline` → `tasks`
+- ✅ `$schema` URL 更新
+- ✅ `packageManager` 字段已添加
+- ✅ 环境变量从 `experimentalGlobalPassThroughEnv` 迁移到 `globalPassThroughEnv`
+
+### 6. pnpm workspace 协议问题
+
+**问题**：使用 `workspace:*` 后发布到 npm 失败
+
+**解决方案**：
+
+pnpm 会自动在发布时将 `workspace:*` 替换为实际版本号。确保：
+
+```json
+{
+  "dependencies": {
+    "@my-monorepo/shared": "workspace:*"  // 开发时
+  }
+}
+
+// 发布后自动转换为：
+{
+  "dependencies": {
+    "@my-monorepo/shared": "1.0.0"  // 发布后
+  }
+}
+```
+
+**pnpm 发布配置**：
+
+```json
+{
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
 ```
 
 ### 5. pnpm-lock.yaml 冲突
@@ -1373,8 +1695,9 @@ npx turbo link
 ### ✅ 完成的工作
 
 1. **项目初始化**
-   - 配置 pnpm workspaces
+   - 配置 pnpm 9.x workspaces
    - 创建 Monorepo 目录结构
+   - 配置 catalog 统一依赖版本（pnpm 9.0+）
 
 2. **创建包和应用**
    - 共享工具包（shared）
@@ -1382,9 +1705,11 @@ npx turbo link
    - Web 应用（web）
    - 文档站点（docs）
 
-3. **构建优化**
-   - 配置 Turborepo
+3. **构建优化（Turborepo 2.x）**
+   - 配置 Turborepo 2.6.1（最新稳定版）
    - 智能缓存和并行构建
+   - Watch 模式和新终端 UI
+   - 远程缓存（可选）
 
 4. **代码规范**
    - ESLint + Prettier
@@ -1401,13 +1726,42 @@ npx turbo link
 3. **配置 CI/CD**：GitHub Actions 自动化
 4. **添加文档**：完善各包的 README
 5. **版本管理**：使用 Changesets 管理版本
+6. **探索 Turborepo 2.x 新特性**：Watch 模式、任务过滤、远程缓存
 
 ### 📚 参考资源
 
-- [pnpm workspaces](https://pnpm.io/workspaces)
-- [Turborepo 文档](https://turbo.build/repo/docs)
-- [Monorepo 最佳实践](https://monorepo.tools/)
+**官方文档**：
+- [Turborepo 2.0 发布公告](https://turborepo.com/blog/turbo-2-0) - 2024-06-04
+- [Turborepo 官方文档](https://turbo.build/repo/docs)
+- [pnpm workspaces 文档](https://pnpm.io/workspaces)
+- [pnpm 9.x 更新日志](https://github.com/pnpm/pnpm/releases)
+
+**工具和生态**：
+- [Monorepo 工具对比](https://monorepo.tools/)
+- [Changesets 版本管理](https://github.com/changesets/changesets)
+- [Turborepo 示例项目](https://github.com/vercel/turborepo/tree/main/examples)
+
+**迁移指南**：
+- [Turborepo 1.x → 2.x 迁移](https://turbo.build/repo/docs/crafting-your-repository/upgrading)
+- [自动迁移工具](https://turbo.build/repo/docs/reference/turbo-codemod)
+
+### 🆕 Turborepo 2.x 关键特性
+
+- ✅ **新终端 UI**：交互式任务查看和日志
+- ✅ **Watch 模式**：智能文件监听和自动重跑
+- ✅ **MIT 许可证**：从专有许可证变更
+- ✅ **长期支持**：官方支持政策
+- ✅ **性能提升**：Rust 核心引擎优化
+
+### 📊 版本兼容性
+
+| 工具 | 推荐版本 | 最低版本 | 备注 |
+|------|---------|---------|------|
+| **Turborepo** | 2.6.1 | 2.0.0 | 使用 2.x 新语法 |
+| **pnpm** | 9.15.0 | 9.0.0 | 支持 catalog 特性 |
+| **Node.js** | 20.18.1 LTS | 18.0.0 | 推荐 LTS 版本 |
+| **TypeScript** | 5.3.3+ | 5.0.0 | 支持最新特性 |
 
 ---
 
-🎉 恭喜！你已经成功创建了一个完整的 Monorepo 项目！
+🎉 恭喜！你已经成功创建了一个基于 **Turborepo 2.x + pnpm 9.x** 的现代化 Monorepo 项目！
