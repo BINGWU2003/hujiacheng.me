@@ -1,6 +1,6 @@
 ---
 title: editorconfig 配置选项
-date: 2025-11-06
+date: 2025-11-27
 duration: 60min
 type: notes
 art: random
@@ -30,6 +30,37 @@ end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 ```
+
+:::tip 版本说明
+本文档基于 **EditorConfig 规范 v0.17.2** 编写，适用于所有支持 EditorConfig 的编辑器和 IDE。
+
+**当前规范版本**：
+- **EditorConfig 规范**: v0.17.2 (Copyright 2019-2024 by EditorConfig Team)
+- **官方网站**: [editorconfig.org](https://editorconfig.org/)
+- **规范文档**: [spec.editorconfig.org](https://spec.editorconfig.org/)
+
+**规范更新历史**：
+- **v0.17.2** (当前版本)：更新文件格式定义
+- **v0.15.0**：重要变更 - 分号 (;) 和井号 (#) 只能在行首作为注释标记
+  - 修复了值中包含这些字符时的解析混淆问题
+- **v0.14.0 及更早**：早期规范版本
+
+**主流编辑器支持**：
+- ✅ **Visual Studio Code** - 原生支持（需要扩展）
+- ✅ **JetBrains IDEs** (WebStorm, IntelliJ IDEA 等) - 原生支持
+- ✅ **Sublime Text** - 通过插件支持
+- ✅ **Vim** - 通过插件支持
+- ✅ **Atom** - 通过插件支持
+- ✅ **Emacs** - 通过插件支持
+:::
+
+:::warning 注意事项
+- **注释规则变更**：v0.15.0+ 中，`;` 和 `#` 只能在行首作为注释，不能在行中间
+- **大小写敏感**：配置文件名必须是小写的 `.editorconfig`
+- **作用范围**：配置从当前目录向上查找，直到找到 `root = true` 或到达文件系统根目录
+- **插件版本**：编辑器插件版本号独立于规范版本号
+- **属性优先级**：较近的 `.editorconfig` 文件的配置会覆盖较远的配置
+:::
 
 ## 为什么需要 EditorConfig
 
@@ -575,6 +606,50 @@ max_line_length = off
 - ⚠️ 不是所有编辑器都支持
 - ⚠️ 不会自动换行，只是提示
 - ⚠️ 建议配合 Prettier/ESLint 使用
+
+## 高级属性（非标准/特定编辑器）
+
+以下属性不是 EditorConfig 官方规范的一部分，但被某些编辑器支持：
+
+### 1. quote_type（JetBrains IDEs）
+
+**作用**：设置引号类型（JetBrains 系列 IDE 专用）。
+
+**可选值**：
+- `single`：单引号
+- `double`：双引号
+
+```ini
+[*.{js,ts}]
+quote_type = single
+```
+
+### 2. spaces_around_operators（JetBrains IDEs）
+
+**作用**：操作符周围是否添加空格。
+
+**可选值**：`true` / `false`
+
+```ini
+[*.{js,ts}]
+spaces_around_operators = true
+```
+
+### 3. spaces_around_brackets（JetBrains IDEs）
+
+**作用**：括号周围是否添加空格。
+
+**可选值**：`none` / `inside` / `outside` / `both`
+
+```ini
+[*.{js,ts}]
+spaces_around_brackets = none
+```
+
+**注意**：
+- ⚠️ 这些属性仅被特定编辑器支持
+- ⚠️ 不建议在通用项目中使用
+- ⚠️ 推荐使用 Prettier/ESLint 处理这类格式化
 
 ## 完整推荐配置
 
@@ -1411,6 +1486,23 @@ editorconfig-checker src/index.js
 
 ## 总结
 
+### EditorConfig 核心规范属性
+
+根据 [EditorConfig 规范 v0.17.2](https://spec.editorconfig.org/)，以下是官方标准支持的属性：
+
+**通用属性（所有编辑器应支持）**：
+- `indent_style` - 缩进风格（space / tab）
+- `indent_size` - 缩进大小（整数 / tab）
+- `tab_width` - Tab 显示宽度（整数）
+- `end_of_line` - 换行符（lf / crlf / cr）
+- `charset` - 字符编码（utf-8 / utf-8-bom / latin1 / utf-16be / utf-16le）
+- `trim_trailing_whitespace` - 删除行尾空格（true / false）
+- `insert_final_newline` - 文件末尾换行（true / false）
+- `root` - 标记根配置（true / false）
+
+**扩展属性（部分编辑器支持）**：
+- `max_line_length` - 最大行长度（整数 / off）
+
 ### 必须配置的属性
 
 ```ini
@@ -1465,8 +1557,26 @@ end_of_line = crlf
 
 ## 参考资源
 
-- [EditorConfig 官方网站](https://editorconfig.org/)
-- [EditorConfig 规范](https://spec.editorconfig.org/)
-- [EditorConfig Wiki](https://github.com/editorconfig/editorconfig/wiki)
-- [VSCode EditorConfig 扩展](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig)
-- [EditorConfig Checker](https://github.com/editorconfig-checker/editorconfig-checker)
+### 官方文档
+- [EditorConfig 官方网站](https://editorconfig.org/) - 主页和简介
+- [EditorConfig 规范 v0.17.2](https://spec.editorconfig.org/) - 完整规范文档
+- [EditorConfig GitHub](https://github.com/editorconfig/editorconfig) - 官方仓库
+- [EditorConfig Wiki](https://github.com/editorconfig/editorconfig/wiki) - 社区文档
+- [EditorConfig 属性列表](https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties) - 所有支持的属性
+
+### 编辑器插件
+- [VSCode EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig) - Visual Studio Code 扩展
+- [Sublime Text EditorConfig](https://packagecontrol.io/packages/EditorConfig) - Sublime Text 插件
+- [Atom EditorConfig](https://atom.io/packages/editorconfig) - Atom 插件
+- [Vim EditorConfig](https://github.com/editorconfig/editorconfig-vim) - Vim 插件
+- [Emacs EditorConfig](https://github.com/editorconfig/editorconfig-emacs) - Emacs 插件
+
+### 工具和验证
+- [EditorConfig Checker](https://github.com/editorconfig-checker/editorconfig-checker) - 配置验证工具
+- [EditorConfig Core](https://github.com/editorconfig/editorconfig-core-js) - JavaScript 核心库
+- [EditorConfig Python](https://github.com/editorconfig/editorconfig-core-py) - Python 核心库
+
+### 相关资源
+- [Prettier 文档](https://prettier.io/) - 代码格式化工具
+- [ESLint 文档](https://eslint.org/) - JavaScript 代码检查工具
+- [Git 属性文档](https://git-scm.com/docs/gitattributes) - .gitattributes 配置
