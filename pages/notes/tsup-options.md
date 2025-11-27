@@ -268,9 +268,11 @@ export default defineConfig({
 
 | 格式 | 说明 | 文件扩展名 | 适用场景 |
 |------|------|-----------|----------|
-| `cjs` | CommonJS | `.js` | Node.js、require() |
+| `cjs` | CommonJS | `.js` 或 `.cjs` | Node.js、require() |
 | `esm` | ES Module | `.mjs` 或 `.js` | 现代 Node.js、import |
 | `iife` | 立即执行函数 | `.global.js` | 浏览器 `<script>` 标签 |
+
+> 💡 **提示**：输出文件的扩展名取决于 `package.json` 中的 `type` 字段。如果需要自定义扩展名，可以使用 `outExtension` 选项或 `--legacy-output` 命令行参数。
 
 **影响对比**：
 
@@ -341,12 +343,8 @@ export default defineConfig({
   }
 });
 
-// 只生成类型声明
-export default defineConfig({
-  dts: {
-    only: true  // 不打包 JS，只生成 .d.ts
-  }
-});
+// 只生成类型声明（不打包 JS）
+// 命令行方式：tsup index.ts --dts-only
 ```
 
 **影响对比**：
@@ -483,10 +481,10 @@ export default defineConfig({
   sourcemap: 'inline'
 });
 
-// 只在开发环境生成
-export default defineConfig({
-  sourcemap: process.env.NODE_ENV === 'development'
-});
+// 根据 watch 模式动态配置
+export default defineConfig((options) => ({
+  sourcemap: options.watch ? 'inline' : true
+}));
 ```
 
 **影响对比**：
@@ -528,8 +526,17 @@ export default defineConfig({
 **可选值**：
 
 ```typescript
-'es3' | 'es5' | 'es2015' | 'es2016' | 'es2017' | 'es2018' | 'es2019' | 'es2020' | 'es2021' | 'es2022' | 'esnext' | 'node10' | 'node12' | 'node14' | 'node16' | 'node18' | 'node20'
+// ES 版本
+'es3' | 'es5' | 'es2015' | 'es2016' | 'es2017' | 'es2018' | 'es2019' | 'es2020' | 'es2021' | 'es2022' | 'esnext'
+
+// Node.js 版本
+'node10' | 'node12' | 'node14' | 'node16' | 'node18' | 'node20'
+
+// 浏览器（也支持）
+'chrome' | 'firefox' | 'safari' | 'edge'
 ```
+
+> 💡 **提示**：ES5 目标需要通过 SWC 进行转译。
 
 **影响对比**：
 
@@ -649,15 +656,32 @@ tsup src/index.ts --watch
 # ✓ Build success
 ```
 
+**忽略特定目录**（默认忽略 `dist`、`node_modules`、`.git`）：
+
+```bash
+# 忽略额外目录
+tsup src/index.ts --watch --ignore-watch ignore-this-folder
+
+# 忽略多个目录
+tsup src/index.ts --watch --ignore-watch folder1 --ignore-watch folder2
+```
+
 ### 1.10 splitting（代码分割）
 
 **作用**：启用代码分割。
 
 ```typescript
 export default defineConfig({
-  splitting: true  // 默认：false
+  splitting: true  // ESM 格式默认开启，CJS 格式需要手动开启
+});
+
+// 禁用代码分割
+export default defineConfig({
+  splitting: false
 });
 ```
+
+> ⚠️ **注意**：代码分割对于 ESM 输出格式默认是开启的，对于 CJS 输出是实验性功能。
 
 **影响对比**：
 
@@ -897,24 +921,25 @@ export const result = add(1, 2);
 
 ### 1.17 treeshake（Tree Shaking）
 
-**作用**：移除未使用的代码。
+**作用**：启用 Rollup 的 Tree Shaking（移除未使用的代码）。
 
 ```typescript
+// 启用 Rollup tree shaking（替代 esbuild 默认的 tree shaking）
 export default defineConfig({
-  treeshake: true  // 默认开启
+  treeshake: true
 });
+```
 
-// 详细配置
-export default defineConfig({
-  treeshake: {
-    preset: 'smallest'  // 'smallest', 'safest', 'recommended'
-  }
-});
+> ⚠️ **注意**：esbuild 默认会进行 tree shaking，但有时效果不如 Rollup。启用此选项会使用 Rollup 进行 tree shaking，可能会获得更好的效果。
+
+```bash
+# 命令行方式
+tsup src/index.ts --treeshake
 ```
 
 ### 1.18 env（环境变量）
 
-**作用**：注入环境变量。
+**作用**：定义编译时环境变量。
 
 ```typescript
 export default defineConfig({
@@ -925,17 +950,24 @@ export default defineConfig({
 });
 ```
 
+```bash
+# 命令行方式
+tsup src/index.ts --env.NODE_ENV production --env.API_URL https://api.example.com
+```
+
 **在代码中使用**：
 
 ```typescript
-// 源代码
+// 源代码（两种方式都支持）
 console.log(process.env.NODE_ENV);
-console.log(process.env.API_URL);
+console.log(import.meta.env.API_URL);
 
-// 编译后
+// 编译后（会被替换为实际值）
 console.log('production');
 console.log('https://api.example.com');
 ```
+
+> ⚠️ **注意**：不要在代码中直接 `import process from 'process'`，否则环境变量替换可能不生效。
 
 ### 1.19 inject（注入代码）
 
@@ -961,6 +993,124 @@ export default defineConfig({
     js: '/* Copyright 2024 */'
   }
 });
+```
+
+### 1.21 outExtension（自定义输出扩展名）
+
+**作用**：自定义输出文件的扩展名。
+
+```typescript
+export default defineConfig({
+  outExtension({ format }) {
+    return {
+      js: `.${format}.js`,  // 如：index.esm.js, index.cjs.js
+    }
+  },
+});
+```
+
+### 1.22 onSuccess（构建成功回调）
+
+**作用**：构建成功后执行命令或函数。
+
+```bash
+# 命令行方式
+tsup src/index.ts --watch --onSuccess "node dist/index.js"
+```
+
+```typescript
+// 配置文件方式
+import { defineConfig } from 'tsup';
+import http from 'http';
+
+export default defineConfig({
+  async onSuccess() {
+    // 启动开发服务器
+    const server = http.createServer((req, res) => {
+      res.end('Hello World!');
+    });
+    server.listen(3000);
+
+    // 返回清理函数
+    return () => {
+      server.close();
+    };
+  },
+});
+```
+
+### 1.23 loader（自定义文件加载器）
+
+**作用**：为特定文件类型指定加载器。
+
+```bash
+# 命令行方式
+tsup --loader ".jpg=base64" --loader ".webp=file"
+```
+
+```typescript
+export default defineConfig({
+  loader: {
+    '.jpg': 'base64',   // 转为 base64
+    '.webp': 'file',    // 作为文件处理
+    '.png': 'dataurl',  // 转为 data URL
+  },
+});
+```
+
+### 1.24 publicDir（复制静态资源）
+
+**作用**：将指定目录的文件复制到输出目录。
+
+```bash
+# 默认复制 ./public 目录
+tsup --publicDir public
+
+# 自定义目录
+tsup --publicDir assets
+```
+
+### 1.25 metafile（生成元数据）
+
+**作用**：生成 esbuild 元数据文件，用于分析打包结果。
+
+```bash
+tsup --format cjs,esm --metafile
+```
+
+生成的 `metafile-*.json` 可用于 [bundle-buddy](https://bundle-buddy.com/) 等工具分析。
+
+### 1.26 experimentalDts（实验性类型声明）
+
+**作用**：使用 `@microsoft/api-extractor` 生成更健壮的类型声明。
+
+```bash
+# 需要先安装
+npm i @microsoft/api-extractor -D
+
+# 使用
+tsup index.ts --experimental-dts
+```
+
+### 1.27 cjsInterop（CommonJS 互操作）
+
+**作用**：控制默认导出在 CommonJS 中的转换方式。
+
+```bash
+tsup src/index.ts --cjsInterop
+```
+
+```typescript
+// 源代码
+export default function greet() {
+  return 'Hello';
+}
+
+// 默认转换
+module.exports.default = greet;
+
+// 使用 --cjsInterop 后（如果只有默认导出）
+module.exports = greet;
 ```
 
 ## 二、完整推荐配置
@@ -1035,16 +1185,15 @@ import { defineConfig } from 'tsup';
 export default defineConfig({
   entry: ['src/cli.ts'],
   format: ['esm'],
-  dts: true,
+  dts: false,  // CLI 通常不需要类型声明
   clean: true,
   shims: true,  // 添加 Node.js 垫片
   platform: 'node',
-  target: 'node16',
-  banner: {
-    js: '#!/usr/bin/env node'  // 添加 shebang
-  }
+  target: 'node16'
 });
 ```
+
+> 💡 **提示**：如果源文件 `src/cli.ts` 开头包含 `#!/usr/bin/env node`（hashbang），tsup 会自动将输出文件设为可执行，无需在 `banner` 中手动添加。
 
 **对应的 package.json**：
 
@@ -1075,9 +1224,14 @@ export default defineConfig({
   format: ['cjs', 'esm'],
   dts: true,
   clean: true,
-  splitting: true,  // 代码分割
-  treeshake: true
+  splitting: true,  // 启用代码分割
+  treeshake: true   // 启用 Rollup tree shaking
 });
+```
+
+```bash
+# 命令行方式
+tsup --entry src/a.ts --entry src/b.ts
 ```
 
 **对应的 package.json**：
@@ -1119,9 +1273,7 @@ export default defineConfig({
   minify: true,      // 压缩代码
   target: 'es2018',
   globalName: 'MyLib',
-  treeshake: {
-    preset: 'smallest'  // 最激进的 tree shaking
-  }
+  treeshake: true    // 启用 Rollup tree shaking
 });
 ```
 
@@ -1200,6 +1352,9 @@ tsup src/index.ts --format cjs,esm,iife
 # 生成类型声明
 tsup src/index.ts --dts
 tsup src/index.ts --dts-only  # 只生成类型
+
+# 兼容模式（避免 .mjs/.cjs 扩展名）
+tsup src/index.ts --format esm,cjs,iife --legacy-output
 ```
 
 ### 3.3 开发相关
@@ -1255,6 +1410,35 @@ tsup src/index.ts \
     "build:prod": "tsup --minify --sourcemap false"
   }
 }
+```
+
+### 3.6 tsup-node 命令
+
+专门用于 Node.js 应用的命令，会自动排除 Node.js 内置模块：
+
+```bash
+# 不打包 Node.js 内置包（如 fs, path 等）
+tsup-node src/index.ts
+```
+
+### 3.7 条件配置
+
+配置文件可以导出一个函数，根据命令行参数动态生成配置：
+
+```typescript
+import { defineConfig } from 'tsup';
+
+export default defineConfig((options) => {
+  return {
+    entry: ['src/index.ts'],
+    format: ['cjs', 'esm'],
+    dts: true,
+    clean: true,
+    // 根据 watch 模式调整配置
+    minify: !options.watch,
+    sourcemap: options.watch ? 'inline' : true
+  };
+});
 ```
 
 ## 四、常见问题和最佳实践
@@ -1669,6 +1853,14 @@ export default defineConfig({
 ### 案例 3：CLI 工具
 
 ```typescript
+// src/cli.ts（源文件开头添加 hashbang）
+#!/usr/bin/env node
+
+import { program } from 'commander';
+// ...CLI 代码
+```
+
+```typescript
 // tsup.config.ts
 import { defineConfig } from 'tsup';
 
@@ -1679,10 +1871,8 @@ export default defineConfig({
   clean: true,
   shims: true,
   platform: 'node',
-  target: 'node16',
-  banner: {
-    js: '#!/usr/bin/env node'
-  }
+  target: 'node16'
+  // 无需手动添加 banner，tsup 会自动处理源文件中的 hashbang
 });
 ```
 
@@ -1763,6 +1953,24 @@ export default defineConfig({
 3. **配置 package.json**：正确导出模块
 4. **集成到工作流**：配置 npm scripts
 5. **发布到 npm**：测试和发布
+
+## 八、IDE 配置
+
+### VS Code JSON Schema 支持
+
+在 VS Code 中启用 tsup 配置文件的智能提示：
+
+```json
+// .vscode/settings.json
+{
+  "json.schemas": [
+    {
+      "url": "https://cdn.jsdelivr.net/npm/tsup/schema.json",
+      "fileMatch": ["package.json", "tsup.config.json"]
+    }
+  ]
+}
+```
 
 ## 参考资源
 

@@ -156,19 +156,38 @@ project/
 ```javascript
 {
   "env": {
-    "browser": true,      // window, document, localStorage 等
-    "node": true,         // process, __dirname, require 等
-    "es6": true,          // ES6 全局变量（Promise, Set, Map）
-    "es2020": true,       // ES2020 全局变量（BigInt, globalThis）
-    "es2021": true,       // ES2021 全局变量
-    "es2022": true,       // ES2022 全局变量
+    // 运行环境
+    "browser": true,      // 浏览器全局变量（window, document, localStorage 等）
+    "node": true,         // Node.js 全局变量（process, __dirname, require 等）
     "worker": true,       // Web Worker 全局变量
     "serviceworker": true,// Service Worker 全局变量
     "commonjs": true,     // CommonJS 全局变量（module, exports）
     "shared-node-browser": true,  // Node.js 和浏览器共享的全局变量
+    "amd": true,          // AMD 规范的 require() 和 define()
+    
+    // ECMAScript 版本（同时设置 parserOptions.ecmaVersion）
+    "es6": true,          // ES6 全局变量（Promise, Set, Map），ecmaVersion 设为 6
+    "es2016": true,       // ES2016 全局变量，ecmaVersion 设为 7
+    "es2017": true,       // ES2017 全局变量，ecmaVersion 设为 8
+    "es2018": true,       // ES2018 全局变量，ecmaVersion 设为 9
+    "es2019": true,       // ES2019 全局变量，ecmaVersion 设为 10
+    "es2020": true,       // ES2020 全局变量（BigInt, globalThis），ecmaVersion 设为 11
+    "es2021": true,       // ES2021 全局变量，ecmaVersion 设为 12
+    "es2022": true,       // ES2022 全局变量，ecmaVersion 设为 13
+    "es2023": true,       // ES2023 全局变量，ecmaVersion 设为 14
+    "es2024": true,       // ES2024 全局变量，ecmaVersion 设为 15
+    
+    // 测试框架
     "jest": true,         // Jest 全局变量（describe, test, expect）
     "mocha": true,        // Mocha 全局变量（describe, it, before）
-    "jquery": true        // jQuery 全局变量（$, jQuery）
+    "jasmine": true,      // Jasmine 全局变量
+    "qunit": true,        // QUnit 全局变量
+    
+    // 其他
+    "jquery": true,       // jQuery 全局变量（$, jQuery）
+    "mongo": true,        // MongoDB 全局变量
+    "greasemonkey": true, // GreaseMonkey 全局变量
+    "webextensions": true // WebExtensions 全局变量
   }
 }
 ```
@@ -208,8 +227,9 @@ const path = require('path');       // ✅ 正确
 ```
 
 **可选值**：
-- `"readonly"` / `"off"`：只读，不可修改
-- `"writable"` / `"on"`：可读写
+- `"readonly"`：只读，不可修改
+- `"writable"`：可读写
+- `"off"`：禁用该全局变量（即使环境中定义了也不可用）
 
 **影响对比**：
 
@@ -435,16 +455,19 @@ interface User {
 {
   "parserOptions": {
     // ECMAScript 版本
-    "ecmaVersion": 2021,  // 3, 5, 6/2015, 7/2016, ..., 2021, "latest"
+    // 可选值: 3, 5(默认), 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+    //        或 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
+    //        或 "latest"（自动使用最新支持的版本）
+    "ecmaVersion": "latest",
     
     // 模块类型
-    "sourceType": "module",  // "script" 或 "module"
+    "sourceType": "module",  // "script"(默认) 或 "module"
     
     // ECMAScript 特性
     "ecmaFeatures": {
-      "jsx": true,              // 启用 JSX
-      "globalReturn": false,    // 允许全局 return
-      "impliedStrict": false    // 启用严格模式
+      "jsx": true,              // 启用 JSX 解析
+      "globalReturn": false,    // 允许全局作用域使用 return
+      "impliedStrict": false    // 启用全局严格模式（ecmaVersion >= 5）
     },
     
     // TypeScript 特定（需要 @typescript-eslint/parser）
@@ -606,13 +629,27 @@ const name = "John"  // ✅ 正确
 {
   "rules": {
     "no-unused-vars": ["error", {
-      "vars": "all",           // 检查所有变量
-      "args": "after-used",    // 检查使用后的参数
-      "ignoreRestSiblings": true  // 忽略剩余参数
+      "vars": "all",              // 检查所有变量（包括全局）
+      "args": "after-used",       // 只检查最后一个使用参数之后的参数
+      "ignoreRestSiblings": true, // 忽略解构中的剩余兄弟属性
+      "argsIgnorePattern": "^_",  // 忽略以 _ 开头的参数
+      "varsIgnorePattern": "^_"   // 忽略以 _ 开头的变量
     }]
   }
 }
 ```
+
+**配置选项说明**：
+
+| 选项 | 可选值 | 说明 |
+|------|--------|------|
+| `vars` | `"all"` / `"local"` | `all`：检查所有变量；`local`：只检查局部变量 |
+| `args` | `"after-used"` / `"all"` / `"none"` | `after-used`：只检查最后使用参数之后的；`all`：检查所有参数；`none`：不检查参数 |
+| `ignoreRestSiblings` | `true` / `false` | 是否忽略解构中剩余兄弟属性 |
+| `argsIgnorePattern` | 正则表达式 | 忽略匹配的参数名 |
+| `varsIgnorePattern` | 正则表达式 | 忽略匹配的变量名 |
+| `caughtErrors` | `"all"` / `"none"` | 是否检查 catch 块中的错误参数 |
+| `caughtErrorsIgnorePattern` | 正则表达式 | 忽略匹配的 catch 错误参数名 |
 
 **影响对比**：
 
@@ -620,7 +657,8 @@ const name = "John"  // ✅ 正确
 // ❌ 错误
 const unused = 10;  // ❌ 'unused' is assigned a value but never used
 
-function calculate(a, b, c) {  // ❌ 'c' is defined but never used
+// args: "after-used" 时
+function calculate(a, b, c, d) {  // ❌ 'c' 和 'd' 在最后使用的 'b' 之后，会报错
   return a + b;
 }
 
@@ -632,10 +670,14 @@ function calculate(a, b) {  // 只声明使用的参数
   return a + b;
 }
 
-// 使用下划线前缀表示故意不使用
+// 使用下划线前缀表示故意不使用（配合 argsIgnorePattern: "^_"）
 function calculate(a, b, _c) {  // ✅ 正确
   return a + b;
 }
+
+// 解构中的剩余兄弟属性（配合 ignoreRestSiblings: true）
+const { used, ...rest } = obj;  // ✅ rest 即使未使用也不报错
+console.log(used);
 ```
 
 #### no-undef
@@ -972,9 +1014,15 @@ function process<T>(data: T): T {  // ✅ 使用泛型
 ```javascript
 {
   "rules": {
-    "no-unused-vars": "off",  // 关闭基础规则
+    "no-unused-vars": "off",  // 关闭基础规则，避免与 TS 规则冲突
     "@typescript-eslint/no-unused-vars": ["error", {
-      "argsIgnorePattern": "^_"  // 忽略 _ 开头的参数
+      "args": "all",                       // 检查所有参数
+      "argsIgnorePattern": "^_",           // 忽略 _ 开头的参数
+      "varsIgnorePattern": "^_",           // 忽略 _ 开头的变量
+      "caughtErrors": "all",               // 检查 catch 中的错误参数
+      "caughtErrorsIgnorePattern": "^_",   // 忽略 _ 开头的错误参数
+      "destructuredArrayIgnorePattern": "^_",  // 忽略解构数组中 _ 开头的元素
+      "ignoreRestSiblings": true           // 忽略剩余兄弟属性
     }]
   }
 }
@@ -990,14 +1038,14 @@ module.exports = {
   root: true,
   env: {
     browser: true,
-    es2021: true,
+    es2022: true,
     node: true
   },
   extends: [
     'eslint:recommended'
   ],
   parserOptions: {
-    ecmaVersion: 2021,
+    ecmaVersion: 'latest',
     sourceType: 'module'
   },
   rules: {
@@ -1028,7 +1076,7 @@ module.exports = {
   root: true,
   env: {
     browser: true,
-    es2021: true,
+    es2022: true,
     node: true
   },
   extends: [
@@ -1039,7 +1087,7 @@ module.exports = {
   ],
   parser: 'vue-eslint-parser',
   parserOptions: {
-    ecmaVersion: 2021,
+    ecmaVersion: 'latest',
     parser: '@typescript-eslint/parser',
     sourceType: 'module',
     project: './tsconfig.json',
@@ -1096,7 +1144,7 @@ module.exports = {
   root: true,
   env: {
     browser: true,
-    es2021: true,
+    es2022: true,
     node: true
   },
   extends: [
@@ -1108,7 +1156,7 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2021,
+    ecmaVersion: 'latest',
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true
@@ -1153,13 +1201,13 @@ module.exports = {
   root: true,
   env: {
     node: true,
-    es2021: true
+    es2022: true
   },
   extends: [
     'eslint:recommended'
   ],
   parserOptions: {
-    ecmaVersion: 2021,
+    ecmaVersion: 'latest',
     sourceType: 'module'
   },
   rules: {
@@ -1542,10 +1590,77 @@ npx eslint . --report-unused-disable-directives
 4. 使用 `--fix` 自动修复可修复的问题
 5. 定期更新 ESLint 和插件版本
 
+## 八、ESLint 9.x 新特性预览
+
+ESLint 9.x 引入了全新的**扁平化配置（Flat Config）**系统，使用 `eslint.config.js` 替代 `.eslintrc.*` 文件。
+
+### 8.1 主要变化
+
+| 特性 | ESLint 8.x | ESLint 9.x |
+|------|------------|------------|
+| 配置文件 | `.eslintrc.js` / `.eslintrc.json` | `eslint.config.js` |
+| 配置格式 | 对象形式 | 数组形式 |
+| env 选项 | 支持 | 移除，使用 `globals` 包代替 |
+| plugins 格式 | 字符串数组 | 对象形式 |
+| extends | 支持 | 移除，直接使用配置数组 |
+
+### 8.2 扁平化配置示例
+
+```javascript
+// eslint.config.js
+import js from "@eslint/js";
+import globals from "globals";
+import tseslint from "typescript-eslint";
+import pluginVue from "eslint-plugin-vue";
+
+export default [
+  // 推荐配置
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  ...pluginVue.configs["flat/recommended"],
+  
+  // 自定义配置
+  {
+    files: ["**/*.{js,ts,vue}"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        ...globals.browser,
+        ...globals.node
+      }
+    },
+    rules: {
+      "no-console": "warn",
+      "no-unused-vars": "error"
+    }
+  },
+  
+  // 忽略文件
+  {
+    ignores: ["dist/**", "node_modules/**"]
+  }
+];
+```
+
+### 8.3 迁移建议
+
+如果你正在使用 ESLint 8.x，可以通过以下命令检查配置迁移：
+
+```bash
+# 安装迁移工具
+npx @eslint/migrate-config .eslintrc.js
+
+# 或手动迁移
+# 参考官方迁移指南：https://eslint.org/docs/latest/use/configure/migration-guide
+```
+
 ## 参考资源
 
-- [ESLint 官方文档](https://eslint.org/docs/v8.x/)
-- [ESLint 规则列表](https://eslint.org/docs/v8.x/rules/)
+- [ESLint 官方文档](https://eslint.org/docs/latest/)
+- [ESLint 8.x 文档](https://eslint.org/docs/v8.x/)
+- [ESLint 规则列表](https://eslint.org/docs/latest/rules/)
+- [ESLint 配置迁移指南](https://eslint.org/docs/latest/use/configure/migration-guide)
 - [Vue ESLint Plugin](https://eslint.vuejs.org/)
 - [TypeScript ESLint](https://typescript-eslint.io/)
 - [React ESLint Plugin](https://github.com/jsx-eslint/eslint-plugin-react)
