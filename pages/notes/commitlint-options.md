@@ -27,20 +27,22 @@ echo "export default { extends: ['@commitlint/config-conventional'] };" > commit
 ```
 
 :::tip 版本说明
-本文档基于 **@commitlint/cli 20.x** 编写，适用于使用 Conventional Commits 规范的项目。
+本文档基于 **@commitlint/cli 19.x** 编写，适用于使用 Conventional Commits 规范的项目。
 
-**当前版本**：
-- **@commitlint/cli**: v20.1.0 (2024 年 10 月发布)
-- **@commitlint/config-conventional**: v20.1.0
+**当前稳定版本**：
+- **@commitlint/cli**: v19.6.0 (2024 年发布)
+- **@commitlint/config-conventional**: v19.6.0
 
 **主要版本历史**：
-- **v20.1.0** (2024-10)：最新版本，持续维护
-- **v19.0.0** (2024-02)：改进配置系统，增强 TypeScript 支持
-- **v18.0.0** (2023-10)：移除对 Node.js 16 的支持，要求 Node.js >= 18
+- **v19.x** (2024)：当前稳定版本，改进配置系统，增强 TypeScript 支持
+- **v18.x** (2023)：移除对 Node.js 16 的支持，要求 Node.js >= 18
+- **v17.x** (2023)：完全迁移到 TypeScript
+- **v16.x** (2022)：支持 ES Modules
 
 **运行环境要求**：
-- ✅ Node.js >= 18 (LTS)
-- ✅ Git >= 2.13.2
+- ✅ **Node.js >= 18** (推荐使用 LTS 版本)
+- ✅ **Git >= 2.13.2**
+- ⚠️ **Node.js 24+** 用户需要注意模块加载变化（见下方警告）
 :::
 
 :::warning 注意事项
@@ -48,6 +50,12 @@ echo "export default { extends: ['@commitlint/config-conventional'] };" > commit
 - 如果项目使用 CommonJS，配置文件应使用 `module.exports` 语法
 - commitlint 配置支持多种文件格式：`.commitlintrc.js`、`commitlint.config.js`、`.commitlintrc.json` 等
 - 推荐与 Husky 配合使用，在 commit-msg hook 中自动检查提交信息
+
+**Node.js 24+ 重要提示**：
+- Node v24 改变了模块加载方式，可能导致配置文件加载失败
+- 如果遇到 `Please add rules to your commitlint.config.js` 错误：
+  - 方案 1：添加 `package.json`，运行 `npm init es6` 声明为 ES6 模块
+  - 方案 2：将配置文件重命名为 `commitlint.config.mjs`
 :::
 
 ## 为什么需要 commitlint
@@ -382,10 +390,30 @@ export default {
 };
 ```
 
-**默认忽略的消息**：
-- Merge 分支的消息
-- Revert 消息
-- 等等...
+**默认忽略的消息类型**：
+- `Merge pull request` - Merge PR 消息
+- `Merge X into Y` - 合并分支消息
+- `Merge branch X` - 合并分支消息
+- `Revert X` - 回滚提交消息
+- `v1.2.3` - Semver 版本号格式
+- `Automatic merge X` - 自动合并消息
+- `Auto-merged X into Y` - 自动合并消息
+
+**影响对比**：
+
+```bash
+# defaultIgnores: true（默认）
+git commit -m "Merge pull request #123"  # ✅ 通过（被忽略）
+git commit -m "Revert commit abc123"     # ✅ 通过（被忽略）
+git commit -m "v1.2.3"                   # ✅ 通过（被忽略）
+git commit -m "feat: 添加功能"            # ✅ 通过（正常检查）
+
+# defaultIgnores: false
+git commit -m "Merge pull request #123"  # ❌ 错误（不符合规范）
+git commit -m "feat: 添加功能"            # ✅ 通过（正常检查）
+```
+
+**参考**：完整的默认忽略规则列表可查看 [@commitlint/is-ignored](https://github.com/conventional-changelog/commitlint/blob/master/%40commitlint/is-ignored/src/defaults.ts)
 
 ### 1.7 helpUrl
 
@@ -395,6 +423,63 @@ export default {
 export default {
   helpUrl: 'https://github.com/your-org/commit-convention'
 };
+```
+
+**影响**：当提交检查失败时，会在错误信息中显示自定义的帮助链接。
+
+```bash
+# 默认 helpUrl
+✖   found 1 problems, 0 warnings
+ⓘ   Get help: https://github.com/conventional-changelog/commitlint/#what-is-commitlint
+
+# 自定义 helpUrl
+✖   found 1 problems, 0 warnings
+ⓘ   Get help: https://github.com/your-org/commit-convention
+```
+
+### 1.8 prompt
+
+**作用**：配置交互式提示的选项（配合 `@commitlint/prompt` 使用）。
+
+```javascript
+export default {
+  prompt: {
+    messages: {
+      // 自定义提示消息
+    },
+    questions: {
+      type: {
+        description: '请选择提交类型:',
+        enum: {
+          feat: {
+            description: '新功能',
+            title: 'Features'
+          },
+          fix: {
+            description: 'Bug 修复',
+            title: 'Bug Fixes'
+          }
+        }
+      },
+      scope: {
+        description: '请输入影响范围 (可选):'
+      },
+      subject: {
+        description: '请输入简短描述:'
+      }
+    }
+  }
+};
+```
+
+**使用场景**：配合 `@commitlint/prompt-cli` 使用，提供交互式提交体验。
+
+```bash
+# 安装
+npm install --save-dev @commitlint/prompt-cli
+
+# 使用
+npx commit
 ```
 
 ## 二、常用规则详解
@@ -977,8 +1062,25 @@ npx husky init
 # Unix/Mac/Linux
 echo "npx --no -- commitlint --edit \$1" > .husky/commit-msg
 
-# Windows (PowerShell)
+# Windows (PowerShell/CMD)
+# 注意：Windows 用户需要使用 ` (反引号) 转义 $
 echo "npx --no -- commitlint --edit `$1" > .husky/commit-msg
+```
+
+**不同包管理器的 hook 配置**：
+
+```bash
+# npm (推荐)
+echo "npx --no -- commitlint --edit \$1" > .husky/commit-msg
+
+# pnpm
+echo "pnpm dlx commitlint --edit \$1" > .husky/commit-msg
+
+# yarn
+echo "yarn commitlint --edit \$1" > .husky/commit-msg
+
+# bun
+echo "bunx commitlint --edit \$1" > .husky/commit-msg
 ```
 
 **4. 配置 commitlint**：
@@ -996,8 +1098,31 @@ export default {
 # ❌ 不规范的提交会被拒绝
 git commit -m "update"
 
+# 输出示例：
+# ⧗   input: update
+# ✖   subject may not be empty [subject-empty]
+# ✖   type may not be empty [type-empty]
+# ✖   found 2 problems, 0 warnings
+# ⓘ   Get help: https://github.com/conventional-changelog/commitlint/#what-is-commitlint
+
 # ✅ 规范的提交会通过
 git commit -m "feat: 添加用户登录功能"
+
+# 输出示例：
+# [main abc1234] feat: 添加用户登录功能
+# 1 file changed, 10 insertions(+)
+```
+
+**测试另一个不符合规范的示例**：
+
+```bash
+git commit -m "foo: this will fail"
+
+# 输出示例：
+# ⧗   input: foo: this will fail
+# ✖   type must be one of [build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test] [type-enum]
+# ✖   found 1 problems, 0 warnings
+# ⓘ   Get help: https://github.com/conventional-changelog/commitlint/#what-is-commitlint
 ```
 
 ### 4.2 使用 simple-git-hooks
@@ -1368,7 +1493,9 @@ echo "test: message" | npx commitlint
 npx commitlint --print-config
 ```
 
-### 6.4 自定义规则
+### 6.4 自定义规则和插件
+
+#### 内联自定义规则
 
 ```javascript
 // commitlint.config.mjs
@@ -1393,6 +1520,64 @@ export default {
   }
 };
 ```
+
+#### 使用外部插件
+
+**1. 创建插件包**：
+
+```javascript
+// commitlint-plugin-custom/index.js
+module.exports = {
+  rules: {
+    'no-todo': (parsed) => {
+      const { subject } = parsed;
+      if (subject && subject.includes('TODO')) {
+        return [false, 'subject 不能包含 TODO'];
+      }
+      return [true];
+    },
+    'require-jira-ticket': (parsed) => {
+      const { subject } = parsed;
+      const jiraPattern = /[A-Z]+-\d+/;
+      if (!jiraPattern.test(subject)) {
+        return [false, 'subject 必须包含 JIRA ticket (例如: PROJ-123)'];
+      }
+      return [true];
+    }
+  }
+};
+```
+
+**2. 在配置中使用插件**：
+
+```javascript
+// commitlint.config.mjs
+export default {
+  extends: ['@commitlint/config-conventional'],
+  plugins: ['commitlint-plugin-custom'],
+  rules: {
+    // 使用插件规则时，格式为: '插件名/规则名'
+    'custom/no-todo': [2, 'always'],
+    'custom/require-jira-ticket': [1, 'always']  // 警告级别
+  }
+};
+```
+
+**3. package.json 配置**（插件需要声明 peerDependency）：
+
+```json
+{
+  "name": "commitlint-plugin-custom",
+  "peerDependencies": {
+    "@commitlint/types": ">=7.6.0"
+  }
+}
+```
+
+**注意事项**：
+- 插件支持从 commitlint v7.6.0 开始
+- 插件规则使用时需要加上插件名前缀，如 `pluginname/rule-name`
+- 插件必须在 `peerDependencies` 中声明 `@commitlint/types`
 
 ### 6.5 CI/CD 集成
 
@@ -1442,6 +1627,20 @@ commitlint:
 
 ## 七、总结
 
+### 版本支持
+
+**当前版本**：
+- **稳定版**: v19.x (推荐)
+- **最低 Node.js 要求**: >= 18
+- **插件支持**: >= v7.6.0
+- **TypeScript 支持**: v17.x+
+- **ES Modules 支持**: v16.x+
+
+**版本策略**：
+- ✅ 安全补丁会应用到未 EOL 的版本
+- ✅ 新功能只会添加到最新主版本
+- ⚠️ 不保证为旧版本及时发布补丁（非赞助项目）
+
 ### 必须配置的选项
 
 1. **extends**: 继承标准配置
@@ -1452,7 +1651,7 @@ commitlint:
 
 1. 安装 commitlint 和配置文件
 2. 配置 husky 自动检查
-3. 可选：安装 commitizen 交互式提交
+3. 可选：安装 commitizen 或 @commitlint/prompt-cli 交互式提交
 4. 在 CI 中验证提交消息
 5. 团队培训统一规范
 
