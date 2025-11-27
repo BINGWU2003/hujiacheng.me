@@ -30,6 +30,30 @@ npx cz
 # 或者使用 git cz(需要全局安装或配置脚本)
 ```
 
+:::tip 版本说明
+本文档基于 **Commitizen 4.x** (cz-cli) 编写，适用于 JavaScript/TypeScript 项目。
+
+**当前版本**：
+- **Commitizen (cz-cli)**: v4.3.1 (2024-09-27 发布)
+- **cz-conventional-changelog**: v3.3.0 (2019 发布，5年未更新)
+
+**注意区分两个同名项目**：
+- ✅ **commitizen/cz-cli** (本文档)：Node.js 生态，用于 JavaScript/TypeScript 项目
+- ⚠️ **commitizen-tools/commitizen**：Python 生态，用于 Python 项目
+
+**主要版本历史**：
+- **v4.3.1** (2024-09-27)：修复重试提交后的进程关闭问题
+- **v4.3.0** (2024-01-19)：最新功能版本
+- **v4.2.x** (2020-2021)：稳定版本系列
+:::
+
+:::warning 注意事项
+- `cz-conventional-changelog` 适配器已 5 年未更新（v3.3.0），但仍然可用且稳定
+- 如果需要更现代的适配器，建议使用 `cz-customizable`、`@commitlint/cz-commitlint` 或 `cz-git`
+- 确保 Node.js 版本 >= 14.x（Commitizen 4.x 要求）
+- 本文档的配置选项主要适用于各类适配器，具体选项可能因适配器而异
+:::
+
 **提交效果对比**:
 
 ```bash
@@ -73,7 +97,7 @@ Commitizen 支持多种配置方式:
 }
 ```
 
-### 3. .cz.json 文件
+### 3. .czrc 配置文件（更多选项）
 
 ```json
 {
@@ -84,7 +108,17 @@ Commitizen 支持多种配置方式:
   "defaultScope": "",
   "defaultSubject": "",
   "defaultBody": "",
-  "defaultIssues": ""
+  "defaultIssues": "",
+  "types": {
+    "feat": {
+      "description": "A new feature",
+      "title": "Features"
+    },
+    "fix": {
+      "description": "A bug fix",
+      "title": "Bug Fixes"
+    }
+  }
 }
 ```
 
@@ -533,7 +567,124 @@ npm install --save-dev cz-emoji
 📝 docs(readme): update installation steps
 ```
 
-### 2.4 cz-conventional-changelog-zh(中文简化版)
+### 2.4 cz-git(现代化推荐)
+
+**安装**:
+
+```bash
+npm install --save-dev cz-git
+```
+
+**配置**:
+
+```json
+{
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-git"
+    }
+  }
+}
+```
+
+**特点**:
+- 🤖 **轻量级**：基于 Commitizen,零依赖,更快的安装速度
+- ⚡ **高性能**：优化的交互体验
+- 🎨 **高度可定制**：支持 Emoji、作用域、自定义问题
+- 🌍 **国际化**：内置中英文支持
+- 📝 **智能提示**：更好的 TypeScript 支持
+
+**配置文件** `.commitlintrc.js`:
+
+```javascript
+module.exports = {
+  extends: ['@commitlint/config-conventional'],
+  prompt: {
+    messages: {
+      type: '选择你要提交的类型 :',
+      scope: '选择一个提交范围（可选）:',
+      customScope: '请输入自定义的提交范围 :',
+      subject: '填写简短精炼的变更描述 :\n',
+      body: '填写更加详细的变更描述（可选）。使用 "|" 换行 :\n',
+      breaking: '列举非兼容性重大的变更（可选）。使用 "|" 换行 :\n',
+      footerPrefixesSelect: '选择关联issue前缀（可选）:',
+      customFooterPrefix: '输入自定义issue前缀 :',
+      footer: '列举关联issue (可选) 例如: #31, #I3244 :\n',
+      confirmCommit: '是否提交或修改commit ?'
+    },
+    types: [
+      { value: 'feat', name: 'feat:     ✨  新增功能', emoji: ':sparkles:' },
+      { value: 'fix', name: 'fix:      🐛  修复缺陷', emoji: ':bug:' },
+      { value: 'docs', name: 'docs:     📝  文档更新', emoji: ':memo:' },
+      { value: 'style', name: 'style:    💄  代码格式', emoji: ':lipstick:' },
+      { value: 'refactor', name: 'refactor: ♻️   代码重构', emoji: ':recycle:' },
+      { value: 'perf', name: 'perf:     ⚡️  性能提升', emoji: ':zap:' },
+      { value: 'test', name: 'test:     ✅  测试相关', emoji: ':white_check_mark:' },
+      { value: 'build', name: 'build:    📦️  构建相关', emoji: ':package:' },
+      { value: 'ci', name: 'ci:       🎡  持续集成', emoji: ':ferris_wheel:' },
+      { value: 'chore', name: 'chore:    🔨  其他修改', emoji: ':hammer:' },
+      { value: 'revert', name: 'revert:   ⏪️  回退代码', emoji: ':rewind:' }
+    ],
+    useEmoji: true,
+    emojiAlign: 'center',
+    themeColorCode: '',
+    scopes: [],
+    allowCustomScopes: true,
+    allowEmptyScopes: true,
+    customScopesAlign: 'bottom',
+    customScopesAlias: 'custom',
+    emptyScopesAlias: 'empty',
+    upperCaseSubject: false,
+    markBreakingChangeMode: false,
+    allowBreakingChanges: ['feat', 'fix'],
+    breaklineNumber: 100,
+    breaklineChar: '|',
+    skipQuestions: [],
+    issuePrefixes: [{ value: 'closed', name: 'closed:   ISSUES has been processed' }],
+    customIssuePrefixAlign: 'top',
+    emptyIssuePrefixAlias: 'skip',
+    customIssuePrefixAlias: 'custom',
+    allowCustomIssuePrefix: true,
+    allowEmptyIssuePrefix: true,
+    confirmColorize: true,
+    maxHeaderLength: Infinity,
+    maxSubjectLength: Infinity,
+    minSubjectLength: 0,
+    scopeOverrides: undefined,
+    defaultBody: '',
+    defaultIssues: '',
+    defaultScope: '',
+    defaultSubject: ''
+  }
+};
+```
+
+### 2.5 @commitlint/cz-commitlint(官方 Commitlint 适配器)
+
+**安装**:
+
+```bash
+npm install --save-dev @commitlint/cz-commitlint commitizen inquirer@9
+```
+
+**配置**:
+
+```json
+{
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/cz-commitlint"
+    }
+  }
+}
+```
+
+**特点**:
+- 🔗 **与 Commitlint 深度集成**：配置一次,两个工具共享
+- 📏 **规则同步**：Commitlint 的规则自动应用到 Commitizen
+- ⚙️ **零额外配置**：使用现有的 `commitlint.config.js`
+
+### 2.6 cz-conventional-changelog-zh(中文简化版)
 
 **安装**:
 
@@ -1150,21 +1301,27 @@ git push --follow-tags origin main
 ### 核心要点
 
 1. **选择合适的适配器**:
-   - 标准项目: `cz-conventional-changelog`
-   - 需要定制: `cz-customizable`
-   - 喜欢 Emoji: `cz-emoji`
+   - 🌟 **现代化项目**: `cz-git` (推荐,轻量级、高性能、中文支持)
+   - 🔗 **Commitlint 集成**: `@commitlint/cz-commitlint` (配置共享)
+   - 📦 **传统标准项目**: `cz-conventional-changelog` (稳定但陈旧)
+   - 🎨 **高度定制**: `cz-customizable` (完全自定义)
+   - ✨ **Emoji 风格**: `cz-emoji` (视觉化提交类型)
 
 2. **配置关键选项**:
-   - `path`: 指定适配器
-   - `maxHeaderWidth`: 标题长度限制
+   - `path`: 指定适配器 (必选)
+   - `maxHeaderWidth`: 标题长度限制 (推荐 100)
    - `skipQuestions`: 跳过不需要的问题
+   - `defaultType`/`defaultScope`: 设置默认值
 
 3. **集成相关工具**:
-   - Commitlint: 验证提交信息
-   - Husky: Git hooks
-   - Standard Version: 自动化版本管理
+   - **Commitlint**: 验证提交信息格式
+   - **Husky**: Git hooks 自动化
+   - **Standard Version**: 自动化版本管理和 CHANGELOG
+   - **Conventional Changelog**: 生成变更日志
 
 ### 推荐配置组合
+
+**方案一：现代化配置（推荐 2024+）**
 
 ```json
 {
@@ -1173,7 +1330,54 @@ git push --follow-tags origin main
     "release": "standard-version"
   },
   "devDependencies": {
-    "commitizen": "^4.3.0",
+    "commitizen": "^4.3.1",
+    "cz-git": "^1.9.0",
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "husky": "^9.0.0",
+    "standard-version": "^9.5.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-git"
+    }
+  }
+}
+```
+
+**方案二：官方集成配置**
+
+```json
+{
+  "scripts": {
+    "commit": "git-cz"
+  },
+  "devDependencies": {
+    "commitizen": "^4.3.1",
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "@commitlint/cz-commitlint": "^19.0.0",
+    "inquirer": "^9.0.0",
+    "husky": "^9.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/cz-commitlint"
+    }
+  }
+}
+```
+
+**方案三：传统稳定配置**
+
+```json
+{
+  "scripts": {
+    "commit": "git-cz",
+    "release": "standard-version"
+  },
+  "devDependencies": {
+    "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
     "@commitlint/cli": "^18.0.0",
     "@commitlint/config-conventional": "^18.0.0",
@@ -1190,17 +1394,51 @@ git push --follow-tags origin main
 
 ### 学习建议
 
-1. 从 `cz-conventional-changelog` 开始
-2. 理解 Conventional Commits 规范
-3. 逐步集成 Commitlint 和 Husky
-4. 根据团队需求自定义配置
-5. 使用自动化工具简化流程
+1. **新项目**：直接使用 `cz-git` 或 `@commitlint/cz-commitlint`（更现代化）
+2. **现有项目**：先使用 `cz-conventional-changelog`，再逐步迁移
+3. **理解规范**：深入学习 [Conventional Commits](https://www.conventionalcommits.org/) 规范
+4. **集成工具**：逐步集成 Commitlint 和 Husky，形成完整工作流
+5. **团队定制**：根据团队需求使用 `cz-customizable` 自定义配置
+6. **自动化**：配合 Standard Version 实现自动化版本管理
+
+### 适配器对比
+
+| 适配器 | 维护状态 | 学习曲线 | 自定义程度 | 推荐场景 |
+|--------|----------|----------|------------|----------|
+| **cz-git** | ✅ 活跃 | 低 | 高 | 🌟 新项目首选 |
+| **@commitlint/cz-commitlint** | ✅ 活跃 | 低 | 中 | 已有 Commitlint 配置 |
+| **cz-conventional-changelog** | ⚠️ 5年未更新 | 低 | 低 | 传统项目 |
+| **cz-customizable** | ✅ 活跃 | 中 | 极高 | 需要完全自定义 |
+| **cz-emoji** | ⚠️ 不活跃 | 低 | 低 | 喜欢 Emoji 风格 |
 
 ## 参考资源
 
-- [Commitizen 官方文档](https://github.com/commitizen/cz-cli)
-- [Conventional Commits 规范](https://www.conventionalcommits.org/)
-- [cz-customizable](https://github.com/leoforfree/cz-customizable)
-- [Commitlint](https://commitlint.js.org/)
-- [Standard Version](https://github.com/conventional-changelog/standard-version)
-- [Git Commit Message 规范](https://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
+### 官方文档
+
+- [Commitizen 官方文档](https://github.com/commitizen/cz-cli) - cz-cli 主项目
+- [Conventional Commits 规范](https://www.conventionalcommits.org/) - 提交信息规范标准
+- [Commitlint 文档](https://commitlint.js.org/) - 提交信息校验工具
+- [Standard Version](https://github.com/conventional-changelog/standard-version) - 自动化版本管理
+
+### 现代化适配器
+
+- [cz-git](https://cz-git.qbb.sh/) - 🌟 推荐的现代化适配器
+- [@commitlint/cz-commitlint](https://github.com/conventional-changelog/commitlint/tree/master/@commitlint/cz-commitlint) - 官方 Commitlint 适配器
+- [cz-customizable](https://github.com/leoforfree/cz-customizable) - 高度可定制适配器
+- [cz-emoji](https://github.com/ngryman/cz-emoji) - Emoji 风格适配器
+
+### 相关工具
+
+- [Husky](https://typicode.github.io/husky/) - Git hooks 工具
+- [lint-staged](https://github.com/okonet/lint-staged) - 暂存区文件校验
+- [Conventional Changelog](https://github.com/conventional-changelog/conventional-changelog) - 变更日志生成器
+
+### 学习资源
+
+- [Angular Git Commit Guidelines](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#commit) - Angular 提交规范
+- [语义化版本 (Semver)](https://semver.org/lang/zh-CN/) - 版本号规范
+- [如何写好 Git Commit Message](https://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html) - 阮一峰博客
+
+---
+
+🎉 掌握 Commitizen，让你的 Git 提交更规范！
