@@ -1,6 +1,6 @@
 ---
 title: package.json 配置选项
-date: 2025-11-07
+date: 2025-11-27
 duration: 60min
 type: notes
 art: random
@@ -32,6 +32,34 @@ npm init -y
 # 使用 ES Module 创建
 npm init -y --type=module
 ```
+
+:::tip 版本说明
+本文档基于 **npm 10.x** 和 **Node.js 18+** 编写，涵盖最新的 package.json 规范。
+
+**规范版本**：
+- **package.json 规范**: 遵循 [npm package.json 规范](https://docs.npmjs.com/cli/v10/configuring-npm/package-json)
+- **Node.js 包规范**: 遵循 [Node.js Packages 规范](https://nodejs.org/api/packages.html)
+
+**关键特性支持**：
+- ✅ **exports** 字段：Node.js 12.7.0+ (2019-07)，现代包入口标准
+- ✅ **imports** 字段：Node.js 14.6.0+ (2020-07)，内部导入映射
+- ✅ **type** 字段：Node.js 12.0.0+ (2019-04)，指定模块系统
+- ✅ **workspaces** 字段：npm 7.0.0+ (2020-10)，Monorepo 支持
+- ✅ **overrides** 字段：npm 8.3.0+ (2021-12)，依赖覆盖
+
+**现代化特性（2024）**：
+- 📦 **条件导出**：根据环境（import/require）和条件选择不同入口
+- 🎯 **子路径导出**：精确控制包的公开 API，隐藏内部实现
+- 🔧 **TypeScript 支持**：通过 exports 字段的 types 条件
+- 🚀 **ESM 优先**：现代项目推荐使用 ES Modules
+:::
+
+:::warning 注意事项
+- **exports 优先级**：当存在 exports 字段时，main 字段会被忽略
+- **TypeScript 兼容**：使用 exports 需要 TypeScript 4.7+ 和 moduleResolution: "node16" 或 "nodenext"
+- **向后兼容**：使用 exports 时建议保留 main 字段以兼容旧版本 Node.js
+- **工作区限制**：workspaces 仅在包管理器的根 package.json 中有效
+:::
 
 ## 基础字段
 

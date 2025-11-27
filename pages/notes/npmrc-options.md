@@ -1,6 +1,6 @@
 ---
 title: npmrc 配置选项
-date: 2025-11-16
+date: 2025-11-27
 duration: 90min
 type: notes
 art: random
@@ -32,7 +32,36 @@ npm config set registry https://registry.npmmirror.com
 npm config delete registry
 ```
 
-**注意**:本文档基于 npm 10.x 版本,适用于 Node.js 18+ 环境。
+:::tip 版本说明
+本文档基于 **npm CLI 10.x** 编写，适用于 Node.js 18+ 环境。
+
+**当前版本**：
+- **npm CLI**: v10.9.2 (2024 年 12 月发布)
+- **Node.js LTS**: v18.x, v20.x, v22.x
+
+**主要版本历史**：
+- **npm v11.x** (2024-11 开始)：新版本，包含一些破坏性变更
+  - `npm init` 新增 type 提示
+  - `npm publish` 默认 dist-tag 行为变更
+  - `bun.lockb` 文件加入严格忽略列表
+- **npm v10.x** (2023-09 至今)：当前稳定版本，推荐使用
+  - 改进性能和依赖解析
+  - 增强安全性
+- **npm v9.x** (2022-10)：引入 `overrides` 字段支持
+- **npm v8.x** (2021-10)：lockfile v3 格式
+- **npm v7.x** (2020-10)：重大更新，peer dependencies 严格检查
+
+**运行环境要求**：
+- ✅ Node.js >= 18.17.0 (npm 10.x)
+- ✅ Node.js >= 20.5.0 (npm 11.x)
+:::
+
+:::warning 注意事项
+- 本文档主要针对 **npm 10.x**，大部分配置与 npm 11.x 兼容
+- npm 7+ 对 peer dependencies 行为有重大变更，可能需要使用 `legacy-peer-deps`
+- 配置文件格式为 INI 格式，不支持 JSON
+- 敏感信息（如 token）建议使用环境变量而非直接写入配置文件
+:::
 
 ## 配置文件
 
