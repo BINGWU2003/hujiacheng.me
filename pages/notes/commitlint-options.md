@@ -1,6 +1,6 @@
 ---
 title: commitlint 配置选项
-date: 2025-11-06
+date: 2025-11-27
 duration: 120min
 type: notes
 art: random
@@ -25,6 +25,30 @@ npm install --save-dev @commitlint/cli @commitlint/config-conventional
 # 初始化配置文件
 echo "export default { extends: ['@commitlint/config-conventional'] };" > commitlint.config.js
 ```
+
+:::tip 版本说明
+本文档基于 **@commitlint/cli 20.x** 编写，适用于使用 Conventional Commits 规范的项目。
+
+**当前版本**：
+- **@commitlint/cli**: v20.1.0 (2024 年 10 月发布)
+- **@commitlint/config-conventional**: v20.1.0
+
+**主要版本历史**：
+- **v20.1.0** (2024-10)：最新版本，持续维护
+- **v19.0.0** (2024-02)：改进配置系统，增强 TypeScript 支持
+- **v18.0.0** (2023-10)：移除对 Node.js 16 的支持，要求 Node.js >= 18
+
+**运行环境要求**：
+- ✅ Node.js >= 18 (LTS)
+- ✅ Git >= 2.13.2
+:::
+
+:::warning 注意事项
+- 本文档使用 **ES Module** 语法 (`export default`)，适用于现代 Node.js 项目
+- 如果项目使用 CommonJS，配置文件应使用 `module.exports` 语法
+- commitlint 配置支持多种文件格式：`.commitlintrc.js`、`commitlint.config.js`、`.commitlintrc.json` 等
+- 推荐与 Husky 配合使用，在 commit-msg hook 中自动检查提交信息
+:::
 
 ## 为什么需要 commitlint
 
@@ -950,11 +974,11 @@ npx husky init
 **3. 添加 commit-msg hook**：
 
 ```bash
-# Unix/Mac
+# Unix/Mac/Linux
 echo "npx --no -- commitlint --edit \$1" > .husky/commit-msg
 
-# Windows
-echo npx --no -- commitlint --edit %1 > .husky/commit-msg
+# Windows (PowerShell)
+echo "npx --no -- commitlint --edit `$1" > .husky/commit-msg
 ```
 
 **4. 配置 commitlint**：
