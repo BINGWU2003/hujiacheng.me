@@ -1,11 +1,40 @@
 ---
 title: Vitest 单元测试配置指南
-date: 2025-09-28
+date: 2025-11-27
 duration: 30min
 art: random
 ---
 
 [[toc]]
+
+:::tip 版本说明
+本文档基于 **Vitest 3.x** 编写，涵盖最新的配置和 API。
+
+**核心版本**：
+- **Vitest**: v3.2.4 (2024年12月发布)
+- **@vitest/coverage-v8**: v3.2.4
+- **Vite**: v5.0.0+
+
+**重要里程碑**：
+- ✅ **Vitest 3.0** (2024年)：新 Reporter API、按行号测试、新断言匹配器
+- ✅ **Vitest 3.2** (2024年12月)：性能改进、新配置选项、浏览器模式增强
+- ✅ **Vitest 4.0** (2025年初)：即将发布
+
+**主要特性（Vitest 3.x）**：
+- ⚡ **极速启动**：基于 Vite 的快速 HMR
+- 🔄 **智能监听**：文件变化自动重新运行相关测试
+- 📦 **原生 ESM**：完整的 ES 模块支持
+- 🎯 **Jest 兼容**：兼容 Jest API，迁移简单
+- 🌐 **浏览器模式**：真实浏览器环境测试
+- 🔍 **按行号过滤**：`vitest foo.test.js:10`
+:::
+
+:::warning 注意事项
+- **Vitest 3.x** 与 2.x 相比有少量破坏性变更，建议新项目直接使用 3.x
+- **公共 API 重新设计**：`vitest/node` 的公共 API 已重新设计
+- **浏览器模式**：支持 Playwright 和 WebdriverIO 配置
+- **新增断言**：`toHaveBeenCalledBefore`、`toHaveBeenCalledAfter`、`toBeOneOf`、`toSatisfy`
+:::
 
 本文档介绍如何在 monorepo 项目中为工具函数库配置 Vitest 单元测试。
 
@@ -50,7 +79,7 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
-    // 测试环境
+    // 测试环境 (node | jsdom | happy-dom)
     environment: 'node',
     // 测试文件匹配模式
     include: ['src/**/*.{test,spec}.{js,ts}', 'tests/**/*.{test,spec}.{js,ts}'],
@@ -60,10 +89,106 @@ export default defineConfig({
     globals: true,
     // 覆盖率配置
     coverage: {
-      provider: 'v8',
+      provider: 'v8', // 或 'istanbul'
       reporter: ['text', 'json', 'html'],
       exclude: ['node_modules/', 'dist/', '**/*.d.ts', '**/*.config.{js,ts}', 'coverage/**'],
     },
+  },
+})
+```
+
+:::warning Vitest 3.x 配置变更
+- **已弃用**：`environmentMatchGlobs` → 使用 `projects` 配置
+- **已弃用**：`poolMatchGlobs` → 使用 `projects` 配置
+- **新增**：`workspace` 字段支持 monorepo 内联配置
+- **新增**：`browser` 配置支持浏览器环境测试
+:::
+
+#### 多项目配置（Vitest 3.x 推荐）
+
+如果需要为不同测试类型配置不同环境：
+
+```typescript
+import { defineConfig } from 'vitest/config'
+
+export default defineConfig({
+  test: {
+    // 使用 projects 替代已弃用的 environmentMatchGlobs
+    projects: [
+      {
+        extends: true, // 继承根配置
+        test: {
+          name: 'unit', // 项目名称
+          include: ['**/*.unit.test.ts'],
+          environment: 'node',
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'browser',
+          include: ['**/*.browser.test.ts'],
+          environment: 'jsdom', // 或 'happy-dom'
+        },
+      },
+    ],
+  },
+})
+```
+
+#### 浏览器模式配置（Vitest 3.x 新特性）
+
+Vitest 3.x 支持在真实浏览器环境中运行测试：
+
+```typescript
+import { defineConfig } from 'vitest/config'
+
+export default defineConfig({
+  test: {
+    browser: {
+      enabled: true,
+      provider: 'playwright', // 或 'webdriverio'
+      headless: true, // 无头模式
+      instances: [
+        { browser: 'chromium' },
+        // 可以配置多个浏览器
+        // { browser: 'firefox' },
+        // { browser: 'webkit' },
+      ],
+    },
+  },
+})
+```
+
+初始化浏览器模式依赖：
+
+```bash
+pnpm exec vitest init browser
+```
+
+#### Monorepo 工作区配置（Vitest 3.x）
+
+对于 monorepo 项目，可以使用内联 workspace 配置：
+
+```typescript
+import { defineConfig } from 'vitest/config'
+
+export default defineConfig({
+  test: {
+    // 使用 workspace 字段简化 monorepo 配置
+    workspace: ['packages/*'],
+    // 或者混合使用 glob 和内联配置
+    projects: [
+      'packages/*', // glob 模式
+      {
+        extends: true,
+        test: {
+          name: 'integration',
+          include: ['tests/**/*.integration.test.ts'],
+          environment: 'node',
+        },
+      },
+    ],
   },
 })
 ```
@@ -81,10 +206,43 @@ export default defineConfig({
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:run:verbose": "vitest run --reporter=verbose"
+    "test:run:verbose": "vitest run --reporter=verbose",
+    "test:ui": "vitest --ui",
+    "test:browser": "vitest --browser"
   }
 }
 ```
+
+:::tip Vitest 3.x CLI 新特性
+**按行号过滤测试**（Vitest 3.0+）：
+```bash
+# 运行指定文件中特定行号的测试
+vitest src/utils.test.ts:42
+
+# 运行多个行号的测试
+vitest src/utils.test.ts:10,src/utils.test.ts:25
+
+# 支持相对路径和绝对路径
+vitest ./basic/foo.js:10
+vitest /users/project/basic/foo.js:10
+```
+
+**其他有用的 CLI 选项**：
+```bash
+# 运行指定项目（多项目配置时）
+vitest --project=unit
+
+# 列出所有测试文件
+vitest list --filesOnly
+
+# 禁用 boolean 选项（两种方式）
+vitest --no-api
+vitest --api=false
+
+# 使用多个 reporter
+vitest --reporter=dot --reporter=default
+```
+:::
 
 ## 测试文件编写
 
@@ -205,8 +363,60 @@ expect(mockFn).toHaveBeenCalled() // 函数被调用
 expect(mockFn).toHaveBeenCalledTimes(2) // 调用次数
 expect(mockFn).toHaveBeenCalledWith('arg1', 'arg2') // 调用参数
 expect(mockFn).toHaveBeenLastCalledWith('arg') // 最后一次调用参数
+
+// Vitest 3.0+ 新增断言
+expect(mockFn).toHaveBeenCalledExactlyOnceWith('arg') // 精确调用一次
+expect(mockFn1).toHaveBeenCalledBefore(mockFn2) // 调用顺序：之前
+expect(mockFn1).toHaveBeenCalledAfter(mockFn2) // 调用顺序：之后
+
+// 异常断言
 expect(() => fn()).toThrow() // 抛出异常
 expect(() => fn()).toThrow('error message') // 抛出特定异常
+```
+
+**Vitest 3.x 新增断言示例**：
+
+```typescript
+import { describe, it, expect, vi } from 'vitest'
+
+describe('Vitest 3.x 新增断言', () => {
+  it('应该精确调用一次', () => {
+    const mockFn = vi.fn()
+
+    mockFn('arg1')
+
+    // ✅ Vitest 3.0+ 新增：检查是否精确调用一次且参数匹配
+    expect(mockFn).toHaveBeenCalledExactlyOnceWith('arg1')
+  })
+
+  it('应该验证调用顺序', () => {
+    const mock1 = vi.fn()
+    const mock2 = vi.fn()
+
+    mock1()
+    mock2()
+    mock1()
+
+    // ✅ Vitest 3.0+ 新增：验证调用顺序
+    expect(mock1).toHaveBeenCalledBefore(mock2)
+    expect(mock2).toHaveBeenCalledAfter(mock1)
+  })
+
+  it('应该匹配多个可能值之一', () => {
+    const value = 'red'
+
+    // ✅ Vitest 3.0+ 新增：匹配多个可能值之一
+    expect(value).toBeOneOf(['red', 'green', 'blue'])
+  })
+
+  it('应该满足自定义条件', () => {
+    const num = 42
+
+    // ✅ Vitest 3.0+ 新增：自定义断言条件
+    expect(num).toSatisfy(n => n > 40 && n < 50)
+    expect([1, 2, 3]).toSatisfy(arr => arr.every(n => n > 0))
+  })
+})
 ```
 
 ##### 异步断言
@@ -241,6 +451,9 @@ const mockFn = vi.fn((a, b) => a + b)
 expect(mockFn).toHaveBeenCalled()
 expect(mockFn).toHaveBeenCalledWith('arg1', 'arg2')
 expect(mockFn).toHaveBeenCalledTimes(1)
+
+// ✅ Vitest 3.0+ 新增：精确调用检查
+expect(mockFn).toHaveBeenCalledExactlyOnceWith('arg1', 'arg2')
 ```
 
 ##### Spy 监听
@@ -257,14 +470,35 @@ const spy = vi.spyOn(Math, 'random').mockReturnValue(0.5)
 
 ##### 模拟模块
 
+:::warning Vitest 3.x Mock 重要注意事项
+**`vi.mock` 提升行为**：
+- `vi.mock()` 调用会被**自动提升**到文件顶部，在 import 之前执行
+- 如需在 mock 中使用外部变量，必须使用 `vi.hoisted()`
+- `vi.doMock()` 不会被提升，但只影响**后续的动态 import**
+
+**`vi.useFakeTimers()` 变更**（Vitest 3.0+）：
+- 默认现在会 mock **所有**计时器相关 API（包括 `performance.now()`）
+- 旧版本中 `performance.now()` 不会被 mock
+- 如需自定义，在配置中设置 `fakeTimers.toFake`
+:::
+
 ```typescript
-// 模拟整个模块
+// ❌ 错误：外部变量在 vi.mock 中不可用
+const mockValue = 100
 vi.mock('./utils', () => ({
-  default: vi.fn(),
-  namedExport: vi.fn(),
+  getValue: () => mockValue, // ❌ undefined
 }))
 
-// 部分模拟
+// ✅ 正确：使用 vi.hoisted
+const mocks = vi.hoisted(() => ({
+  getValue: vi.fn(() => 100),
+}))
+
+vi.mock('./utils', () => ({
+  getValue: mocks.getValue,
+}))
+
+// ✅ 部分模拟（保留实际实现）
 vi.mock('./utils', async () => {
   const actual = await vi.importActual('./utils')
   return {
@@ -272,12 +506,22 @@ vi.mock('./utils', async () => {
     specificFunction: vi.fn(),
   }
 })
+
+// ✅ 使用 vi.doMock（非提升）访问外部变量
+let mockCounter = 0
+vi.doMock('./counter', () => ({
+  getCount: () => ++mockCounter,
+}))
+
+// 注意：vi.doMock 只影响后续的动态 import
+const { getCount } = await import('./counter')
+getCount() // 1
 ```
 
 ##### 时间控制
 
 ```typescript
-// 使用假时间
+// 使用假时间（Vitest 3.0+ 默认 mock 所有计时器 API）
 vi.useFakeTimers()
 
 // 推进时间
@@ -289,6 +533,29 @@ vi.useRealTimers()
 
 // 设置系统时间
 vi.setSystemTime(new Date('2023-01-01'))
+
+// ⚠️ Vitest 3.0+ 注意：performance.now() 现在也会被 mock
+vi.useFakeTimers()
+performance.now() // 返回假时间
+
+// 如需恢复 Vitest 2.x 行为，在配置文件中设置：
+// vitest.config.ts
+export default defineConfig({
+  test: {
+    fakeTimers: {
+      toFake: [
+        'setTimeout',
+        'clearTimeout',
+        'setInterval',
+        'clearInterval',
+        'setImmediate',
+        'clearImmediate',
+        'Date',
+        // 不包括 'performance' 以保持旧行为
+      ],
+    },
+  },
+})
 ```
 
 #### 4. 生命周期钩子
@@ -978,11 +1245,34 @@ export default defineConfig({
 
 ## 总结
 
-通过以上配置，我们成功为 monorepo 项目中的工具函数库配置了 Vitest 单元测试。这个配置提供了：
+通过以上配置，我们成功为 monorepo 项目中的工具函数库配置了 Vitest 3.x 单元测试。这个配置提供了：
 
-- 快速的测试执行速度
-- 完整的代码覆盖率报告
-- 与现代前端工具链的良好集成
-- 易于维护的测试结构
+- ⚡ **极速测试执行**：基于 Vite 的快速 HMR 和按需编译
+- 📊 **完整覆盖率报告**：支持 v8 和 istanbul 两种覆盖率提供者
+- 🔍 **精准测试过滤**：支持按文件名、行号精确定位测试
+- 🌐 **浏览器模式**：支持在真实浏览器环境中运行测试
+- 🎯 **多项目支持**：通过 `projects` 和 `workspace` 配置管理 monorepo
+- 🛠️ **现代化 API**：Vitest 3.x 新增断言和改进的 mock 系统
+- ✅ **TypeScript 原生支持**：无需额外配置即可测试 TS 代码
+
+### Vitest 3.x 关键特性
+
+| 特性 | 说明 | 版本 |
+|------|------|------|
+| 按行号过滤 | `vitest foo.test.ts:10` | 3.0+ |
+| 新断言匹配器 | `toBeOneOf`, `toSatisfy`, `toHaveBeenCalledExactlyOnceWith` | 3.0+ |
+| 浏览器模式 | 支持 Playwright/WebdriverIO | 3.0+ |
+| `vi.hoisted()` | 解决 mock 提升问题 | 3.0+ |
+| `workspace` 配置 | 简化 monorepo 设置 | 3.0+ |
+| `fakeTimers` 默认行为 | 现在 mock 所有计时器 API（包括 `performance.now()`） | 3.0+ |
+
+### 参考资源
+
+- [Vitest 官方文档](https://vitest.dev/)
+- [Vitest 3.0 发布说明](https://vitest.dev/blog/vitest-3)
+- [Vitest GitHub 仓库](https://github.com/vitest-dev/vitest)
+- [Vite 官方文档](https://vitejs.dev/)
+- [Vitest 浏览器模式](https://vitest.dev/guide/browser/)
+- [Vitest API 参考](https://vitest.dev/api/)
 
 这样的测试配置确保了代码质量，提高了开发效率，并为持续集成提供了可靠的基础。
