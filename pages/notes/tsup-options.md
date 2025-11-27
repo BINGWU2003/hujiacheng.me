@@ -23,6 +23,24 @@ tsup src/index.ts
 tsup src/index.ts --format cjs,esm --dts
 ```
 
+:::tip 版本说明
+本文档基于 **tsup 8.x+** 编写，包含最新的配置选项和最佳实践。如果你使用旧版本 tsup，某些选项可能不可用。
+
+**主要更新**：
+- ✅ tsup 8.0+ 新增 `--experimental-dts` 选项，使用 `@microsoft/api-extractor` 生成更可靠的类型声明
+- ✅ 支持 `--legacy-output` 标志，避免 `.mjs`/`.cjs` 扩展名
+- ✅ 改进的代码分割支持（ESM 默认开启，CJS 通过 `--splitting` 实验性支持）
+- ✅ 自动处理 CLI hashbang（`#!/usr/bin/env node`），无需手动设置可执行权限
+- ✅ 增强的 Tree Shaking（可选使用 Rollup 替代 esbuild）
+:::
+
+:::warning 注意事项
+- tsup 主要基于 esbuild，适合快速构建 TypeScript 库
+- 配置选项会随 tsup 版本更新而变化
+- 建议先使用命令行熟悉功能，再创建配置文件
+- 对于复杂的打包需求，可能需要考虑使用 Rollup 或 Vite
+:::
+
 ### 核心特性
 
 - ⚡ **极速构建**：基于 esbuild，比 Webpack/Rollup 快 10-100 倍

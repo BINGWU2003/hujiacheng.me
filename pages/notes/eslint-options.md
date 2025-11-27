@@ -26,7 +26,32 @@ npm install --save-dev eslint
 npx eslint --init
 ```
 
-**注意**：本文档基于 ESLint 8.x 版本（已于 2024-10-05 停止维护），建议新项目使用 [ESLint 9.x](https://eslint.org/docs/latest/)。
+:::tip 版本说明
+本文档基于 **ESLint 8.x** 编写，该版本已于 **2024-10-05 停止维护**。建议新项目使用 [ESLint 9.x](https://eslint.org/docs/latest/) 及其扁平化配置（Flat Config）。
+
+**ESLint 8.x vs 9.x 主要区别**：
+- ✅ **ESLint 9.x**（推荐新项目）：
+  - 使用 `eslint.config.js` 扁平化配置格式
+  - 移除 `env` 选项，使用 `globals` 包代替
+  - 配置格式更简洁，采用数组形式
+  - `ecmaVersion` 默认为 `"latest"`，`sourceType` 默认为 `"module"`
+- ⚠️ **ESLint 8.x**（本文档）：
+  - 使用 `.eslintrc.js` / `.eslintrc.json` 配置格式
+  - 支持 `env`、`extends` 等传统配置选项
+  - 仍然广泛使用于现有项目中
+
+**ESLint 10.x 重大变更**：
+- ❌ 完全移除对旧配置格式（`.eslintrc.*`）的支持
+- ❌ 移除 `ESLINT_USE_FLAT_CONFIG` 环境变量
+- ✅ 只支持扁平化配置格式（`eslint.config.js`）
+:::
+
+:::warning 注意事项
+- 本文档适用于使用 ESLint 8.x 及传统配置格式的项目
+- 如果你正在启动新项目，建议直接使用 ESLint 9.x+ 和扁平化配置
+- 现有项目可以使用 `@eslint/migrate-config` 工具迁移到新格式
+- 配置迁移指南：https://eslint.org/docs/latest/use/configure/migration-guide
+:::
 
 ## 配置文件
 
