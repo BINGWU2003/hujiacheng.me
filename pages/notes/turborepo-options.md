@@ -23,6 +23,34 @@ turbo init
 turbo run build
 ```
 
+:::tip 版本说明
+本文档基于 **Turborepo 2.x** 编写。Turborepo 2.0 引入了重大变更，包括将 `pipeline` 重命名为 `tasks`。
+
+**Turborepo 1.x vs 2.x 主要区别**：
+- ✅ **Turborepo 2.x**（推荐）：
+  - 使用 `tasks` 替代 `pipeline` 配置任务
+  - 改进的 UI 模式（`--ui` 标志）
+  - 更好的错误信息和日志输出
+  - 支持任务标签（tags）用于分组执行
+  - 移除了一些已废弃的选项
+- ⚠️ **Turborepo 1.x**（本文档部分兼容）：
+  - 使用 `pipeline` 配置任务
+  - 基础的日志输出
+  - 仍被广泛使用但不再推荐
+
+**迁移提示**：
+- 如果使用 Turborepo 1.x，将文档中的 `tasks` 替换为 `pipeline` 即可
+- Turborepo 2.x 向后兼容 `pipeline`，但建议迁移到 `tasks`
+- 配置选项大部分保持一致，迁移成本较低
+:::
+
+:::warning 注意事项
+- 本文档主要适用于 Turborepo 2.x，但大部分配置与 1.x 兼容
+- Turborepo 的配置选项可能随版本更新而变化
+- 建议参考 [官方文档](https://turbo.build/repo/docs) 获取最新信息
+- 本文档为了兼容性，在示例中同时展示 `tasks` 和 `pipeline` 用法
+:::
+
 ### 核心特性
 
 - ⚡ **智能缓存**：从不重复执行相同的工作
@@ -155,12 +183,12 @@ apps/docs/turbo.json
 ```json
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
-    // 任务配置
+  "tasks": {
+    // 任务配置（Turborepo 2.x）
   },
+  // "pipeline": {} // Turborepo 1.x 使用此项
   "globalEnv": [],
-  "globalDependencies": [],
-  "remoteCache": {}
+  "globalDependencies": []
 }
 ```
 
@@ -181,7 +209,7 @@ apps/docs/turbo.json
 ```json
 // ❌ 不配置 $schema
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependson": ["^build"]  // 拼写错误，但不提示
     }
@@ -191,9 +219,9 @@ apps/docs/turbo.json
 // ✅ 配置 $schema
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "tasks": {
     "build": {
-      "dependson": ["^build"]  // IDE 会标红提示错误
+      "dependsOn": ["^build"]  // IDE 会标红和自动补全，避免拼写错误
     }
   }
 }
@@ -205,13 +233,20 @@ apps/docs/turbo.json
 - ✅ 悬停提示
 - ✅ 减少拼写错误
 
-### 1.2 pipeline
+### 1.2 tasks / pipeline
 
 **作用**：定义任务及其依赖关系（Turborepo 的核心配置）。
 
+:::tip 配置键名变更
+- **Turborepo 2.x**：使用 `"tasks"` 键
+- **Turborepo 1.x**：使用 `"pipeline"` 键
+- 两者功能完全相同，只是键名不同
+:::
+
 ```json
+// Turborepo 2.x（推荐）
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**"]
@@ -226,12 +261,22 @@ apps/docs/turbo.json
     }
   }
 }
+
+// Turborepo 1.x（仍然支持）
+{
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**"]
+    }
+  }
+}
 ```
 
-**pipeline 是什么**：
+**tasks/pipeline 是什么**：
 
 ```
-pipeline = 管道配置
+tasks/pipeline = 任务配置
 
 定义了项目中所有可执行的任务，以及它们之间的关系：
 - 哪些任务需要先执行
@@ -242,13 +287,13 @@ pipeline = 管道配置
 **影响对比**：
 
 ```bash
-# ❌ 不配置 pipeline
+# ❌ 不配置 tasks
 turbo run build
-# 错误：No "build" task found in pipeline
+# 错误：No "build" task found in tasks
 
-# ✅ 配置 pipeline
+# ✅ 配置 tasks
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"]
     }
@@ -265,7 +310,7 @@ turbo run build
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"]
     },
@@ -293,7 +338,7 @@ turbo run build
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"]
     }
@@ -323,7 +368,7 @@ packages/
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "test": {
       "dependsOn": ["build"]
     }
@@ -349,7 +394,7 @@ packages/ui:
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "test": {
       "dependsOn": ["^build", "build"]
     }
@@ -375,7 +420,7 @@ packages/ui:
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "deploy": {
       "dependsOn": ["build", "test", "lint"]
     }
@@ -398,7 +443,7 @@ packages/ui:
 ```json
 // ❌ 不配置 dependsOn
 {
-  "pipeline": {
+  "tasks": {
     "build": {},
     "test": {}
   }
@@ -409,7 +454,7 @@ packages/ui:
 
 // ✅ 配置 dependsOn
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"]
     },
@@ -429,7 +474,7 @@ packages/ui:
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "outputs": ["dist/**", ".next/**", "build/**"]
     },
@@ -444,7 +489,7 @@ packages/ui:
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "outputs": [
         "dist/**",           // dist 下所有文件
@@ -501,7 +546,7 @@ turbo run build
 ```json
 // ❌ 不配置 outputs
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"]
       // 没有 outputs
@@ -516,7 +561,7 @@ turbo run build
 
 // ✅ 配置 outputs
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
@@ -536,7 +581,7 @@ turbo run build
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "cache": true,  // 默认值，使用缓存
       "outputs": ["dist/**"]
@@ -556,7 +601,7 @@ turbo run build
 ```json
 // build 任务（cache: true）
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "cache": true,
       "outputs": ["dist/**"]
@@ -570,7 +615,7 @@ turbo run build
 
 // dev 任务（cache: false）
 {
-  "pipeline": {
+  "tasks": {
     "dev": {
       "cache": false
     }
@@ -586,12 +631,12 @@ turbo run build
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     // ✅ 需要缓存的任务
     "build": { "cache": true },
     "test": { "cache": true },
     "lint": { "cache": true },
-    
+
     // ❌ 不需要缓存的任务
     "dev": { "cache": false },      // 开发服务器
     "start": { "cache": false },    // 启动服务
@@ -606,7 +651,7 @@ turbo run build
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "dev": {
       "cache": false,
       "persistent": true  // 持续运行，不会自动结束
@@ -639,7 +684,7 @@ turbo run dev
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "dev": {
       "cache": false,
       "persistent": true
@@ -666,7 +711,7 @@ turbo run dev
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "inputs": [
         "src/**",           // src 下所有文件
@@ -700,7 +745,7 @@ turbo run dev
 ```json
 // ❌ 不配置 inputs（使用默认值）
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "outputs": ["dist/**"]
     }
@@ -713,7 +758,7 @@ turbo run build
 
 // ✅ 配置 inputs（精确控制）
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "inputs": ["src/**", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]
@@ -734,7 +779,7 @@ turbo run build
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "inputs": [
         "src/**/*.ts",
@@ -770,7 +815,7 @@ turbo run build
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "env": ["NODE_ENV", "API_URL"],
       "outputs": ["dist/**"]
@@ -784,7 +829,7 @@ turbo run build
 ```bash
 # ❌ 不配置 env
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "outputs": ["dist/**"]
     }
@@ -799,7 +844,7 @@ NODE_ENV=production turbo run build
 
 # ✅ 配置 env
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "env": ["NODE_ENV"],
       "outputs": ["dist/**"]
@@ -818,7 +863,7 @@ NODE_ENV=production turbo run build
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "env": [
         "NODE_ENV",           // 环境（development/production）
@@ -833,21 +878,27 @@ NODE_ENV=production turbo run build
 }
 ```
 
-### 1.9 outputMode（输出模式）
+### 1.9 outputLogs（输出日志模式）
 
 **作用**：控制任务的日志输出方式。
 
+:::tip 配置键名变更
+- **Turborepo 2.x**：使用 `outputLogs` 配置
+- **Turborepo 1.x**：使用 `outputMode` 配置
+- 命令行仍可使用 `--output-logs` 标志
+:::
+
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
-      "outputMode": "hash-only"
+      "outputLogs": "hash-only"
     },
     "dev": {
-      "outputMode": "full"
+      "outputLogs": "full"
     },
     "test": {
-      "outputMode": "new-only"
+      "outputLogs": "new-only"
     }
   }
 }
@@ -866,8 +917,8 @@ NODE_ENV=production turbo run build
 **影响对比**：
 
 ```bash
-# outputMode: "full"
-turbo run build --output-mode=full
+# outputLogs: "full"
+turbo run build --output-logs=full
 
 # 输出：
 # packages/shared:
@@ -876,14 +927,14 @@ turbo run build --output-mode=full
 #   ✓ dist/index.js created
 #   ✓ dist/index.d.ts created
 
-# outputMode: "hash-only"
-turbo run build --output-mode=hash-only
+# outputLogs: "hash-only"
+turbo run build --output-logs=hash-only
 
 # 输出：
 # packages/shared: cache miss, executing abc123def
 
-# outputMode: "errors-only"
-turbo run build --output-mode=errors-only
+# outputLogs: "errors-only"
+turbo run build --output-logs=errors-only
 
 # 输出：
 # （只有错误时才显示）
@@ -896,7 +947,7 @@ turbo run build --output-mode=errors-only
 ```json
 {
   "globalEnv": ["NODE_ENV", "CI"],
-  "pipeline": {
+  "tasks": {
     "build": {
       "outputs": ["dist/**"]
     }
@@ -909,7 +960,7 @@ turbo run build --output-mode=errors-only
 ```json
 // ❌ 不配置 globalEnv
 {
-  "pipeline": {
+  "tasks": {
     "build": { "outputs": ["dist/**"] },
     "test": {},
     "lint": {}
@@ -925,7 +976,7 @@ NODE_ENV=development turbo run build
 // ✅ 配置 globalEnv
 {
   "globalEnv": ["NODE_ENV"],
-  "pipeline": {
+  "tasks": {
     "build": { "outputs": ["dist/**"] },
     "test": {},
     "lint": {}
@@ -945,8 +996,8 @@ NODE_ENV=development turbo run build
 {
   // globalEnv：影响所有任务
   "globalEnv": ["NODE_ENV", "CI"],
-  
-  "pipeline": {
+
+  "tasks": {
     "build": {
       // env：只影响 build 任务
       "env": ["API_URL"],
@@ -972,7 +1023,7 @@ NODE_ENV=development turbo run build
     "tsconfig.json",
     ".eslintrc.js"
   ],
-  "pipeline": {
+  "tasks": {
     "build": {
       "outputs": ["dist/**"]
     }
@@ -986,7 +1037,7 @@ NODE_ENV=development turbo run build
 # ✅ 配置 globalDependencies
 {
   "globalDependencies": ["tsconfig.json"],
-  "pipeline": {
+  "tasks": {
     "build": { "outputs": ["dist/**"] }
   }
 }
@@ -1036,7 +1087,7 @@ turbo run build
 ```json
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "build/**"]
@@ -1061,16 +1112,16 @@ turbo run build
 ```json
 {
   "$schema": "https://turbo.build/schema.json",
-  
+
   "globalEnv": ["NODE_ENV", "CI"],
-  
+
   "globalDependencies": [
     ".env",
     "tsconfig.json",
     ".eslintrc.js"
   ],
-  
-  "pipeline": {
+
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": [
@@ -1084,24 +1135,24 @@ turbo run build
       "outputs": ["dist/**", ".next/**", ".vitepress/dist/**"],
       "env": ["API_URL", "PUBLIC_KEY"]
     },
-    
+
     "dev": {
       "cache": false,
       "persistent": true,
-      "outputMode": "full"
+      "outputLogs": "full"
     },
-    
+
     "preview": {
       "cache": false,
       "persistent": true
     },
-    
+
     "lint": {
       "dependsOn": ["^build"],
       "inputs": ["src/**/*.ts", "src/**/*.tsx", ".eslintrc.js"],
       "outputs": []
     },
-    
+
     "test": {
       "dependsOn": ["build"],
       "inputs": [
@@ -1111,13 +1162,13 @@ turbo run build
       ],
       "outputs": ["coverage/**"]
     },
-    
+
     "type-check": {
       "dependsOn": ["^build"],
       "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json"],
       "outputs": []
     },
-    
+
     "clean": {
       "cache": false
     }
@@ -1130,15 +1181,15 @@ turbo run build
 ```json
 {
   "$schema": "https://turbo.build/schema.json",
-  
+
   "globalEnv": ["NODE_ENV"],
-  
+
   "globalDependencies": [
     "tsconfig.json",
     "vite.config.ts"
   ],
-  
-  "pipeline": {
+
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": [
@@ -1151,34 +1202,34 @@ turbo run build
       "outputs": ["dist/**"],
       "env": ["VITE_*"]
     },
-    
+
     "dev": {
       "cache": false,
       "persistent": true,
-      "outputMode": "full"
+      "outputLogs": "full"
     },
-    
+
     "preview": {
       "cache": false,
       "persistent": true
     },
-    
+
     "lint": {
       "inputs": ["src/**/*.{ts,tsx,vue}", ".eslintrc.js"],
       "outputs": []
     },
-    
+
     "lint:css": {
       "inputs": ["src/**/*.{css,scss,vue}", ".stylelintrc.js"],
       "outputs": []
     },
-    
+
     "test": {
       "dependsOn": ["build"],
       "inputs": ["src/**", "vitest.config.ts"],
       "outputs": ["coverage/**"]
     },
-    
+
     "type-check": {
       "dependsOn": ["^build"],
       "inputs": ["src/**/*.{ts,vue}", "tsconfig.json"],
@@ -1193,32 +1244,32 @@ turbo run build
 ```json
 {
   "$schema": "https://turbo.build/schema.json",
-  
+
   "globalEnv": ["NODE_ENV"],
-  
-  "pipeline": {
+
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**"],
       "env": ["NEXT_PUBLIC_*"]
     },
-    
+
     "dev": {
       "cache": false,
       "persistent": true
     },
-    
+
     "start": {
       "dependsOn": ["build"],
       "cache": false,
       "persistent": true
     },
-    
+
     "lint": {
       "dependsOn": ["^build"],
       "outputs": []
     },
-    
+
     "test": {
       "dependsOn": ["build"],
       "outputs": ["coverage/**"]
@@ -1232,13 +1283,13 @@ turbo run build
 ```json
 {
   "$schema": "https://turbo.build/schema.json",
-  
+
   "globalDependencies": [
     "tsconfig.json",
     "tsconfig.base.json"
   ],
-  
-  "pipeline": {
+
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": [
@@ -1254,28 +1305,28 @@ turbo run build
         "*.d.ts"
       ]
     },
-    
+
     "dev": {
       "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },
-    
+
     "test": {
       "dependsOn": ["build"],
       "inputs": ["src/**", "vitest.config.ts"],
       "outputs": ["coverage/**"]
     },
-    
+
     "lint": {
       "inputs": ["src/**", ".eslintrc.js"]
     },
-    
+
     "type-check": {
       "dependsOn": ["^build"],
       "inputs": ["src/**", "tsconfig.json"]
     },
-    
+
     "prepublishOnly": {
       "dependsOn": ["build", "test", "lint"],
       "cache": false
@@ -1339,16 +1390,16 @@ turbo run build --summarize
 
 ```bash
 # 显示完整输出
-turbo run build --output-mode=full
+turbo run build --output-logs=full
 
 # 只显示错误
-turbo run build --output-mode=errors-only
+turbo run build --output-logs=errors-only
 
 # 只显示哈希
-turbo run build --output-mode=hash-only
+turbo run build --output-logs=hash-only
 
 # 静默模式
-turbo run build --output-mode=none
+turbo run build --output-logs=none
 ```
 
 ### 3.5 并行控制
@@ -1430,7 +1481,7 @@ turbo run build --summarize
 
 # 3. 检查 outputs 配置
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "outputs": ["dist/**"]  // 确保路径正确
     }
@@ -1439,7 +1490,7 @@ turbo run build --summarize
 
 # 4. 检查环境变量
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "env": ["NODE_ENV"],  // 确保包含影响构建的环境变量
       "outputs": ["dist/**"]
@@ -1453,7 +1504,7 @@ turbo run build --summarize
 ```json
 // ❌ 原因 1：outputs 路径错误
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "outputs": ["build/**"]  // 实际输出在 dist/
     }
@@ -1462,7 +1513,7 @@ turbo run build --summarize
 
 // ✅ 修复
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "outputs": ["dist/**"]
     }
@@ -1471,7 +1522,7 @@ turbo run build --summarize
 
 // ❌ 原因 2：缺少环境变量配置
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "outputs": ["dist/**"]
       // 缺少 env: ["NODE_ENV"]
@@ -1481,7 +1532,7 @@ turbo run build --summarize
 
 // ✅ 修复
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "env": ["NODE_ENV"],
       "outputs": ["dist/**"]
@@ -1491,7 +1542,7 @@ turbo run build --summarize
 
 // ❌ 原因 3：inputs 太宽泛
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "inputs": ["**/*"],  // 包含所有文件，包括 README、测试等
       "outputs": ["dist/**"]
@@ -1501,7 +1552,7 @@ turbo run build --summarize
 
 // ✅ 修复
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "inputs": [
         "src/**",
@@ -1533,7 +1584,7 @@ Error: Cannot find module '@my-monorepo/shared'
 ```json
 // ❌ 错误：缺少 dependsOn
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "outputs": ["dist/**"]
       // 没有 dependsOn
@@ -1545,7 +1596,7 @@ Error: Cannot find module '@my-monorepo/shared'
 
 // ✅ 正确：添加 dependsOn
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],  // 先构建依赖的包
       "outputs": ["dist/**"]
@@ -1587,7 +1638,7 @@ turbo run dev --filter=@my-monorepo/admin
 
 // 方案 3：配置 persistent
 {
-  "pipeline": {
+  "tasks": {
     "dev": {
       "cache": false,
       "persistent": true  // 允许多个持续运行的任务
@@ -1605,7 +1656,7 @@ turbo run dev --filter=@my-monorepo/admin
 ```json
 // ❌ 错误：未配置 env
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "outputs": ["dist/**"]
     }
@@ -1617,7 +1668,7 @@ NODE_ENV=production turbo run build
 
 // ✅ 正确：配置 env
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "env": ["NODE_ENV"],
       "outputs": ["dist/**"]
@@ -1630,7 +1681,7 @@ NODE_ENV=production turbo run build
 
 // ✅ Vite/Next.js 项目
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "env": ["VITE_*", "NEXT_PUBLIC_*"],  // 使用通配符
       "outputs": ["dist/**"]
@@ -1733,7 +1784,7 @@ GitHub Repository → Settings → Secrets
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "outputs": [
         "dist/**",
@@ -1751,7 +1802,7 @@ GitHub Repository → Settings → Secrets
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "inputs": [
         "src/**/*.{ts,tsx}",
@@ -1769,7 +1820,7 @@ GitHub Repository → Settings → Secrets
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"]  // 先构建依赖
     },
@@ -1787,11 +1838,11 @@ GitHub Repository → Settings → Secrets
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "dev": {
-      "cache": false,      // 不缓存
-      "persistent": true,  // 持续运行
-      "outputMode": "full" // 显示完整输出
+      "cache": false,        // 不缓存
+      "persistent": true,    // 持续运行
+      "outputLogs": "full"   // 显示完整输出
     }
   }
 }
@@ -1802,7 +1853,7 @@ GitHub Repository → Settings → Secrets
 ```json
 {
   "globalEnv": ["NODE_ENV", "CI"],
-  "pipeline": {
+  "tasks": {
     "build": {
       "env": [
         "VITE_*",         // Vite 环境变量
@@ -1818,7 +1869,7 @@ GitHub Repository → Settings → Secrets
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "inputs": [
         "src/**",
@@ -1838,7 +1889,7 @@ GitHub Repository → Settings → Secrets
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": [
@@ -1872,12 +1923,12 @@ turbo run build --concurrency=$(nproc)
 
 ```json
 {
-  "pipeline": {
+  "tasks": {
     "build": {
-      "outputMode": "errors-only"  // CI 环境只显示错误
+      "outputLogs": "errors-only"  // CI 环境只显示错误
     },
     "dev": {
-      "outputMode": "full"  // 开发环境显示完整输出
+      "outputLogs": "full"  // 开发环境显示完整输出
     }
   }
 }
@@ -1934,7 +1985,7 @@ turbo run build --concurrency=$(nproc)
 ```json
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
@@ -1949,7 +2000,7 @@ turbo run build --concurrency=$(nproc)
 {
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": ["NODE_ENV"],
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"],
