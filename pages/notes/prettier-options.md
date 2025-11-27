@@ -28,6 +28,36 @@ npm install --save-dev prettier
 echo {}> .prettierrc.json
 ```
 
+:::tip 版本说明
+本文档基于 **Prettier 3.x** 编写，包含最新的配置选项和最佳实践。
+
+**Prettier 2.x vs 3.x 主要区别**：
+- ✅ **Prettier 3.x**（推荐新项目）：
+  - 默认 `endOfLine` 改为 `"lf"`（统一换行符）
+  - 默认 `arrowParens` 改为 `"always"`（箭头函数始终添加括号）
+  - 性能优化，格式化速度提升 10-20%
+  - 更好的配置文件解析和缓存机制
+  - 支持更多语言和框架（如 Vue 3.3+、TypeScript 5+）
+  - 移除了一些已废弃的选项
+- ⚠️ **Prettier 2.x**（仍然广泛使用）：
+  - `endOfLine` 默认为 `"auto"`（保持原有换行符）
+  - `arrowParens` 默认为 `"avoid"`（单参数省略括号）
+  - 广泛用于现有项目中，稳定可靠
+
+**主要版本更新时间线**：
+- **Prettier 3.0**（2023-07-05）：重大性能改进和默认值变更
+- **Prettier 2.0**（2020-03-21）：引入新的 CLI 和配置系统
+- **Prettier 1.x**（已停止维护）：早期版本
+:::
+
+:::warning 注意事项
+- 本文档主要适用于 Prettier 3.x，但大部分配置与 2.x 兼容
+- Prettier 的配置选项相对稳定，版本间变化较小
+- 建议新项目使用 Prettier 3.x 以获得更好的性能
+- 升级到 Prettier 3.x 时，注意检查 `endOfLine` 和 `arrowParens` 的默认值变化
+- 配置选项会随 Prettier 版本更新而变化，建议参考 [官方文档](https://prettier.io/docs/)
+:::
+
 ## 配置文件
 
 Prettier 支持多种配置文件格式：
@@ -597,7 +627,41 @@ const text2 = 'He said "Hello"';       // 包含双引号，使用单引号
 - HTML 属性：始终使用双引号（Prettier 自动处理）
 - JSON：始终使用双引号（规范要求）
 
-### 1.6 quoteProps
+### 1.6 jsxSingleQuote
+
+**作用**：在 JSX 中使用单引号而不是双引号。
+
+```json
+{
+  "jsxSingleQuote": false
+}
+```
+
+**默认值**：`false`（双引号）
+
+**影响对比**：
+
+```jsx
+// jsxSingleQuote: false（默认）
+<div className="container">
+  <Button type="primary" onClick={handleClick}>
+    Click me
+  </Button>
+</div>
+
+// jsxSingleQuote: true
+<div className='container'>
+  <Button type='primary' onClick={handleClick}>
+    Click me
+  </Button>
+</div>
+```
+
+**使用建议**：
+- 推荐：`false`（JSX 中使用双引号是社区惯例）
+- 注意：此选项独立于 `singleQuote`，只影响 JSX 属性
+
+### 1.7 quoteProps
 
 **作用**：对象属性的引号使用规则。
 
@@ -643,7 +707,7 @@ const obj = {
 - 推荐：`as-needed`（简洁）
 - 严格一致性：`consistent`
 
-### 1.7 trailingComma
+### 1.8 trailingComma
 
 **作用**：在多行结构中是否添加尾随逗号。
 
@@ -654,9 +718,9 @@ const obj = {
 ```
 
 **可选值**：
-- `es5`（默认）：在 ES5 中有效的地方添加（对象、数组）
+- `all`（默认，Prettier 3.x）：尽可能添加（包括函数参数）
+- `es5`（Prettier 2.x 默认）：在 ES5 中有效的地方添加（对象、数组）
 - `none`：不添加尾随逗号
-- `all`：尽可能添加（包括函数参数）
 
 **影响对比**：
 
@@ -737,7 +801,7 @@ const user = {
 - 兼容老浏览器：`es5`
 - 不喜欢尾随逗号：`none`
 
-### 1.8 bracketSpacing
+### 1.9 bracketSpacing
 
 **作用**：对象字面量的括号之间是否添加空格。
 
@@ -765,7 +829,7 @@ import {useState, useEffect} from 'react';
 - 推荐：`true`（更易阅读）
 - 紧凑风格：`false`
 
-### 1.9 bracketSameLine
+### 1.10 bracketSameLine
 
 **作用**：在 JSX 中，将 `>` 放在最后一行的末尾，而不是单独一行。
 
@@ -776,6 +840,10 @@ import {useState, useEffect} from 'react';
 ```
 
 **默认值**：`false`
+
+:::tip 选项重命名
+此选项在 Prettier 2.4.0 中引入，替代了已废弃的 `jsxBracketSameLine` 选项。如果你的项目使用 Prettier 2.3 或更早版本，请使用 `jsxBracketSameLine` 代替。
+:::
 
 **影响对比**：
 
@@ -809,7 +877,7 @@ import {useState, useEffect} from 'react';
 - React/Vue 推荐：`false`（更清晰）
 - 紧凑风格：`true`
 
-### 1.10 arrowParens
+### 1.11 arrowParens
 
 **作用**：箭头函数参数是否始终添加括号。
 
@@ -820,8 +888,8 @@ import {useState, useEffect} from 'react';
 ```
 
 **可选值**：
-- `always`（默认）：始终添加括号
-- `avoid`：尽可能省略括号
+- `always`（默认，Prettier 3.x）：始终添加括号
+- `avoid`（Prettier 2.x 默认）：尽可能省略括号
 
 **影响对比**：
 
@@ -1024,10 +1092,10 @@ export default {
 ```
 
 **可选值**：
-- `lf`（默认）：Unix/Linux 换行符 `\n`
+- `lf`（默认，Prettier 3.x）：Unix/Linux 换行符 `\n`
 - `crlf`：Windows 换行符 `\r\n`
 - `cr`：旧 Mac 换行符 `\r`
-- `auto`：保持现有换行符
+- `auto`（Prettier 2.x 默认）：保持现有换行符
 
 **影响对比**：
 
@@ -1124,7 +1192,7 @@ function greet(name){console.log(`Hello ${name}`);}
   "semi": true,
   "singleQuote": true,
   "quoteProps": "as-needed",
-  "trailingComma": "es5",
+  "trailingComma": "all",
   "bracketSpacing": true,
   "arrowParens": "always",
   "endOfLine": "lf"
@@ -1161,7 +1229,7 @@ function greet(name){console.log(`Hello ${name}`);}
   "semi": true,
   "singleQuote": true,
   "quoteProps": "as-needed",
-  "trailingComma": "es5",
+  "trailingComma": "all",
   "bracketSpacing": true,
   "arrowParens": "always",
   "endOfLine": "lf",
@@ -1178,7 +1246,7 @@ function greet(name){console.log(`Hello ${name}`);}
   "tabWidth": 2,
   "semi": true,
   "singleQuote": true,
-  "trailingComma": "es5",
+  "trailingComma": "all",
   "overrides": [
     {
       "files": "*.json",
@@ -1502,8 +1570,8 @@ function test() { return 'not formatted'; }
 1. **printWidth**: `80` 或 `100` - 根据团队屏幕选择
 2. **semi**: `true` - 避免 ASI 陷阱
 3. **singleQuote**: `true` - JavaScript 社区主流
-4. **trailingComma**: `es5` 或 `all` - 更好的 Git diff
-5. **endOfLine**: `lf` - 跨平台一致性
+4. **trailingComma**: `all` - 更好的 Git diff（Prettier 3.x 默认）
+5. **endOfLine**: `lf` - 跨平台一致性（Prettier 3.x 默认）
 
 ### 推荐工作流
 
