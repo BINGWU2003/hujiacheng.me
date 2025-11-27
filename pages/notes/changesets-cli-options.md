@@ -254,7 +254,7 @@ npx changeset publish
   "changelog": "@changesets/cli/changelog"
 }
 
-// 使用 GitHub
+// 使用 GitHub（推荐开源项目）
 {
   "changelog": [
     "@changesets/changelog-github",
@@ -264,7 +264,12 @@ npx changeset publish
 
 // 自定义生成器
 {
-  "changelog": "./my-changelog-generator.js"
+  "changelog": "./my-changelog-config.js"
+}
+
+// 带选项的自定义生成器
+{
+  "changelog": ["./my-changelog-config.js", { "repo": "myorg/myrepo" }]
 }
 
 // 不生成 changelog
@@ -290,6 +295,58 @@ npx changeset publish
 （不生成 CHANGELOG.md）
 ```
 
+**自定义 Changelog 生成器**：
+
+```javascript
+// my-changelog-config.js
+const { getInfo } = require("@changesets/get-github-info");
+
+async function getReleaseLine(changeset, type, options) {
+  const [firstLine, ...futureLines] = changeset.summary
+    .split("\n")
+    .map(l => l.trimEnd());
+
+  let returnVal = `- ${
+    changeset.commit
+      ? `[\`${changeset.commit}\`](${options.repo}/commit/${changeset.commit})`
+      : ""
+  } ${firstLine}`;
+
+  if (futureLines.length > 0) {
+    returnVal += `\n${futureLines.map(l => `  ${l}`).join("\n")}`;
+  }
+
+  return returnVal;
+}
+
+async function getDependencyReleaseLine(changesets, dependenciesUpdated, options) {
+  if (dependenciesUpdated.length === 0) return "";
+
+  const changesetLinks = changesets.map(
+    changeset => `- Updated dependencies [${changeset.commit?.slice(0, 7)}]`
+  );
+
+  const updatedDependenciesList = dependenciesUpdated.map(
+    dependency => `  - ${dependency.name}@${dependency.newVersion}`
+  );
+
+  return [...changesetLinks, ...updatedDependenciesList].join("\n");
+}
+
+module.exports = {
+  getReleaseLine,
+  getDependencyReleaseLine
+};
+```
+
+**使用自定义生成器**：
+
+```json
+{
+  "changelog": ["./my-changelog-config.js", { "repo": "myorg/myrepo" }]
+}
+```
+
 ### 1.2 commit（自动提交）
 
 **作用**：版本更新后是否自动提交。
@@ -311,12 +368,12 @@ npx changeset publish
 
 // 自定义提交信息生成器
 {
-  "commit": "./my-commit-message.js"
+  "commit": "../scripts/commit.js"
 }
 
 // 带选项的自定义生成器
 {
-  "commit": ["./my-commit-message.js", { "skipCI": true }]
+  "commit": ["../scripts/commit.js", { "customOption": true }]
 }
 ```
 
@@ -341,6 +398,38 @@ npx changeset version
 npx changeset version
 # ✓ 版本更新完成
 # ✓ 自动提交，不跳过 CI
+```
+
+**自定义提交信息生成器**：
+
+```javascript
+// scripts/commit.js
+async function getAddMessage(changeset, options) {
+  // changeset 添加时的提交信息
+  return `docs: add changeset for ${changeset.summary}`;
+}
+
+async function getVersionMessage(releasePlan, options) {
+  // version 更新时的提交信息
+  const releases = releasePlan.releases
+    .map(r => `${r.name}@${r.newVersion}`)
+    .join(", ");
+
+  return `chore: release ${releases}`;
+}
+
+module.exports = {
+  getAddMessage,
+  getVersionMessage
+};
+```
+
+**使用自定义生成器**：
+
+```json
+{
+  "commit": ["../scripts/commit.js", { "skipCI": true }]
+}
 ```
 
 ### 1.3 access（发布权限）
@@ -712,10 +801,17 @@ npx changeset init
 npx changeset
 npx changeset add  # 同上
 
+# 添加空 changeset（不包含任何包变更）
+npx changeset --empty
+
+# 添加 changeset 并在编辑器中打开
+npx changeset --open
+
 # 查看状态
 npx changeset status
 npx changeset status --verbose  # 详细信息
 npx changeset status --since main  # 自指定分支以来的变更
+npx changeset status --output status.json  # 输出为 JSON 文件
 ```
 
 ### 3.2 版本管理
@@ -724,13 +820,18 @@ npx changeset status --since main  # 自指定分支以来的变更
 # 更新版本
 npx changeset version
 
+# 忽略特定包（跳过不发布）
+npx changeset version --ignore package-name
+npx changeset version --ignore @my-org/package-a --ignore @my-org/package-b
+
+# Snapshot 模式（测试版本更新，不修改 semver 范围）
+npx changeset version --snapshot
+npx changeset version --snapshot canary  # 生成 1.0.0-canary-20240101120000
+
 # 预发布版本
 npx changeset pre enter alpha
 npx changeset version
 npx changeset pre exit
-
-# 查看将要发布的版本
-npx changeset version --dry-run
 ```
 
 ### 3.3 发布
@@ -739,18 +840,23 @@ npx changeset version --dry-run
 # 发布到 npm
 npx changeset publish
 
-# 发布并打 tag
-npx changeset publish --tag next
+# 使用一次性密码（OTP）发布（如果启用了 2FA）
+npx changeset publish --otp=123456
 
-# 只打 tag，不发布
+# 发布到指定 tag（默认是 latest）
+npx changeset publish --tag next
+npx changeset publish --tag beta
+npx changeset publish --tag canary
+
+# 只打 git tag，不发布到 npm
 npx changeset tag
 ```
 
-### 3.4 预发布
+### 3.4 预发布（Pre-release）
 
 ```bash
 # 1. 进入预发布模式
-npx changeset pre enter alpha
+npx changeset pre enter alpha   # 或 beta、rc 等
 
 # 2. 添加 changeset
 npx changeset
@@ -760,13 +866,52 @@ npx changeset version
 # 1.0.0 → 1.1.0-alpha.0
 
 # 4. 发布
-npx changeset publish
+npx changeset publish --tag alpha
 
 # 5. 退出预发布模式
 npx changeset pre exit
+
+# 完整示例
+npx changeset pre enter beta
+npx changeset
+npx changeset version  # 生成 1.1.0-beta.0
+npx changeset publish --tag beta
+npx changeset pre exit
 ```
 
-### 3.5 配置 package.json
+### 3.5 Snapshot 版本（测试版本）
+
+**作用**：生成临时测试版本，不影响正式版本号。
+
+```bash
+# 生成 snapshot 版本
+npx changeset version --snapshot
+
+# 带标签的 snapshot
+npx changeset version --snapshot canary
+# 生成版本号：1.0.0-canary-20240101120000
+
+# 发布 snapshot 版本
+npx changeset publish --tag canary
+
+# 使用场景
+# 1. PR 预览构建
+# 2. 快速测试
+# 3. CI/CD 临时版本
+```
+
+**Snapshot vs Pre-release**：
+
+| 特性 | Snapshot | Pre-release |
+|------|----------|-------------|
+| **版本号** | `1.0.0-canary-20240101` | `1.0.0-alpha.0` |
+| **时间戳** | ✅ 包含时间戳 | ❌ 无时间戳 |
+| **状态持久** | ❌ 一次性 | ✅ 持续状态 |
+| **使用场景** | 临时测试 | 正式预发布 |
+| **依赖更新** | ⚠️ 不更新 semver | ✅ 正常更新 |
+```
+
+### 3.6 配置 package.json
 
 ```json
 {
