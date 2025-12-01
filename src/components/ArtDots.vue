@@ -26,24 +26,34 @@ const offsetY = window.scrollY
 
 const SCALE = 200
 const LENGTH = 10
-const SPACING = 15
+const TARGET_POINTS = 2000
+const MAX_POINTS = 2600
+const ENABLE_ANIMATION = true
+const FRAME_INTERVAL = 1000 / 12
+let lastFrameTime = 0
+let hasRenderedStatic = false
 
 function getForceOnPoint(x: number, y: number, z: number) {
   // https://p5js.org/reference/#/p5/noise
   return (noise(x / SCALE, y / SCALE, z) - 0.5) * 2 * TWO_PI
 }
 
-const existingPoints = new Set<string>()
 const points: { x: number, y: number, opacity: number }[] = []
 
+function getSpacing() {
+  const estimated = Math.sqrt((w * h) / TARGET_POINTS)
+  return Math.max(18, Math.min(estimated, 45))
+}
+
 function addPoints() {
-  for (let x = -SPACING / 2; x < w + SPACING; x += SPACING) {
-    for (let y = -SPACING / 2; y < h + offsetY + SPACING; y += SPACING) {
-      const id = `${x}-${y}`
-      if (existingPoints.has(id))
-        continue
-      existingPoints.add(id)
+  const spacing = getSpacing()
+  points.length = 0
+
+  for (let x = -spacing / 2; x < w + spacing; x += spacing) {
+    for (let y = -spacing / 2; y < h + spacing; y += spacing) {
       points.push({ x, y, opacity: Math.random() * 0.5 + 0.5 })
+      if (points.length >= MAX_POINTS)
+        return
     }
   }
 }
@@ -60,8 +70,20 @@ function setup() {
 }
 
 function draw({ circle }: P5I) {
+  if (!ENABLE_ANIMATION) {
+    if (hasRenderedStatic)
+      return
+    hasRenderedStatic = true
+  }
+  else {
+    const now = performance.now()
+    if (now - lastFrameTime < FRAME_INTERVAL)
+      return
+    lastFrameTime = now
+  }
+
   background('#ffffff')
-  const t = +new Date() / 10000
+  const t = ENABLE_ANIMATION ? performance.now() / 10000 : 0
 
   for (const p of points) {
     const { x, y } = p
