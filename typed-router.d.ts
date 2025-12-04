@@ -49,6 +49,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/mcp-site': RouteRecordInfo<'/notes/mcp-site', '/notes/mcp-site', Record<never, never>, Record<never, never>>,
     '/notes/monorepo': RouteRecordInfo<'/notes/monorepo', '/notes/monorepo', Record<never, never>, Record<never, never>>,
     '/notes/monorepo-turborepo': RouteRecordInfo<'/notes/monorepo-turborepo', '/notes/monorepo-turborepo', Record<never, never>, Record<never, never>>,
+    '/notes/nginx-deploy': RouteRecordInfo<'/notes/nginx-deploy', '/notes/nginx-deploy', Record<never, never>, Record<never, never>>,
     '/notes/npmrc-options': RouteRecordInfo<'/notes/npmrc-options', '/notes/npmrc-options', Record<never, never>, Record<never, never>>,
     '/notes/package-json-options': RouteRecordInfo<'/notes/package-json-options', '/notes/package-json-options', Record<never, never>, Record<never, never>>,
     '/notes/picgo-tencent-cos-typora-setup-image-hosting': RouteRecordInfo<'/notes/picgo-tencent-cos-typora-setup-image-hosting', '/notes/picgo-tencent-cos-typora-setup-image-hosting', Record<never, never>, Record<never, never>>,
