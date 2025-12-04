@@ -8,6 +8,20 @@ art: random
 
 [[toc]]
 
+## 项目仓库
+
+本文档基于真实项目编写，完整代码可在 GitHub 上查看：
+
+🔗 **项目地址**: [https://github.com/BINGWU2003/vue-lib](https://github.com/BINGWU2003/vue-lib)
+
+包含：
+- ✅ 完整的 Vite 7.x + Vue 3.5 配置
+- ✅ TypeScript 类型声明生成
+- ✅ Demo 演示应用
+- ✅ 可直接运行的示例代码
+
+---
+
 ## 什么是 Vite 库模式
 
 [Vite](https://vitejs.dev/) 是新一代前端构建工具，提供极快的开发服务器启动和热更新体验。Vite 的**库模式（Library Mode）**专门用于打包可复用的组件库或工具库，而非完整的应用程序。
@@ -29,25 +43,29 @@ npm install --save-dev @vitejs/plugin-vue vue-tsc unplugin-dts @types/node
 ```
 
 :::tip 版本说明
-本文档基于 **Vite 5.x** 编写。Vite 6.x 已经发布，主要改进包括：
+本文档基于 **Vite 7.x** 编写（当前最新稳定版本）。
 
-**Vite 5.x vs 6.x 主要变化**：
+**Vite 版本演进**：
+- **Vite 7.x**（2024年12月发布，本文档）：
+  - 进一步改进的 Environment API
+  - 更好的性能优化
+  - 增强的 SSR 和模块图处理
+  - 默认使用 Rollup 4.x
+  - 完全向后兼容库模式配置
+
 - Vite 6.x（2024年11月发布）：
-  - 新增 Environment API，支持更灵活的环境配置
-  - 改进的 SSR 支持和模块图处理
-  - 更好的性能和稳定性
-  - 默认使用更新的 Rollup 4.x
-- Vite 5.x（本文档）：
-  - 稳定且广泛使用的版本
+  - 引入 Environment API
+  - 改进的 SSR 支持
+
+- Vite 5.x（稳定版本）：
+  - 广泛使用的版本
   - 完整的库模式支持
-  - 丰富的生态系统和插件
-  - 生产环境验证充分
   :::
 
 :::warning 注意事项
-- 本文档适用于使用 Vite 5.x 构建 Vue 3 组件库的项目
-- Vite 6.x 的新特性（如 Environment API）不在本文讨论范围
-- 升级到 Vite 6.x 时需要注意插件兼容性
+- 本文档适用于使用 Vite 7.x 构建 Vue 3 组件库的项目
+- Vite 7.x 的库模式配置与 5.x/6.x 基本兼容
+- 升级时建议查看官方迁移指南
 - 迁移指南：https://vitejs.dev/guide/migration
 :::
 
@@ -293,7 +311,7 @@ export default defineConfig({
   plugins: [
     vue(),
     dts({
-      outDir: 'dist/types',
+      outDirs: 'dist/types',
       entryRoot: 'src',
       include: ['src/**/*.ts', 'src/**/*.vue'],
       cleanVueFileName: true,
@@ -307,14 +325,16 @@ export default defineConfig({
 
 | 选项 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `outDir` | `string` | - | 类型声明文件输出目录 |
-| `entryRoot` | `string` | - | 入口文件根目录 |
-| `include` | `string[]` | - | 需要包含的文件模式 |
-| `exclude` | `string[]` | - | 需要排除的文件模式 |
+| `outDirs` | `string \| string[]` | - | 类型声明文件输出目录，可指定数组输出到多个目录 |
+| `entryRoot` | `string` | - | 入口文件根目录（用于 monorepo） |
+| `include` | `string \| string[]` | - | 需要包含的文件模式 |
+| `exclude` | `string \| string[]` | - | 需要排除的文件模式 |
 | `cleanVueFileName` | `boolean` | `false` | 清理 .vue 文件名后缀 |
 | `insertTypesEntry` | `boolean` | `false` | 自动插入类型入口 |
 | `staticImport` | `boolean` | `false` | 将动态导入转为静态导入 |
-| `declarationOnly` | `boolean` | `true` | 只生成声明文件 |
+| `copyDtsFiles` | `boolean` | `false` | 是否复制源码中的 .d.ts 文件 |
+| `declarationOnly` | `boolean` | `false` | 只生成声明文件，删除所有其他产物 |
+| `bundleTypes` | `boolean \| object` | `false` | 是否将类型声明打包为单个文件 |
 
 ## 三、TypeScript 配置
 
@@ -821,10 +841,11 @@ export default defineConfig({
   plugins: [
     vue(),
     dts({
-      outDir: 'dist/types',
+      outDirs: 'dist/types',          // 注意：官方接口使用 outDirs（复数）
       entryRoot: 'src',
       include: ['src/**/*.ts', 'src/**/*.vue'],
-      cleanVueFileName: true
+      cleanVueFileName: true,
+      copyDtsFiles: false             // 不复制源码中的 .d.ts
     })
   ],
 
@@ -839,7 +860,8 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'MyComponentLib',
       formats: ['es', 'umd'],
-      fileName: (format) => `my-lib.${format}.js`
+      fileName: (format) => `my-lib.${format}.js`,
+      cssFileName: 'index'            // CSS 文件名（不含扩展名）
     },
 
     rollupOptions: {
@@ -849,19 +871,33 @@ export default defineConfig({
           vue: 'Vue'
         },
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name === 'style.css') {
-            return 'index.css'
-          }
-          return assetInfo.name
-        }
+          if (assetInfo.name === 'index.css') return 'index.css'
+          return assetInfo.name || 'assets/[name][extname]'
+        },
+        exports: 'named'                // 使用命名导出
       }
     },
 
     cssCodeSplit: false,
-    sourcemap: true
+    sourcemap: true,
+    outDir: 'dist'
   }
 })
 ```
+
+:::tip 配置说明
+- **unplugin-dts 配置**：
+  - 使用 `outDirs`（复数）根据官方 `CreateRuntimeOptions` 接口
+  - `copyDtsFiles: false` 避免复制不必要的 .d.ts 文件
+
+- **build.lib 配置**：
+  - `cssFileName` 用于指定 CSS 输出名称
+  - Vite 7.x 完全支持该配置
+
+- **rollupOptions.output**：
+  - `exports: 'named'` 使用命名导出模式
+  - `assetFileNames` 自定义资源文件命名
+:::
 
 ### 4.2 多入口配置
 
@@ -909,22 +945,32 @@ export default defineConfig({
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
+    "build": "vite build",
     "type-check": "vue-tsc --noEmit"
   },
   "peerDependencies": {
     "vue": "^3.3.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.0.0",
-    "typescript": "^5.3.0",
-    "unplugin-dts": "^1.3.0",
-    "vite": "^5.0.0",
-    "vue": "^3.3.0",
-    "vue-tsc": "^1.8.0"
+    "@types/node": "^24.0.0",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "typescript": "^5.9.0",
+    "unplugin-dts": "^1.0.0-beta.6",
+    "vite": "^7.0.0",
+    "vue": "^3.5.0",
+    "vue-tsc": "^3.0.0"
   }
 }
 ```
+
+:::tip 版本说明（2025年最新）
+- **Vite**: `^7.0.0` - 最新稳定版本
+- **Vue**: `^3.5.0` - 最新稳定版本
+- **@vitejs/plugin-vue**: `^6.0.0` - 配合 Vite 7.x
+- **unplugin-dts**: `^1.0.0-beta.6` - 支持最新功能
+- **TypeScript**: `^5.9.0` - 最新稳定版本
+- **vue-tsc**: `^3.0.0` - Vue 3 类型检查工具
+:::
 
 ### 5.2 exports 字段说明
 
@@ -953,7 +999,7 @@ export default defineConfig({
         // Vue 生态插件
         /^@vue\//,
 
-        // UI 框架
+        // UI 框架（如果使用）
         'element-plus',
         /^element-plus/
       ]
@@ -962,6 +1008,18 @@ export default defineConfig({
 })
 ```
 
+:::warning 重要提示
+**为什么要外部化依赖**？
+- ✅ 减小打包体积：避免将 Vue 等大型依赖打包进库
+- ✅ 避免重复打包：使用库的项目可能已安装这些依赖
+- ✅ 保持版本灵活：允许使用者选择依赖版本
+
+**必须外部化的依赖**：
+- 所有 `peerDependencies` 中的包
+- 框架类库：`vue`, `react`, `angular` 等
+- 大型 UI 框架：`element-plus`, `ant-design-vue` 等
+:::
+
 ### 6.2 CSS 处理最佳实践
 
 **推荐做法**：
@@ -969,71 +1027,445 @@ export default defineConfig({
 ```typescript
 export default defineConfig({
   build: {
-    cssCodeSplit: false  // 将所有 CSS 合并到一个文件
+    cssCodeSplit: false,  // 将所有 CSS 合并到一个文件
+    lib: {
+      cssFileName: 'index'  // 自定义 CSS 文件名
+    },
+    rollupOptions: {
+      output: {
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name === 'index.css') return 'index.css'
+          return assetInfo.name || 'assets/[name][extname]'
+        }
+      }
+    }
   }
 })
 ```
 
-### 6.3 Tree Shaking 优化
+**在 package.json 中导出 CSS**：
 
 ```json
-// package.json
+{
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/my-lib.es.js",
+      "require": "./dist/my-lib.umd.js"
+    },
+    "./style.css": "./dist/index.css"
+  }
+}
+```
+
+**使用者导入方式**：
+
+```typescript
+// 导入组件
+import { MyButton } from 'my-component-lib'
+
+// 导入样式
+import 'my-component-lib/style.css'
+```
+
+### 6.3 Tree Shaking 优化
+
+**package.json 配置**：
+
+```json
 {
   "sideEffects": [
     "*.css",
-    "*.scss"
+    "*.scss",
+    "*.vue"
   ]
 }
 ```
 
+**src/index.ts - 使用命名导出**：
+
 ```typescript
-// src/index.ts - 使用命名导出
+// ✅ 推荐：命名导出，支持 Tree Shaking
 export { default as MyButton } from './components/MyButton.vue'
 export { default as MyInput } from './components/MyInput.vue'
+
+// ❌ 避免：默认导出整个对象
+// export default {
+//   MyButton,
+//   MyInput
+// }
 ```
 
-## 七、总结
+**使用效果**：
+
+```typescript
+// 只会打包 MyButton，MyInput 会被 Tree Shaking 移除
+import { MyButton } from 'my-component-lib'
+```
+
+### 6.4 常见配置错误
+
+#### 错误 1：unplugin-dts 配置错误
+
+```typescript
+// ❌ 错误：使用了错误的属性名
+dts({
+  outputDir: 'dist/types'  // 错误！应该是 outDirs
+})
+
+// ✅ 正确：outDirs（根据官方 CreateRuntimeOptions 接口）
+dts({
+  outDirs: 'dist/types'
+})
+```
+
+#### 错误 2：忘记外部化 Vue
+
+```typescript
+// ❌ 错误：未外部化 vue
+export default defineConfig({
+  build: {
+    lib: { /* ... */ }
+    // 缺少 rollupOptions.external
+  }
+})
+
+// ✅ 正确：外部化 vue
+export default defineConfig({
+  build: {
+    lib: { /* ... */ },
+    rollupOptions: {
+      external: ['vue']
+    }
+  }
+})
+```
+
+#### 错误 3：package.json 缺少 types 字段
+
+```json
+// ❌ 错误：缺少 types
+{
+  "main": "./dist/my-lib.umd.js",
+  "module": "./dist/my-lib.es.js"
+}
+
+// ✅ 正确：包含 types
+{
+  "main": "./dist/my-lib.umd.js",
+  "module": "./dist/my-lib.es.js",
+  "types": "./dist/types/index.d.ts"
+}
+```
+
+## 七、真实项目完整配置（基于当前项目）
+
+本节展示一个真实可用的 Vue 3 组件库配置，基于当前项目实践。
+
+### 7.1 项目结构
+
+```
+vue-lib/
+├── src/
+│   ├── button/
+│   │   ├── button.vue
+│   │   ├── type.ts
+│   │   └── index.ts
+│   ├── input/
+│   │   ├── input.vue
+│   │   ├── type.ts
+│   │   └── index.ts
+│   ├── index.ts           # 主入口
+│   └── env.d.ts           # 类型声明
+├── demo/                  # 演示应用
+│   ├── src/
+│   └── package.json
+├── vite.config.ts
+├── tsconfig.json
+├── package.json
+└── README.md
+```
+
+### 7.2 vite.config.ts（当前项目配置）
+
+```typescript
+// vite.config.ts
+import { defineConfig } from 'vite'
+import { resolve } from 'path'
+import vue from '@vitejs/plugin-vue'
+import dts from 'unplugin-dts/vite'
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    dts({
+      outDirs: 'dist/types',
+      entryRoot: 'src',
+      include: ['src/**/*.ts', 'src/**/*.vue'],
+      cleanVueFileName: true,
+      copyDtsFiles: false
+    })
+  ],
+
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src')
+    }
+  },
+
+  build: {
+    lib: {
+      entry: resolve(__dirname, 'src/index.ts'),
+      name: 'MyComponentLib',
+      formats: ['es', 'umd'],
+      fileName: (format) => `my-lib.${format}.js`,
+      cssFileName: 'index'
+    },
+
+    rollupOptions: {
+      external: ['vue', 'element-plus'],
+      output: {
+        globals: {
+          vue: 'Vue',
+          'element-plus': 'ElementPlus'
+        },
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name === 'index.css') return 'index.css'
+          return assetInfo.name || 'assets/[name][extname]'
+        },
+        exports: 'named'
+      }
+    },
+
+    cssCodeSplit: false,
+    sourcemap: true,
+    outDir: 'dist'
+  }
+})
+```
+
+### 7.3 package.json（当前项目配置）
+
+```json
+{
+  "name": "vue-lib",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "My Vue 3 Component Library",
+  "main": "./dist/my-lib.umd.js",
+  "module": "./dist/my-lib.es.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/my-lib.es.js",
+      "require": "./dist/my-lib.umd.js"
+    },
+    "./style.css": "./dist/index.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "type-check": "vue-tsc --noEmit",
+    "demo": "cd demo && pnpm dev",
+    "demo:install": "cd demo && pnpm install"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0",
+    "element-plus": "^2.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@vitejs/plugin-vue": "^6.0.2",
+    "typescript": "^5.9.3",
+    "unplugin-dts": "^1.0.0-beta.6",
+    "vite": "^7.2.6",
+    "vue": "^3.5.25",
+    "vue-tsc": "^3.1.5",
+    "element-plus": "^2.10.0"
+  }
+}
+```
+
+### 7.4 tsconfig.json（当前项目配置）
+
+```json
+{
+  "compilerOptions": {
+    // 模块系统（仅影响类型检查）
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "moduleResolution": "bundler",
+
+    // 严格模式（推荐全部启用）
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // 路径别名
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
+    // 模块解析
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // 其他
+    "skipLibCheck": true,
+    "isolatedModules": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
+}
+```
+
+### 7.5 src/index.ts（入口文件）
+
+```typescript
+// src/index.ts
+export * from "./button"
+export * from "./input"
+```
+
+### 7.6 构建输出
+
+执行 `npm run build` 后的输出结构：
+
+```
+dist/
+├── types/
+│   ├── button/
+│   │   ├── type.d.ts
+│   │   └── index.d.ts
+│   ├── input/
+│   │   ├── type.d.ts
+│   │   └── index.d.ts
+│   └── index.d.ts
+├── my-lib.es.js          # ES Module 格式
+├── my-lib.es.js.map      # Source Map
+├── my-lib.umd.js         # UMD 格式
+├── my-lib.umd.js.map     # Source Map
+└── index.css             # 样式文件
+```
+
+## 八、总结
 
 ### 必须配置的选项
 
 1. **build.lib** - 启用库模式并配置入口
-2. **build.rollupOptions.external** - 外部化依赖
-3. **plugins** - Vue 插件和类型声明生成
-4. **package.json exports** - 正确的导出配置
+2. **build.rollupOptions.external** - 外部化依赖（避免打包 Vue 等）
+3. **plugins** - Vue 插件和类型声明生成（unplugin-dts）
+4. **package.json exports** - 正确的导出配置（支持 ESM/CJS）
 
 ### 推荐工作流
 
-1. 使用 TypeScript + Vue 3
-2. 配置 unplugin-dts 生成类型声明
-3. 外部化 Vue 和主要依赖
-4. 提供 ES Module 和 UMD 格式
-5. 配置正确的 package.json
-6. 启用 Tree Shaking 支持
+1. ✅ 使用 **Vite 7.x + TypeScript + Vue 3.5**
+2. ✅ 配置 **unplugin-dts** 生成类型声明
+3. ✅ 外部化 Vue 和主要依赖（通过 `external`）
+4. ✅ 提供 **ES Module 和 UMD** 格式
+5. ✅ 配置正确的 **package.json exports** 字段
+6. ✅ 启用 **Tree Shaking** 支持（命名导出 + sideEffects）
+7. ✅ 使用 **demo 应用**测试组件库
 
 ### 常用命令
 
 ```bash
-# 开发模式
+# 开发模式（开发组件）
 npm run dev
 
 # 类型检查
 npm run type-check
 
-# 构建
+# 构建库
 npm run build
 
-# 发布
+# 运行演示应用
+npm run demo
+
+# 发布到 npm
 npm publish
 ```
 
-## 八、参考资源
+### 版本兼容性（2025年推荐）
 
-- [Vite 官方文档](https://vitejs.dev/)
-- [Vite 库模式](https://vitejs.dev/guide/build.html#library-mode)
-- [Vite 配置参考](https://vitejs.dev/config/)
-- [@vitejs/plugin-vue](https://github.com/vitejs/vite-plugin-vue/tree/main/packages/plugin-vue)
-- [unplugin-dts](https://github.com/qmhc/unplugin-dts)
-- [Vue 3 官方文档](https://vuejs.org/)
-- [TypeScript 官方文档](https://www.typescriptlang.org/)
-- [Rollup 配置选项](https://rollupjs.org/configuration-options/)
+| 依赖 | 推荐版本 | 说明 |
+|------|---------|------|
+| Vite | `^7.0.0` | 最新稳定版本，性能最优 |
+| Vue | `^3.5.0` | 最新 Vue 3 版本 |
+| @vitejs/plugin-vue | `^6.0.0` | 配合 Vite 7.x |
+| unplugin-dts | `^1.0.0-beta.6` | 最新类型生成插件 |
+| TypeScript | `^5.9.0` | 最新 TS 稳定版 |
+| vue-tsc | `^3.0.0` | Vue 类型检查工具 |
+
+### 核心配置要点
+
+1. **unplugin-dts 配置**：
+   - 使用 `outDirs`（复数，根据官方 `CreateRuntimeOptions` 接口）
+   - 设置 `copyDtsFiles: false` 避免复制不必要文件
+   - 支持数组形式输出到多个目录：`outDirs: ['dist/types', 'lib/types']`
+
+2. **Vite build 配置**：
+   - `cssFileName` 指定 CSS 输出名称
+   - `cssCodeSplit: false` 合并所有 CSS
+   - `sourcemap: true` 生成 Source Map
+
+3. **Rollup 配置**：
+   - `external` 外部化所有 peer dependencies
+   - `exports: 'named'` 使用命名导出模式
+   - `globals` 为 UMD 格式提供全局变量映射
+
+## 九、参考资源
+
+### 官方文档
+
+- [Vite 官方文档](https://vitejs.dev/) - Vite 完整文档
+- [Vite 库模式指南](https://vitejs.dev/guide/build.html#library-mode) - 库模式详细说明
+- [Vite 配置参考](https://vitejs.dev/config/) - 完整配置选项
+- [Vue 3 官方文档](https://vuejs.org/) - Vue 3 框架文档
+- [TypeScript 官方文档](https://www.typescriptlang.org/) - TypeScript 语言文档
+
+### 插件和工具
+
+- [@vitejs/plugin-vue](https://github.com/vitejs/vite-plugin-vue/tree/main/packages/plugin-vue) - Vue SFC 支持
+- [unplugin-dts](https://github.com/qmhc/unplugin-dts) - TypeScript 类型声明生成
+- [vue-tsc](https://github.com/vuejs/language-tools/tree/master/packages/tsc) - Vue 类型检查工具
+- [Rollup 配置选项](https://rollupjs.org/configuration-options/) - Rollup 打包配置
+
+### 相关资源
+
+- [Vite 插件开发指南](https://vitejs.dev/guide/api-plugin.html)
+- [npm package.json 字段说明](https://docs.npmjs.com/cli/v10/configuring-npm/package-json)
+- [Node.js ESM 支持](https://nodejs.org/api/esm.html)
+
+### 本文档更新
+
+- **更新日期**：2025-12-04
+- **基于版本**：Vite 7.x, Vue 3.5, TypeScript 5.9
+- **文档状态**：✅ 已更新至最新版本
+- **项目地址**：[https://github.com/BINGWU2003/vue-lib](https://github.com/BINGWU2003/vue-lib)
+
+---
+
+**总结**：本文档提供了完整的 Vue 3 + TypeScript 组件库 Vite 打包配置指南，涵盖从基础配置到真实项目实践的所有内容。通过遵循本文档的最佳实践，你可以快速构建一个现代化、高性能的 Vue 组件库。
+
+**完整示例代码**：所有配置和代码示例均可在 [GitHub 仓库](https://github.com/BINGWU2003/vue-lib) 中查看和运行。
 

@@ -76,7 +76,6 @@ declare module 'vue-router/auto-routes' {
     '/posts/code-style-standard': RouteRecordInfo<'/posts/code-style-standard', '/posts/code-style-standard', Record<never, never>, Record<never, never>>,
     '/posts/code-style-standard-new': RouteRecordInfo<'/posts/code-style-standard-new', '/posts/code-style-standard-new', Record<never, never>, Record<never, never>>,
     '/posts/component-dev-environment': RouteRecordInfo<'/posts/component-dev-environment', '/posts/component-dev-environment', Record<never, never>, Record<never, never>>,
-    '/posts/component-library-packaging': RouteRecordInfo<'/posts/component-library-packaging', '/posts/component-library-packaging', Record<never, never>, Record<never, never>>,
     '/posts/css-block': RouteRecordInfo<'/posts/css-block', '/posts/css-block', Record<never, never>, Record<never, never>>,
     '/posts/css-effects': RouteRecordInfo<'/posts/css-effects', '/posts/css-effects', Record<never, never>, Record<never, never>>,
     '/posts/custom-block-and-code': RouteRecordInfo<'/posts/custom-block-and-code', '/posts/custom-block-and-code', Record<never, never>, Record<never, never>>,
