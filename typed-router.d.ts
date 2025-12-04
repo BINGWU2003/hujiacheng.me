@@ -67,6 +67,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/vue-3-vite-sentry-monitoring-configuration-guide': RouteRecordInfo<'/notes/vue-3-vite-sentry-monitoring-configuration-guide', '/notes/vue-3-vite-sentry-monitoring-configuration-guide', Record<never, never>, Record<never, never>>,
     '/notes/vue-common-apis': RouteRecordInfo<'/notes/vue-common-apis', '/notes/vue-common-apis', Record<never, never>, Record<never, never>>,
     '/notes/vue-design-and-implementation': RouteRecordInfo<'/notes/vue-design-and-implementation', '/notes/vue-design-and-implementation', Record<never, never>, Record<never, never>>,
+    '/notes/vue3-ts-components-vite-build': RouteRecordInfo<'/notes/vue3-ts-components-vite-build', '/notes/vue3-ts-components-vite-build', Record<never, never>, Record<never, never>>,
     '/posts/': RouteRecordInfo<'/posts/', '/posts', Record<never, never>, Record<never, never>>,
     '/posts/blog-migration': RouteRecordInfo<'/posts/blog-migration', '/posts/blog-migration', Record<never, never>, Record<never, never>>,
     '/posts/browser-rendering-principles': RouteRecordInfo<'/posts/browser-rendering-principles', '/posts/browser-rendering-principles', Record<never, never>, Record<never, never>>,
