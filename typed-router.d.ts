@@ -45,6 +45,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/event-loop': RouteRecordInfo<'/notes/event-loop', '/notes/event-loop', Record<never, never>, Record<never, never>>,
     '/notes/git': RouteRecordInfo<'/notes/git', '/notes/git', Record<never, never>, Record<never, never>>,
     '/notes/git-tortoisegit': RouteRecordInfo<'/notes/git-tortoisegit', '/notes/git-tortoisegit', Record<never, never>, Record<never, never>>,
+    '/notes/gitignore-options': RouteRecordInfo<'/notes/gitignore-options', '/notes/gitignore-options', Record<never, never>, Record<never, never>>,
     '/notes/mcp-config': RouteRecordInfo<'/notes/mcp-config', '/notes/mcp-config', Record<never, never>, Record<never, never>>,
     '/notes/mcp-site': RouteRecordInfo<'/notes/mcp-site', '/notes/mcp-site', Record<never, never>, Record<never, never>>,
     '/notes/monorepo': RouteRecordInfo<'/notes/monorepo', '/notes/monorepo', Record<never, never>, Record<never, never>>,
