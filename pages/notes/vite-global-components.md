@@ -1,6 +1,6 @@
 ---
 title: Vue 3 + TypeScript 全局组件类型声明指南
-date: 2025-12-10
+date: 2025-12-09
 duration: 15min
 type: notes
 art: plum

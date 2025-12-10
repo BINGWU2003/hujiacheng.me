@@ -64,6 +64,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/turborepo-options': RouteRecordInfo<'/notes/turborepo-options', '/notes/turborepo-options', Record<never, never>, Record<never, never>>,
     '/notes/uniapp-intranet-traversal': RouteRecordInfo<'/notes/uniapp-intranet-traversal', '/notes/uniapp-intranet-traversal', Record<never, never>, Record<never, never>>,
     '/notes/uniapp-system-info': RouteRecordInfo<'/notes/uniapp-system-info', '/notes/uniapp-system-info', Record<never, never>, Record<never, never>>,
+    '/notes/vite-chunk-guide': RouteRecordInfo<'/notes/vite-chunk-guide', '/notes/vite-chunk-guide', Record<never, never>, Record<never, never>>,
     '/notes/vite-global-components': RouteRecordInfo<'/notes/vite-global-components', '/notes/vite-global-components', Record<never, never>, Record<never, never>>,
     '/notes/vite-options': RouteRecordInfo<'/notes/vite-options', '/notes/vite-options', Record<never, never>, Record<never, never>>,
     '/notes/vue-3-vite-sentry-monitoring-configuration-guide': RouteRecordInfo<'/notes/vue-3-vite-sentry-monitoring-configuration-guide', '/notes/vue-3-vite-sentry-monitoring-configuration-guide', Record<never, never>, Record<never, never>>,
