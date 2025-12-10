@@ -67,6 +67,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/vite-chunk-guide': RouteRecordInfo<'/notes/vite-chunk-guide', '/notes/vite-chunk-guide', Record<never, never>, Record<never, never>>,
     '/notes/vite-global-components': RouteRecordInfo<'/notes/vite-global-components', '/notes/vite-global-components', Record<never, never>, Record<never, never>>,
     '/notes/vite-options': RouteRecordInfo<'/notes/vite-options', '/notes/vite-options', Record<never, never>, Record<never, never>>,
+    '/notes/Vue 3-async-loading-code-splitting-guide': RouteRecordInfo<'/notes/Vue 3-async-loading-code-splitting-guide', '/notes/Vue 3-async-loading-code-splitting-guide', Record<never, never>, Record<never, never>>,
     '/notes/vue-3-vite-sentry-monitoring-configuration-guide': RouteRecordInfo<'/notes/vue-3-vite-sentry-monitoring-configuration-guide', '/notes/vue-3-vite-sentry-monitoring-configuration-guide', Record<never, never>, Record<never, never>>,
     '/notes/vue-common-apis': RouteRecordInfo<'/notes/vue-common-apis', '/notes/vue-common-apis', Record<never, never>, Record<never, never>>,
     '/notes/vue-design-and-implementation': RouteRecordInfo<'/notes/vue-design-and-implementation', '/notes/vue-design-and-implementation', Record<never, never>, Record<never, never>>,
