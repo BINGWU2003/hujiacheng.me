@@ -14,6 +14,10 @@ art: plum
 
 vite.config.ts 配置
 
+:::warning 注意事项
+- 不建议使用相对路径，建议使用绝对路径
+:::
+
 ```ts
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
@@ -28,6 +32,23 @@ export default defineConfig({
   },
 });
 ```
+绝对路径：
+```ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    // ✅ 生成类似 '/Users/me/project/src' 这样的绝对路径
+    alias: {
+      '@': path.resolve(__dirname, 'src') 
+    },
+  },
+});
+``` 
 
 tsconfig.json 配置
 
