@@ -293,3 +293,36 @@ tsconfig.json 配置
       * **A:** **建议提交**。这能确保团队成员拉取代码后，不需要运行项目就能立刻获得准确的类型提示，也有利于 CI/CD 环节的类型检查。
 
 -----
+
+## vite.config.ts 使用环境变量 env
+
+`.env.development` 文件配置
+
+```bash
+VITE_APP_TITLE = 'vite-app-title'
+APP_TITLE = 'app-title'
+```
+
+`.env.development` 文件配置在 `vite.config.ts` 中使用,配置项以函数的方式使用
+
+`loadEnv` 函数用于加载环境变量，`mode` 为环境，`process.cwd()` 为当前工作目录
+
+```ts
+import { defineConfig, loadEnv } from "vite";
+import react from "@vitejs/plugin-react";
+import tsconfigPaths from "vite-tsconfig-paths";
+// https://vite.dev/config/
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd());
+  console.log(env);
+  return {
+    plugins: [react(), tsconfigPaths()],
+    //...其他配置
+  };
+});
+// 打印结果：{ VITE_APP_TITLE: 'vite-app-title' }
+// 只打印VITE_开头的环境变量 和 .env.development 文件中配置的环境变量
+```
+
+vite官方demo文档：https://cn.vite.dev/config/#using-environment-variables-in-config
+loadEnv文档：https://cn.vite.dev/guide/api-javascript#loadenv
