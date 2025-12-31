@@ -76,6 +76,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/vue-h-and-render-vs-createApp': RouteRecordInfo<'/notes/vue-h-and-render-vs-createApp', '/notes/vue-h-and-render-vs-createApp', Record<never, never>, Record<never, never>>,
     '/notes/vue3-ts-components-vite-build': RouteRecordInfo<'/notes/vue3-ts-components-vite-build', '/notes/vue3-ts-components-vite-build', Record<never, never>, Record<never, never>>,
     '/posts/': RouteRecordInfo<'/posts/', '/posts', Record<never, never>, Record<never, never>>,
+    '/posts/2025-summary': RouteRecordInfo<'/posts/2025-summary', '/posts/2025-summary', Record<never, never>, Record<never, never>>,
     '/posts/blog-migration': RouteRecordInfo<'/posts/blog-migration', '/posts/blog-migration', Record<never, never>, Record<never, never>>,
     '/posts/browser-rendering-principles': RouteRecordInfo<'/posts/browser-rendering-principles', '/posts/browser-rendering-principles', Record<never, never>, Record<never, never>>,
     '/posts/build-server-side-with-express-ts-sequelize': RouteRecordInfo<'/posts/build-server-side-with-express-ts-sequelize', '/posts/build-server-side-with-express-ts-sequelize', Record<never, never>, Record<never, never>>,
