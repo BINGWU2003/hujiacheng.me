@@ -56,6 +56,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/picgo-tencent-cos-typora-setup-image-hosting': RouteRecordInfo<'/notes/picgo-tencent-cos-typora-setup-image-hosting', '/notes/picgo-tencent-cos-typora-setup-image-hosting', Record<never, never>, Record<never, never>>,
     '/notes/prettier-options': RouteRecordInfo<'/notes/prettier-options', '/notes/prettier-options', Record<never, never>, Record<never, never>>,
     '/notes/programming-standard': RouteRecordInfo<'/notes/programming-standard', '/notes/programming-standard', Record<never, never>, Record<never, never>>,
+    '/notes/proxy+reflect': RouteRecordInfo<'/notes/proxy+reflect', '/notes/proxy+reflect', Record<never, never>, Record<never, never>>,
     '/notes/public-api': RouteRecordInfo<'/notes/public-api', '/notes/public-api', Record<never, never>, Record<never, never>>,
     '/notes/rollup-options': RouteRecordInfo<'/notes/rollup-options', '/notes/rollup-options', Record<never, never>, Record<never, never>>,
     '/notes/stylelint-options': RouteRecordInfo<'/notes/stylelint-options', '/notes/stylelint-options', Record<never, never>, Record<never, never>>,
