@@ -74,7 +74,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/vue-common-apis': RouteRecordInfo<'/notes/vue-common-apis', '/notes/vue-common-apis', Record<never, never>, Record<never, never>>,
     '/notes/vue-design-and-implementation': RouteRecordInfo<'/notes/vue-design-and-implementation', '/notes/vue-design-and-implementation', Record<never, never>, Record<never, never>>,
     '/notes/vue-h-and-render': RouteRecordInfo<'/notes/vue-h-and-render', '/notes/vue-h-and-render', Record<never, never>, Record<never, never>>,
-    '/notes/vue-h-and-render-vs-createApp': RouteRecordInfo<'/notes/vue-h-and-render-vs-createApp', '/notes/vue-h-and-render-vs-createApp', Record<never, never>, Record<never, never>>,
+    '/notes/vue-h-and-render-vs-create-app': RouteRecordInfo<'/notes/vue-h-and-render-vs-create-app', '/notes/vue-h-and-render-vs-create-app', Record<never, never>, Record<never, never>>,
     '/notes/vue3-ts-components-vite-build': RouteRecordInfo<'/notes/vue3-ts-components-vite-build', '/notes/vue3-ts-components-vite-build', Record<never, never>, Record<never, never>>,
     '/posts/': RouteRecordInfo<'/posts/', '/posts', Record<never, never>, Record<never, never>>,
     '/posts/2025-summary': RouteRecordInfo<'/posts/2025-summary', '/posts/2025-summary', Record<never, never>, Record<never, never>>,
