@@ -66,6 +66,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/turborepo-options': RouteRecordInfo<'/notes/turborepo-options', '/notes/turborepo-options', Record<never, never>, Record<never, never>>,
     '/notes/uniapp-intranet-traversal': RouteRecordInfo<'/notes/uniapp-intranet-traversal', '/notes/uniapp-intranet-traversal', Record<never, never>, Record<never, never>>,
     '/notes/uniapp-system-info': RouteRecordInfo<'/notes/uniapp-system-info', '/notes/uniapp-system-info', Record<never, never>, Record<never, never>>,
+    '/notes/upload-sourcemap-guide': RouteRecordInfo<'/notes/upload-sourcemap-guide', '/notes/upload-sourcemap-guide', Record<never, never>, Record<never, never>>,
     '/notes/vite-build-process': RouteRecordInfo<'/notes/vite-build-process', '/notes/vite-build-process', Record<never, never>, Record<never, never>>,
     '/notes/vite-chunk-guide': RouteRecordInfo<'/notes/vite-chunk-guide', '/notes/vite-chunk-guide', Record<never, never>, Record<never, never>>,
     '/notes/vite-common-config': RouteRecordInfo<'/notes/vite-common-config', '/notes/vite-common-config', Record<never, never>, Record<never, never>>,
