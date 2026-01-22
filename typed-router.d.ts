@@ -62,6 +62,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/rollup-options': RouteRecordInfo<'/notes/rollup-options', '/notes/rollup-options', Record<never, never>, Record<never, never>>,
     '/notes/sourcemap-comment-demo': RouteRecordInfo<'/notes/sourcemap-comment-demo', '/notes/sourcemap-comment-demo', Record<never, never>, Record<never, never>>,
     '/notes/sourcemap-filter': RouteRecordInfo<'/notes/sourcemap-filter', '/notes/sourcemap-filter', Record<never, never>, Record<never, never>>,
+    '/notes/sourcemap-guide': RouteRecordInfo<'/notes/sourcemap-guide', '/notes/sourcemap-guide', Record<never, never>, Record<never, never>>,
     '/notes/stylelint-options': RouteRecordInfo<'/notes/stylelint-options', '/notes/stylelint-options', Record<never, never>, Record<never, never>>,
     '/notes/transform-hook-failure-analysis': RouteRecordInfo<'/notes/transform-hook-failure-analysis', '/notes/transform-hook-failure-analysis', Record<never, never>, Record<never, never>>,
     '/notes/tsconfig-options': RouteRecordInfo<'/notes/tsconfig-options', '/notes/tsconfig-options', Record<never, never>, Record<never, never>>,
