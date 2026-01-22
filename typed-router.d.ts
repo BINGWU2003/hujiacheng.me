@@ -71,7 +71,6 @@ declare module 'vue-router/auto-routes' {
     '/notes/uniapp-system-info': RouteRecordInfo<'/notes/uniapp-system-info', '/notes/uniapp-system-info', Record<never, never>, Record<never, never>>,
     '/notes/upload-sourcemap-guide': RouteRecordInfo<'/notes/upload-sourcemap-guide', '/notes/upload-sourcemap-guide', Record<never, never>, Record<never, never>>,
     '/notes/version-scripts': RouteRecordInfo<'/notes/version-scripts', '/notes/version-scripts', Record<never, never>, Record<never, never>>,
-    '/notes/vite-build-process': RouteRecordInfo<'/notes/vite-build-process', '/notes/vite-build-process', Record<never, never>, Record<never, never>>,
     '/notes/vite-chunk-guide': RouteRecordInfo<'/notes/vite-chunk-guide', '/notes/vite-chunk-guide', Record<never, never>, Record<never, never>>,
     '/notes/vite-common-config': RouteRecordInfo<'/notes/vite-common-config', '/notes/vite-common-config', Record<never, never>, Record<never, never>>,
     '/notes/vite-global-components': RouteRecordInfo<'/notes/vite-global-components', '/notes/vite-global-components', Record<never, never>, Record<never, never>>,
