@@ -3,7 +3,7 @@
   "private": true,
   "packageManager": "pnpm@9.3.0",
   "scripts": {
-    "build": "cross-env NODE_ENV=production NODE_OPTIONS=\"--max-old-space-size=8192\" vite-ssg build && esno ./scripts/rss.ts",
+    "build": "cross-env NODE_ENV=production NODE_OPTIONS=\"--max-old-space-size=6144\" vite-ssg build && esno ./scripts/rss.ts",
     "dev": "vite --port 3333 --open",
     "preview": "vite preview",
     "static": "rimraf temp && degit antfu/static temp --force && esno scripts/copy-sponsors",

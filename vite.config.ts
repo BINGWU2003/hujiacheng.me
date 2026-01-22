@@ -235,6 +235,8 @@ export default defineConfig({
   ],
 
   build: {
+    target: 'esnext',
+    minify: 'esbuild',
     rollupOptions: {
       onwarn(warning, next) {
         if (warning.code !== 'UNUSED_EXTERNAL_IMPORT')
