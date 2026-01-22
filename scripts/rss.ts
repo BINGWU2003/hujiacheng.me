@@ -41,50 +41,27 @@ async function buildBlogRSS() {
     await Promise.all(
       files.filter(i => !i.includes('index'))
         .map(async (i) => {
-          try {
-            const raw = await fs.readFile(i, 'utf-8')
-            const { data, content } = matter(raw)
+          const raw = await fs.readFile(i, 'utf-8')
+          const { data, content } = matter(raw)
 
-            // 检查必需字段
-            if (!data.title || !data.date) {
-              console.warn(`Skipping ${i}: missing title or date`)
-              return null
-            }
+          const html = markdown.render(content)
+            .replace('src="/', `src="${DOMAIN}/`)
 
-            const html = markdown.render(content)
-              .replace('src="/', `src="${DOMAIN}/`)
+          if (data.image?.startsWith('/'))
+            data.image = DOMAIN + data.image
 
-            if (data.image?.startsWith('/'))
-              data.image = DOMAIN + data.image
-
-            // 安全处理日期
-            const date = data.date ? new Date(data.date) : new Date()
-            if (Number.isNaN(date.getTime())) {
-              console.warn(`Invalid date in ${i}, using current date`)
-            }
-
-            return {
-              ...data,
-              date: Number.isNaN(date.getTime()) ? new Date() : date,
-              content: html,
-              author: [AUTHOR],
-              link: DOMAIN + i.replace(/^pages(.+)\.md$/, '$1'),
-            }
-          }
-          catch (error) {
-            console.error(`Error processing file ${i}:`, error)
-            return null
+          return {
+            ...data,
+            date: new Date(data.date),
+            content: html,
+            author: [AUTHOR],
+            link: DOMAIN + i.replace(/^pages(.+)\.md$/, '$1'),
           }
         }),
     ))
     .filter(Boolean)
-    .filter((post: any) => post && post.title && post.date) // 确保必需字段存在
 
-  posts.sort((a, b) => {
-    const dateA = a.date instanceof Date ? a.date : new Date(a.date)
-    const dateB = b.date instanceof Date ? b.date : new Date(b.date)
-    return dateB.getTime() - dateA.getTime()
-  })
+  posts.sort((a, b) => +new Date(b.date) - +new Date(a.date))
 
   await writeFeed('feed', options, posts)
 }
@@ -105,7 +82,4 @@ async function writeFeed(name: string, options: FeedOptions, items: Item[]) {
   await fs.writeFile(`./dist/${name}.json`, feed.json1(), 'utf-8')
 }
 
-run().catch((error) => {
-  console.error('RSS generation failed:', error)
-  process.exit(1)
-})
+run()
