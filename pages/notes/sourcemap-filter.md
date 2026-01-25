@@ -10,14 +10,14 @@ art: random
 
 `sourcemap-filter.js` 是一个 Vite 插件，用于在构建时 **精细化过滤 Sourcemap**，只为业务代码生成 Sourcemap，排除 `node_modules` 和第三方库。
 
-### 解决的问题
+## 解决的问题
 
 在大型项目中，完整生成所有文件的 Sourcemap 会导致：
 - **内存占用过高**：可能超出 Node.js 默认的 4GB 限制
 - **构建时间过长**：处理大量第三方库的 Sourcemap 耗时
 - **文件体积膨胀**：Sourcemap 文件过大
 
-### 解决方案
+## 解决方案
 
 通过选择性生成 Sourcemap：
 - ✅ **业务代码**：保留 Sourcemap，用于错误堆栈还原
