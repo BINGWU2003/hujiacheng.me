@@ -51,7 +51,7 @@ export const add=(a,b)=>a+b;export const multiply=(a,b)=>a*b;
 // ============================================
 // 代码（简化）
 export function createApp(rootComponent) {
-  return { mount() { ... } };
+  return { mount() { /* ... */ } };
 }
 
 // Sourcemap
@@ -68,7 +68,7 @@ export function createApp(rootComponent) {
 // ============================================
 // 代码（简化）
 export function createRouter(options) {
-  return { push() { ... } };
+  return { push() { /* ... */ } };
 }
 
 // Sourcemap
@@ -85,7 +85,7 @@ export function createRouter(options) {
 // ============================================
 // 代码（简化）
 export function createStore(options) {
-  return { commit() { ... } };
+  return { commit() { /* ... */ } };
 }
 
 // Sourcemap
@@ -107,19 +107,19 @@ export function createStore(options) {
 
 // 第1-100行：来自 vue.esm.js
 export function createApp(rootComponent) {
-  return { mount() { ... } };
+  return { mount() { /* ... */ } };
 }
 // ... 更多 Vue 代码 ...
 
 // 第101-200行：来自 vue-router.esm.js
 export function createRouter(options) {
-  return { push() { ... } };
+  return { push() { /* ... */ } };
 }
 // ... 更多 Vue Router 代码 ...
 
 // 第201-300行：来自 vuex.esm.js
 export function createStore(options) {
-  return { commit() { ... } };
+  return { commit() { /* ... */ } };
 }
 // ... 更多 Vuex 代码 ...
 
@@ -254,11 +254,11 @@ function generateOutput(chunk, config) {
   if (chunk.map === undefined) {
     // "这个 chunk 还没有 sourcemap"
     // "检查配置，看是否需要生成"
-    if (config.sourcemap === 'hidden' || config.sourcemap === true) {
+    if (config.sourcemap === true || config.sourcemap === 'inline' || config.sourcemap === 'hidden') {
       // 生成新的 sourcemap
       return generateNewSourcemap(chunk.code);
     }
-    return null;  // 配置不要求生成
+    return null;  // 配置不要求生成（sourcemap: false）
   }
   
   // 情况 3: chunk.map 是 null（明确不要）
@@ -400,27 +400,30 @@ function mergeSourcemaps(modules) {
 ### 1. Sourcemap 映射关系必须重新计算
 
 ```javascript
-// 原始模块的 sourcemap
+// 原始模块的 sourcemap（假设模块只有1行代码）
 {
-  mappings: 'AAAA,OAAO,MAAM'
+  mappings: 'AAAA,KAAK,MAAM'
+  // mappings 使用分号 ; 分隔行，逗号 , 分隔同一行的多个片段
+  // 每个片段是 VLQ 编码的相对偏移量：[生成列, 源文件索引, 源行, 源列]
   // 解码后：
-  // [0, 0, 0, 0]  // 第1行第0列 → 源文件第1行第0列
-  // [0, 5, 0, 5]  // 第1行第5列 → 源文件第1行第5列
+  // 第1行: 生成列0 → 源文件0的第0行第0列
+  // 第1行: 生成列5 → 源文件0的第0行第5列
 }
 
 // 合并后，这个模块从第101行开始
 // 需要调整为：
 {
-  mappings: '...,AAAA,OAAO,MAAM'
+  mappings: ';;;;...（100个分号表示前100行）...;AAAA,KAAK,MAAM'
   // 解码后：
-  // [100, 0, 0, 0]  // 第101行第0列 → 源文件第1行第0列
-  // [100, 5, 0, 5]  // 第101行第5列 → 源文件第1行第5列
+  // 第101行: 生成列0 → 源文件0的第0行第0列
+  // 第101行: 生成列5 → 源文件0的第0行第5列
 }
 
 // 问题：
 // - 需要解码原始 mappings（VLQ 解码）
-// - 调整所有行号
+// - 调整所有行号（在前面添加空行分隔符）
 // - 重新编码（VLQ 编码）
+// - 合并多个模块的 sources 数组并更新源文件索引
 // - 非常耗时，而且可能用不到
 ```
 
