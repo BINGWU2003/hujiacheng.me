@@ -35,11 +35,13 @@ art: random
   ↓
 模块处理阶段 (resolveId, load, transform, moduleParsed)
   ↓
+模块处理完成 (buildEnd)
+  ↓
 代码生成阶段 (renderStart, renderChunk, augmentChunkHash)
   ↓
 资源输出阶段 (generateBundle, writeBundle)
   ↓
-构建完成 (buildEnd, closeBundle)
+构建完成 (closeBundle)
 ```
 
 ### 1.1 钩子分类
@@ -522,23 +524,21 @@ export default function myPlugin() {
 ### 6.1 配置解析阶段
 
 ```
-1. 执行 vite.config.mjs 导出的函数
+1. 执行 vite.config.ts 导出的函数
    - mode: 'production'
    - command: 'build'
    - 加载环境变量 (loadEnv)
-   - 读取版本号 (readVersion)
 
 2. 各插件的 config 钩子执行
    - @vitejs/plugin-vue
-   - unplugin-auto-import (createAutoImport)
-   - unplugin-vue-setup-extend-plus (createSetupExtend)
-   - vite-plugin-compression (createCompression)
-   - sourcemap-output-filter (createSourcemapOutputFilter)
+   - unplugin-auto-import
+   - unplugin-vue-components
+   - vite-plugin-compression
    - rollup-plugin-visualizer (如果启用)
 
 3. configResolved 钩子执行
    - 各插件读取最终配置
-   - sourcemap-output-filter 确认过滤规则
+   - 确认构建选项和路径配置
 ```
 
 ### 6.2 构建初始化阶段
@@ -569,10 +569,9 @@ export default function myPlugin() {
 
 3. transform 钩子
    - Vue 插件编译 .vue 单文件组件
-   - setup-extend 插件处理 Vue 组件 name 属性
    - esbuild 转换 TypeScript/JSX
    - 生产环境：移除 console 和 debugger
-   - SCSS 预处理器处理样式
+   - SCSS/Less 预处理器处理样式
 
 4. moduleParsed 钩子
    - 分析模块依赖关系
@@ -584,14 +583,16 @@ export default function myPlugin() {
 ```
 根据 manualChunks 配置进行代码分割：
 
-1. vendor-vue: vue, vue-router, vuex, vue-demi
-2. vendor-element: element-plus, @element-plus/icons-vue
-3. vendor-vxe: vxe-table, vxe-pc-ui, xe-utils
-4. vendor-echarts: echarts
-5. vendor-utils: lodash-es, dayjs, axios
-6. vendor-nf-design-base-elp: @saber/nf-design-base-elp
-7. vendor-highlight: highlight.js
-8. 业务代码按路由自动分割
+1. vendor-vue: vue, vue-router, pinia, vue-demi
+2. vendor-ui: element-plus, @element-plus/icons-vue
+3. vendor-charts: echarts
+4. vendor-utils: lodash-es, dayjs, axios
+5. 业务代码按路由自动分割
+
+代码分割优势：
+- 将第三方库分离为独立 chunk
+- 利用浏览器缓存，减少重复下载
+- 减少主包体积，加快首屏加载
 ```
 
 ### 6.5 输出生成阶段
@@ -610,9 +611,6 @@ export default function myPlugin() {
    - 生成带哈希的文件名
 
 4. generateBundle 钩子
-   - sourcemap-output-filter 过滤 sourcemap
-     * 保留业务代码的 sourcemap
-     * 删除 vendor chunk 的 sourcemap
    - compression 插件生成压缩文件
      * 生成 .gz 文件
      * 生成 .br 文件
@@ -625,12 +623,11 @@ export default function myPlugin() {
 ### 6.6 构建完成阶段
 
 ```
-1. buildEnd 钩子
-   - 记录构建信息
-   - 清理临时资源
+注意：buildEnd 在模块处理阶段结束后、输出生成阶段之前执行
 
-2. closeBundle 钩子
+1. closeBundle 钩子
    - 最终清理工作
+   - 可用于上传 sourcemap 到 Sentry
    - 构建流程完全结束
 ```
 
@@ -642,9 +639,8 @@ dist/
 │   ├── index-[hash].js          # 入口文件
 │   ├── index-[hash].js.map      # 入口 sourcemap
 │   ├── vendor-vue-[hash].js     # Vue 相关依赖
-│   ├── vendor-element-[hash].js # Element Plus
-│   ├── vendor-vxe-[hash].js     # VXE Table
-│   ├── vendor-echarts-[hash].js # ECharts
+│   ├── vendor-ui-[hash].js      # UI 组件库
+│   ├── vendor-charts-[hash].js  # 图表库
 │   ├── vendor-utils-[hash].js   # 工具库
 │   ├── [route]-[hash].js        # 路由分割的业务代码
 │   ├── [route]-[hash].js.map    # 业务代码 sourcemap
@@ -679,9 +675,9 @@ Vite 按以下顺序解析和执行插件：
 7. Vite 后构建插件（压缩、manifest、报告等）
 ```
 
-### 7.2 本项目插件执行顺序
+### 7.2 典型项目插件执行顺序
 
-基于当前项目配置，插件的实际执行顺序：
+基于常规 Vue + Vite 项目配置，插件的实际执行顺序：
 
 ```
 构建阶段插件顺序：
@@ -693,20 +689,17 @@ Vite 按以下顺序解析和执行插件：
 2. unplugin-auto-import
    - 自动导入 Vue API (ref, computed, watch 等)
    - 自动导入 Vue Router API
-   - 自动导入 Vuex API
+   - 自动导入 Pinia API
 
-3. unplugin-vue-setup-extend-plus
-   - 处理 Vue 组件的 name 属性
-   - 支持 <script setup name="ComponentName">
+3. unplugin-vue-components
+   - 自动导入组件
+   - 集成 UI 组件库 Resolver
 
 4. vite-plugin-compression
    - enforce: 'post' (后置执行)
    - 在 generateBundle 阶段生成压缩文件
 
-5. sourcemap-output-filter
-   - 在 generateBundle 阶段过滤 sourcemap
-
-6. rollup-plugin-visualizer (可选)
+5. rollup-plugin-visualizer (可选)
    - 在 generateBundle 阶段生成分析报告
 ```
 
@@ -747,10 +740,10 @@ export default function myPlugin() {
 }
 ```
 
-**本项目应用：**
+**典型应用：**
 - `compression` 插件仅在构建时执行
-- `sourcemap-output-filter` 插件仅在构建时执行
-- `code-inspector-plugin` 插件仅在开发时执行
+- `vite-plugin-inspect` 插件仅在开发时执行
+- HMR 相关插件仅在开发时执行
 
 ---
 
@@ -893,9 +886,8 @@ npm run build
 └─────────────────────────────────────────┘
     ↓
 ┌─────────────────────────────────────────┐
-│  4. 代码分割                             │
-│  - 根据 manualChunks 配置分割代码        │
-│  - 生成依赖图谱                          │
+│  4. 模块处理完成                         │
+│  - buildEnd 钩子 (构建阶段结束)          │
 └─────────────────────────────────────────┘
     ↓
 ┌─────────────────────────────────────────┐
@@ -909,7 +901,6 @@ npm run build
     ↓
 ┌─────────────────────────────────────────┐
 │  6. 构建完成                             │
-│  - buildEnd 钩子                        │
 │  - closeBundle 钩子                     │
 └─────────────────────────────────────────┘
     ↓
@@ -920,8 +911,9 @@ npm run build
 
 **1. 钩子执行顺序**
 - 配置钩子最先执行（config → configResolved）
-- 模块处理钩子循环执行（resolveId → load → transform）
-- 输出钩子最后执行（renderChunk → generateBundle → writeBundle）
+- 模块处理钩子循环执行（resolveId → load → transform → moduleParsed）
+- buildEnd 在模块处理完成后执行
+- 输出钩子最后执行（renderStart → renderChunk → generateBundle → writeBundle → closeBundle）
 
 **2. 插件顺序很重要**
 - 使用 `enforce: 'pre'` 提前执行
@@ -940,24 +932,24 @@ npm run build
 - 检查插件执行顺序
 - 确认文件转换流程
 
-### 10.3 本项目构建特点
+### 10.3 典型项目构建特点
 
-基于当前项目配置，构建流程具有以下特点：
+基于常规 Vue + Vite 项目配置，构建流程具有以下特点：
 
 **1. 模块化的插件管理**
-- 插件配置集中在 `vite/plugins/index.js`
+- 插件配置集中在 vite.config.ts
 - 根据构建模式动态加载插件
 - 便于维护和扩展
 
 **2. 精细化的代码分割**
-- 7 个 vendor chunk，按功能分类
+- 多个 vendor chunk，按功能分类
 - 减少重复打包
 - 优化缓存策略
 
 **3. 智能的 Sourcemap 处理**
-- 仅为业务代码生成 sourcemap
+- 可配置仅为业务代码生成 sourcemap
 - 使用 hidden 模式保护源码
-- 减少 50% 以上的 sourcemap 体积
+- 可选上传到错误监控平台
 
 **4. 完善的压缩策略**
 - esbuild 快速压缩
@@ -990,7 +982,7 @@ npm run build
 | 钩子名称 | 执行阶段 | 执行特性 | 主要用途 |
 |---------|---------|---------|---------|
 | `config` | 配置解析前 | Sequential | 修改配置 |
-| `configResolved` | 配置解析后 | Sequential | 读取配置 |
+| `configResolved` | 配置解析后 | Parallel | 读取配置 |
 | `options` | 构建开始前 | Sequential | 修改 Rollup 选项 |
 | `buildStart` | 构建开始 | Parallel | 初始化操作 |
 | `resolveId` | 模块解析 | First | 自定义模块解析 |
@@ -1164,5 +1156,5 @@ export default function buildReportPlugin() {
 ---
 
 **文档版本：** 1.0
-**最后更新：** 2026-01-22
+**最后更新：** 2026-01-23
 **适用 Vite 版本：** 5.x+

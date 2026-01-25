@@ -218,7 +218,7 @@ AST 节点可以分为以下几大类：
 │  🔢 表达式节点（Expression Nodes）                                               │
 │  ├── Identifier                 标识符：变量名、函数名                           │
 │  ├── Literal                    字面量：数字、字符串、布尔值、null              │
-│  ├── BinaryExpression           二元表达式：a + b, a > b, a && b                │
+│  ├── BinaryExpression           二元表达式：a + b, a > b, a === b               │
 │  ├── UnaryExpression            一元表达式：!a, -a, typeof a                    │
 │  ├── CallExpression             函数调用：fn(), obj.method()                    │
 │  ├── MemberExpression           成员访问：obj.prop, arr[0]                      │

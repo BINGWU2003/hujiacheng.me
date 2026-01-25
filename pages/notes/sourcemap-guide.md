@@ -556,7 +556,9 @@ export default {
 
 ### 5.1 Sourcemap 的不同格式
 
-除了 Vite 的配置选项，Sourcemap 本身也有不同的生成格式，影响文件大小和精确度。
+> **注意**：本节介绍的是 **Webpack 的 devtool 选项**，用于帮助理解 Sourcemap 的不同生成策略。Vite 的 `build.sourcemap` 只支持 `true`、`false`、`'inline'`、`'hidden'` 四个值，但了解这些格式有助于理解 Sourcemap 的工作原理。
+
+除了 Vite 的配置选项，Sourcemap 本身也有不同的生成格式（主要在 Webpack 中体现），影响文件大小和精确度。
 
 #### 格式对比表
 
@@ -734,10 +736,12 @@ nosources-source-map：
 // vite.config.js
 export default {
   build: {
-    sourcemap: true,  // 或 'cheap-module-source-map'
+    sourcemap: true,  // Vite 开发环境默认已启用 sourcemap
   }
 }
 ```
+
+> **注意**：Vite 开发模式下默认启用 sourcemap，无需额外配置。`build.sourcemap` 主要用于生产构建。
 
 **推荐理由：**
 - 快速构建
@@ -1448,12 +1452,11 @@ location ~* \.map$ {
 }
 ```
 
-3. **使用 nosources-source-map**
+3. **构建后删除 sourcesContent**
 ```javascript
-// 只包含位置映射，不包含源码内容
-build: {
-  sourcemap: 'nosources-source-map'
-}
+// 使用插件在构建后移除 sourcemap 中的源码内容
+// 这样只保留位置映射，不包含原始源码
+// 可以使用 rollup-plugin-transform 或自定义插件处理 .map 文件
 ```
 
 4. **定期清理旧版本 sourcemap**
@@ -1700,17 +1703,16 @@ curl https://your-cdn.com/assets/index-xxx.js.map
 **解决方案：**
 
 ```javascript
-// 1. 使用 nosources 模式
-build: {
-  sourcemap: 'nosources-source-map'
-}
-
-// 2. 过滤第三方库
+// 1. 过滤第三方库（推荐）
 plugins: [
   createSourcemapOutputFilter({
     exclude: [/^vendor-/, /node_modules/]
   })
 ]
+
+// 2. 使用插件移除 sourcesContent
+// 可以编写 Vite 插件在 generateBundle 钩子中
+// 删除 .map 文件中的 sourcesContent 字段
 
 // 3. 压缩 sourcemap
 import { gzip } from 'zlib';
@@ -1784,7 +1786,7 @@ sentry-cli releases files VERSION upload-sourcemaps \
     │   └─ 是
     │       ├─ 是否使用错误监控平台？
     │       │   ├─ 是 → sourcemap: 'hidden' ✅ 推荐
-    │       │   └─ 否 → sourcemap: 'nosources-source-map'
+    │       │   └─ 否 → sourcemap: 'hidden' + 本地保留 .map 文件
     │       └─ 是否需要内网访问？
     │           └─ 是 → sourcemap: true + Nginx 限制
 ```
