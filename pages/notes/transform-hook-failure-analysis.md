@@ -42,9 +42,9 @@ dist/assets/index-Bk8aZ-po.js.map               ← 生成了 ✅
 // Transform 钩子成功过滤
 moduleMap = {
   // manualChunks: vendor-vue
-  'node_modules/vue/dist/vue.esm.js': { code: '...', map: null },
-  'node_modules/vue-router/dist/vue-router.esm.js': { code: '...', map: null },
-  'node_modules/vuex/dist/vuex.esm.js': { code: '...', map: null },
+  'node_modules/vue/dist/vue.esm-bundler.js': { code: '...', map: null },
+  'node_modules/vue-router/dist/vue-router.esm-bundler.js': { code: '...', map: null },
+  'node_modules/vuex/dist/vuex.esm-bundler.js': { code: '...', map: null },
 
   // manualChunks: vendor-element
   'node_modules/element-plus/es/index.mjs': { code: '...', map: null },
@@ -164,7 +164,7 @@ dist/assets/index-Bk8aZ-po.js.map               ← 生成了
 | **vendor-element** | manualChunks | map: null | map: undefined | 生成 sourcemap | ❌ 有 .map |
 | **vendor-vxe** | manualChunks | map: null | map: undefined | 生成 sourcemap | ❌ 有 .map |
 | **monaco-editor** | 自动分割 | map: null | map: undefined | 生成 sourcemap | ❌ 有 .map |
-| **index** | 业务代码 | map: {...} | map: undefined | 生成 sourcemap | ✅ 有 .map |
+| **index** | 业务代码 | 不处理（保留原始） | map: undefined | 生成 sourcemap | ✅ 有 .map |
 
 **结论**：所有 chunk 的处理逻辑完全一样，都生成了 sourcemap！
 
@@ -253,10 +253,10 @@ chunk = {
 // ============================================
 
 // 处理 Vue 相关的模块
-transform(code, id: 'node_modules/vue/dist/vue.esm.js')
+transform(code, id: 'node_modules/vue/dist/vue.esm-bundler.js')
 → 返回 { code, map: null }  ✅
 
-transform(code, id: 'node_modules/vue-router/dist/vue-router.esm.js')
+transform(code, id: 'node_modules/vue-router/dist/vue-router.esm-bundler.js')
 → 返回 { code, map: null }  ✅
 
 // 处理 Element Plus 相关的模块
@@ -267,9 +267,9 @@ transform(code, id: 'node_modules/element-plus/es/index.mjs')
 transform(code, id: 'node_modules/monaco-editor/esm/vs/editor/editor.main.js')
 → 返回 { code, map: null }  ✅
 
-// 处理业务代码
+// 处理业务代码（当前插件不处理，由其他插件如 vite:esbuild 生成 sourcemap）
 transform(code, id: 'src/main.js')
-→ 返回 null (保留 sourcemap)  ✅
+→ 返回 null (不做转换)  ✅
 
 // ============================================
 // 阶段 2: Chunk 生成（关键阶段）
@@ -277,9 +277,9 @@ transform(code, id: 'src/main.js')
 
 // Chunk 1: vendor-vue (manualChunks 配置)
 const vendorVueModules = [
-  'node_modules/vue/dist/vue.esm.js',           // map: null
-  'node_modules/vue-router/dist/vue-router.esm.js', // map: null
-  'node_modules/vuex/dist/vuex.esm.js',         // map: null
+  'node_modules/vue/dist/vue.esm-bundler.js',           // map: null
+  'node_modules/vue-router/dist/vue-router.esm-bundler.js', // map: null
+  'node_modules/vuex/dist/vuex.esm-bundler.js',         // map: null
   // ... 20+ 个文件
 ];
 
