@@ -76,6 +76,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/vite-build-memory-overflow': RouteRecordInfo<'/notes/vite-build-memory-overflow', '/notes/vite-build-memory-overflow', Record<never, never>, Record<never, never>>,
     '/notes/vite-build-optimization': RouteRecordInfo<'/notes/vite-build-optimization', '/notes/vite-build-optimization', Record<never, never>, Record<never, never>>,
     '/notes/vite-build-process': RouteRecordInfo<'/notes/vite-build-process', '/notes/vite-build-process', Record<never, never>, Record<never, never>>,
+    '/notes/vite-build-visual-guide': RouteRecordInfo<'/notes/vite-build-visual-guide', '/notes/vite-build-visual-guide', Record<never, never>, Record<never, never>>,
     '/notes/vite-build-workflow': RouteRecordInfo<'/notes/vite-build-workflow', '/notes/vite-build-workflow', Record<never, never>, Record<never, never>>,
     '/notes/vite-chunk-guide': RouteRecordInfo<'/notes/vite-chunk-guide', '/notes/vite-chunk-guide', Record<never, never>, Record<never, never>>,
     '/notes/vite-common-config': RouteRecordInfo<'/notes/vite-common-config', '/notes/vite-common-config', Record<never, never>, Record<never, never>>,
