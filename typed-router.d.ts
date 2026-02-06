@@ -36,6 +36,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/commitizen-options': RouteRecordInfo<'/notes/commitizen-options', '/notes/commitizen-options', Record<never, never>, Record<never, never>>,
     '/notes/commitlint-options': RouteRecordInfo<'/notes/commitlint-options', '/notes/commitlint-options', Record<never, never>, Record<never, never>>,
     '/notes/common-code-snippets': RouteRecordInfo<'/notes/common-code-snippets', '/notes/common-code-snippets', Record<never, never>, Record<never, never>>,
+    '/notes/console-performance-analysis': RouteRecordInfo<'/notes/console-performance-analysis', '/notes/console-performance-analysis', Record<never, never>, Record<never, never>>,
     '/notes/css-computed-style': RouteRecordInfo<'/notes/css-computed-style', '/notes/css-computed-style', Record<never, never>, Record<never, never>>,
     '/notes/css-functions': RouteRecordInfo<'/notes/css-functions', '/notes/css-functions', Record<never, never>, Record<never, never>>,
     '/notes/css-specificity': RouteRecordInfo<'/notes/css-specificity', '/notes/css-specificity', Record<never, never>, Record<never, never>>,
