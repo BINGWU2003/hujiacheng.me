@@ -48,6 +48,7 @@ declare module 'vue-router/auto-routes' {
     '/notes/git': RouteRecordInfo<'/notes/git', '/notes/git', Record<never, never>, Record<never, never>>,
     '/notes/git-tortoisegit': RouteRecordInfo<'/notes/git-tortoisegit', '/notes/git-tortoisegit', Record<never, never>, Record<never, never>>,
     '/notes/gitignore-options': RouteRecordInfo<'/notes/gitignore-options', '/notes/gitignore-options', Record<never, never>, Record<never, never>>,
+    '/notes/hbuilderX-uni-app-build-mp-deploy': RouteRecordInfo<'/notes/hbuilderX-uni-app-build-mp-deploy', '/notes/hbuilderX-uni-app-build-mp-deploy', Record<never, never>, Record<never, never>>,
     '/notes/mcp-config': RouteRecordInfo<'/notes/mcp-config', '/notes/mcp-config', Record<never, never>, Record<never, never>>,
     '/notes/mcp-site': RouteRecordInfo<'/notes/mcp-site', '/notes/mcp-site', Record<never, never>, Record<never, never>>,
     '/notes/miniprogram-ci-guide': RouteRecordInfo<'/notes/miniprogram-ci-guide', '/notes/miniprogram-ci-guide', Record<never, never>, Record<never, never>>,
