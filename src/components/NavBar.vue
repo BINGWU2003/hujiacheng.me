@@ -34,6 +34,10 @@ const { y: scroll } = useWindowScroll()
           <span class="lt-md:hidden">导航</span>
           <div i-ri-lightbulb-line class="md:hidden" />
         </RouterLink>
+        <RouterLink to="/works" title="Works">
+          <span class="lt-md:hidden">作品</span>
+          <div i-ri-briefcase-line class="md:hidden" />
+        </RouterLink>
         <a href="https://hujiacheng-blog.netlify.app/" target="_blank" title="Blog">
           <span class="lt-md:hidden">博客</span>
           <div i-ri-article-line md:hidden />

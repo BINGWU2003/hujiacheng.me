@@ -12,16 +12,17 @@ art: random
 Skills: {Html} {Css} {JavaScript} {TypeScript} {Vue} {UniApp} <br>
 Learning: {React} {Vite} {Vitest} {NodeJS} <br>
 
-或者给我发邮件
+
+个人邮箱
 
 <a href="mailto:hujiacheng2003@163.com" font-mono>hujiacheng2003<span i-carbon-at/>163.com</a>
 
-<div flex-auto />
-
-
-个人作品
-
-<p flex="~ gap-2 wrap" class="mt--2!">
-  <a href="https://www.npmjs.com/~hujiacheng" target="_blank"><span op75 i-simple-icons-npm /> npm</a>
-  <a href="https://npmx.dev/org/hujiacheng" target="_blank"><span op75 i-simple-icons-npm /> npmx</a>
+<p>
+  <RouterLink
+    to="/works"
+    font-medium underline underline-offset-4 decoration-dotted
+    hover:decoration-solid
+  >
+    查看我的作品集 ->
+  </RouterLink>
 </p>

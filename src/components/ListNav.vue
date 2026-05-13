@@ -1,5 +1,10 @@
 <script setup lang="ts">
-defineProps<{ projects: Record<string, any[]> }>()
+withDefaults(defineProps<{
+  projects: Record<string, any[]>
+  intro?: string
+}>(), {
+  intro: '我收集和平时使用的前端相关网站',
+})
 
 function slug(name: string) {
   return name.toLowerCase().replace(/[\s\\/]+/g, '-')
@@ -9,7 +14,7 @@ function slug(name: string) {
 <template>
   <div class="max-w-300 mx-auto">
     <p text-center mt--6 mb5 op50 text-lg italic>
-      我收集和平时使用的前端相关网站
+      {{ intro }}
     </p>
     <div
       v-for="key, cidx in Object.keys(projects)" :key="key" slide-enter
