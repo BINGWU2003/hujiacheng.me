@@ -1,23 +1,84 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
   <title id="title">hujiacheng logo</title>
   <desc id="desc">A handwritten signature style monogram for hujiacheng.</desc>
-  <g fill="none" stroke="#f9fafb" stroke-linecap="round" stroke-linejoin="round">
+  <style>
+    .signature {
+      animation: breathe 5s ease-in-out 2s infinite;
+      transform-origin: 256px 256px;
+    }
+
+    .stroke {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: draw 1.35s cubic-bezier(.65, 0, .35, 1) forwards;
+    }
+
+    .stroke-2 {
+      animation-delay: .25s;
+    }
+
+    .stroke-3 {
+      animation-delay: .45s;
+    }
+
+    .stroke-4 {
+      animation-delay: .75s;
+    }
+
+    @keyframes draw {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes breathe {
+      0%, 100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      50% {
+        opacity: .72;
+        transform: translateY(-6px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .signature,
+      .stroke {
+        animation: none;
+      }
+
+      .stroke {
+        stroke-dashoffset: 0;
+      }
+    }
+  </style>
+  <g class="signature" fill="none" stroke="#f9fafb" stroke-linecap="round" stroke-linejoin="round">
     <path
+      class="stroke stroke-1"
       d="M120 360 C148 254 181 132 228 72 C246 49 270 45 278 69 C291 108 230 206 173 285 C145 323 122 350 102 365"
       stroke-width="23"
+      pathLength="1"
     />
     <path
+      class="stroke stroke-2"
       d="M177 286 C207 237 251 212 271 233 C287 250 272 285 255 320"
       stroke-width="22"
+      pathLength="1"
     />
     <path
+      class="stroke stroke-3"
       d="M257 318 C285 262 329 214 383 215 C424 216 445 246 430 284 C409 337 335 370 296 344 C263 322 275 267 328 232"
       stroke-width="24"
+      pathLength="1"
     />
     <path
+      class="stroke stroke-4"
       d="M91 371 C171 396 291 393 421 357"
       stroke-width="13"
       opacity=".52"
+      pathLength="1"
     />
   </g>
 </svg>
