@@ -1,15 +1,4 @@
 <script setup lang="ts">
-import docsearch from '@docsearch/js'
-
-onMounted(() => {
-  docsearch({
-    container: '#docsearch',
-    appId: import.meta.env.VITE_ALGOLIA_APP_ID,
-    apiKey: import.meta.env.VITE_ALGOLIA_API_KEY,
-    indexName: import.meta.env.VITE_ALGOLIA_INDEX_NAME,
-  })
-})
-
 function toTop() {
   window.scrollTo({
     top: 0,
@@ -45,18 +34,10 @@ const { y: scroll } = useWindowScroll()
           <span class="lt-md:hidden">导航</span>
           <div i-ri-lightbulb-line class="md:hidden" />
         </RouterLink>
-        <RouterLink to="/posts" title="Blog">
+        <a href="https://hujiacheng-blog.netlify.app/" target="_blank" title="Blog">
           <span class="lt-md:hidden">博客</span>
           <div i-ri-article-line md:hidden />
-        </RouterLink>
-        <RouterLink to="/archive" title="Archive" class="lt-md:hidden">
-          <span>归档</span>
-        </RouterLink>
-        <RouterLink to="/links" title="Links">
-          <span class="lt-md:hidden">友链</span>
-          <div i-ri-links-line md:hidden />
-        </RouterLink>
-        <div id="docsearch" class="lt-md:hidden" />
+        </a>
         <!-- <a href="https://www.travellings.cn/go.html" target="_blank" title="Travelling">
           <div i-ri-train-line />
         </a> -->

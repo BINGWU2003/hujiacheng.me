@@ -84,7 +84,7 @@ const ArtComponent = computed(() => {
 })
 
 const hasGiscus = computed(() => {
-  return route.path !== '/' && route.path !== '/posts' && route.path !== '/workflow' && route.path !== '/notes'
+  return route.path !== '/'
 })
 </script>
 

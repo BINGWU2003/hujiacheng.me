@@ -248,6 +248,9 @@ export default defineConfig({
   ssgOptions: {
     formatting: 'minify',
   },
+  server: {
+    host: '0.0.0.0',
+  },
 })
 
 const ogSVg = fs.readFileSync('./scripts/og-template.svg', 'utf-8')

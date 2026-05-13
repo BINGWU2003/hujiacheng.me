@@ -3,7 +3,7 @@
   "private": true,
   "packageManager": "pnpm@9.3.0",
   "scripts": {
-    "build": "cross-env NODE_ENV=production NODE_OPTIONS=\"--max-old-space-size=6144\" vite-ssg build && esno ./scripts/rss.ts",
+    "build": "cross-env NODE_ENV=production NODE_OPTIONS=\"--max-old-space-size=6144\" vite-ssg build",
     "dev": "vite --port 3333 --open",
     "preview": "vite preview",
     "static": "rimraf temp && degit antfu/static temp --force && esno scripts/copy-sponsors",
@@ -13,8 +13,6 @@
     "prepare": "simple-git-hooks"
   },
   "dependencies": {
-    "@docsearch/css": "^3.6.1",
-    "@docsearch/js": "^3.6.1",
     "@giscus/vue": "^3.0.0",
     "@vueuse/core": "^10.11.1",
     "dayjs": "^1.11.12",
@@ -52,8 +50,6 @@
     "eslint": "^9.8.0",
     "eslint-plugin-format": "^0.1.2",
     "esno": "^4.7.0",
-    "fast-glob": "^3.3.2",
-    "feed": "^4.2.2",
     "fs-extra": "^11.2.0",
     "gray-matter": "^4.0.3",
     "lint-staged": "^15.2.8",

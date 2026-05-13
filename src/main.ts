@@ -10,9 +10,7 @@ import './styles/prose.css'
 import './styles/markdown.css'
 import './styles/custom-block.css'
 import './styles/code-group.css'
-import './styles/docsearch.css'
 
-import '@docsearch/css'
 import 'uno.css'
 
 import { handleHotUpdate, routes } from 'vue-router/auto-routes'
