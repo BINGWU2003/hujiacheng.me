@@ -1,34 +1,23 @@
-<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg489130" viewBox="0 0 1024 768" height="768px" width="1024px" version="1.1">
-  <metadata id="metadata489136">
-    <rdf:rdf>
-      <cc:work rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-      </cc:work>
-    </rdf:rdf>
-  </metadata>
-  <defs id="defs489134"/>
-  <linearGradient spreadMethod="pad" y2="30%" x2="-10%" y1="120%" x1="30%" id="3d_gradient2-logo-6b82f05d-b7a6-4b4b-bc94-f4adab2d8d54">
-    <stop id="stop489111" stop-opacity="1" stop-color="#ffffff" offset="0%"/>
-    <stop id="stop489113" stop-opacity="1" stop-color="#000000" offset="100%"/>
-  </linearGradient>
-  <linearGradient gradientTransform="rotate(-30)" spreadMethod="pad" y2="30%" x2="-10%" y1="120%" x1="30%" id="3d_gradient3-logo-6b82f05d-b7a6-4b4b-bc94-f4adab2d8d54">
-    <stop id="stop489116" stop-opacity="1" stop-color="#ffffff" offset="0%"/>
-    <stop id="stop489118" stop-opacity="1" stop-color="#cccccc" offset="50%"/>
-    <stop id="stop489120" stop-opacity="1" stop-color="#000000" offset="100%"/>
-  </linearGradient>
-  <g id="logo-group">
-    <image xlink:href="" id="container" x="272" y="144" width="480" height="480" style="display: none;" transform="translate(0 0)"/>
-    <g id="logo-center" transform="translate(0 0)">
-      <image xlink:href="" id="icon_container" style="display: none;" x="0" y="0"/>
-      <g id="slogan" style="font-style:oblique;font-weight:100;font-size:32px;line-height:1;font-family:Overpass;font-variant-ligatures:none;text-align:center;text-anchor:middle" transform="translate(0 0)"/>
-      <g id="title" style="font-style:normal;font-weight:normal;font-size:72px;line-height:1;font-family:'Brandmark Sans 26';font-variant-ligatures:normal;text-align:center;text-anchor:middle" transform="translate(0 0)">
-        <path id="path489139" style="font-style:normal;font-weight:normal;font-size:72px;line-height:1;font-family:'Brandmark Sans 26';font-variant-ligatures:normal;text-align:center;text-anchor:middle" d="M 458.63281,-50.4 V 0 h 2.664 v -50.4 z m 12.384,41.112 h 15.48 V -50.4 h -15.48 z" stroke-width="0" stroke-linejoin="miter" stroke-miterlimit="2" fill="#acacac" stroke="#acacac" transform="translate(0 485.20000000000005) translate(83.56847999999968 -302.8) scale(8) translate(-458.63281 50.4)"/>
-        <path id="path489141" style="font-style:normal;font-weight:normal;font-size:72px;line-height:1;font-family:'Brandmark Sans 26';font-variant-ligatures:normal;text-align:center;text-anchor:middle" d="M 485.98269,-50.4 V 0 h 2.52 v -50.4 z m 12.384,41.112 h 14.688 V 0 h 1.368 v -50.4 h -1.368 v 9.288 h -14.688 v 11.376 h 12.744 v 9.288 h -12.744 z" stroke-width="0" stroke-linejoin="miter" stroke-miterlimit="2" fill="#c4c4c4" stroke="#c4c4c4" transform="translate(0 485.20000000000005) translate(302.3675199999998 -302.8) scale(8) translate(-485.98269 50.4)"/>
-        <path id="path489143" style="font-style:normal;font-weight:normal;font-size:72px;line-height:1;font-family:'Brandmark Sans 26';font-variant-ligatures:normal;text-align:center;text-anchor:middle" d="m 521.71044,-29.736 v -11.376 h 14.76 V -50.4 h -24.552 V 0 h 24.552 v -9.288 h -14.76 v -11.16 h 12.816 v -9.288 z" stroke-width="0" stroke-linejoin="miter" stroke-miterlimit="2" fill="#dddddd" stroke="#dddddd" transform="translate(0 485.20000000000005) translate(509.85351999999966 -302.8) scale(8) translate(-511.91844 50.4)"/>
-        <path id="path489145" style="font-style:normal;font-weight:normal;font-size:72px;line-height:1;font-family:'Brandmark Sans 26';font-variant-ligatures:normal;text-align:center;text-anchor:middle" d="m 556.45269,-41.112 h 9.288 V -50.4 h -28.368 v 9.288 h 9.288 V 0 h 9.792 z" stroke-width="0" stroke-linejoin="miter" stroke-miterlimit="2" fill="#f5f5f5" stroke="#f5f5f5" transform="translate(0 485.20000000000005) translate(713.4875200000004 -302.8) scale(8) translate(-537.37269 50.4)"/>
-      </g>
-      <image xlink:href="" id="icon" style="display: none;" x="0" y="0"/>
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">hujiacheng logo</title>
+  <desc id="desc">A handwritten signature style monogram for hujiacheng.</desc>
+  <g fill="none" stroke="#f9fafb" stroke-linecap="round" stroke-linejoin="round">
+    <path
+      d="M120 360 C148 254 181 132 228 72 C246 49 270 45 278 69 C291 108 230 206 173 285 C145 323 122 350 102 365"
+      stroke-width="23"
+    />
+    <path
+      d="M177 286 C207 237 251 212 271 233 C287 250 272 285 255 320"
+      stroke-width="22"
+    />
+    <path
+      d="M257 318 C285 262 329 214 383 215 C424 216 445 246 430 284 C409 337 335 370 296 344 C263 322 275 267 328 232"
+      stroke-width="24"
+    />
+    <path
+      d="M91 371 C171 396 291 393 421 357"
+      stroke-width="13"
+      opacity=".52"
+    />
   </g>
 </svg>
