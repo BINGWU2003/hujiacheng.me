@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">hujiacheng favicon</title>
+  <desc id="desc">A static handwritten signature style favicon for hujiacheng.</desc>
+  <g fill="none" stroke="#f9fafb" stroke-linecap="round" stroke-linejoin="round">
+    <path
+      d="M120 360 C148 254 181 132 228 72 C246 49 270 45 278 69 C291 108 230 206 173 285 C145 323 122 350 102 365"
+      stroke-width="23"
+    />
+    <path
+      d="M177 286 C207 237 251 212 271 233 C287 250 272 285 255 320"
+      stroke-width="22"
+    />
+    <path
+      d="M257 318 C285 262 329 214 383 215 C424 216 445 246 430 284 C409 337 335 370 296 344 C263 322 275 267 328 232"
+      stroke-width="24"
+    />
+    <path
+      d="M91 371 C171 396 291 393 421 357"
+      stroke-width="13"
+      opacity=".52"
+    />
+  </g>
+</svg>

@@ -10,7 +10,8 @@
     .stroke {
       stroke-dasharray: 1;
       stroke-dashoffset: 1;
-      animation: draw 1.35s cubic-bezier(.65, 0, .35, 1) forwards;
+      opacity: 0;
+      animation: draw-loop 4.8s cubic-bezier(.65, 0, .35, 1) infinite;
     }
 
     .stroke-2 {
@@ -25,8 +26,25 @@
       animation-delay: .75s;
     }
 
-    @keyframes draw {
-      to {
+    @keyframes draw-loop {
+      0% {
+        opacity: 0;
+        stroke-dashoffset: 1;
+      }
+
+      8% {
+        opacity: 1;
+      }
+
+      42%,
+      72% {
+        opacity: 1;
+        stroke-dashoffset: 0;
+      }
+
+      92%,
+      100% {
+        opacity: 0;
         stroke-dashoffset: 0;
       }
     }
@@ -51,6 +69,7 @@
 
       .stroke {
         stroke-dashoffset: 0;
+        opacity: 1;
       }
     }
   </style>
