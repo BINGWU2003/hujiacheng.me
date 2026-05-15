@@ -31,6 +31,30 @@ Learning: {React} {Vite} {Vitest} {NodeJS} <br>
   </a>
 </p>
 
-个人邮箱
+联系方式
 
-<a href="mailto:hujiacheng2003@163.com" font-mono>hujiacheng2003<span i-carbon-at/>163.com</a>
+<p flex="~ gap-4 wrap items-center" class="mt--2!">
+  <a
+    href="https://github.com/BINGWU2003"
+    target="_blank"
+    inline-flex items-center gap-1
+    font-medium underline underline-offset-4 decoration-dotted
+    hover:decoration-solid
+  >
+    <span i-simple-icons-github />
+    GitHub
+  </a>
+  <a
+    href="mailto:hujiacheng2003@163.com"
+    inline-flex items-center gap-1
+    font-medium underline underline-offset-4 decoration-dotted
+    hover:decoration-solid
+  >
+    <span i-carbon-email />
+    <span font-mono>hujiacheng2003<span i-carbon-at />163.com</span>
+  </a>
+  <span inline-flex items-center gap-1 font-medium>
+    <span i-simple-icons-wechat />
+    BINGWU_BW
+  </span>
+</p>
