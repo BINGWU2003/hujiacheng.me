@@ -23,6 +23,15 @@ navs:
       link: 'https://npmx.dev/package/aig-mcp-server'
       desc: '让 AI 编程助手在改代码前自动存档，支持一键回滚并整理 Git 提交'
       icon: 'i-simple-icons-claude'
+    - name: '@weekly-git-report/mcp-server'
+      link: 'https://npmx.dev/package/@weekly-git-report/mcp-server'
+      desc: '给支持 MCP 的 Agent/客户端提供周报相关工具的 stdio 服务'
+      icon: 'i-simple-icons-claude'
+  skill:
+    - name: '@weekly-git-report/cli'
+      link: 'https://npmx.dev/package/@weekly-git-report/cli'
+      desc: '提供本地初始化、项目扫描、提交采集和 Agent Skill 安装能力'
+      icon: 'i-ri-terminal-box-line'
   cli:
     - name: 'bingwu-create'
       link: 'https://npmx.dev/package/bingwu-create'
