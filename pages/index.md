@@ -29,6 +29,14 @@ Learning: {React} {Vite} {Vitest} {NodeJS} <br>
   >
     访问我的博客 ->
   </a>
+  <a
+    href="https://bingwu-skills.netlify.app/"
+    target="_blank"
+    font-medium underline underline-offset-4 decoration-dotted
+    hover:decoration-solid
+  >
+    查看我的skills ->
+  </a>
 </p>
 
 联系方式
