@@ -19,7 +19,7 @@ Learning: {React} {Vite} {Vitest} {NodeJS} <br>
     font-medium underline underline-offset-4 decoration-dotted
     hover:decoration-solid
   >
-    查看我的作品集 ->
+    作品集 ->
   </RouterLink>
   <a
     href="https://hujiacheng-blog.netlify.app/"
@@ -27,7 +27,7 @@ Learning: {React} {Vite} {Vitest} {NodeJS} <br>
     font-medium underline underline-offset-4 decoration-dotted
     hover:decoration-solid
   >
-    访问我的博客 ->
+    博客 ->
   </a>
   <a
     href="https://bingwu-skills.netlify.app/"
@@ -35,7 +35,7 @@ Learning: {React} {Vite} {Vitest} {NodeJS} <br>
     font-medium underline underline-offset-4 decoration-dotted
     hover:decoration-solid
   >
-    查看我的skills ->
+    Skills ->
   </a>
 </p>
 
