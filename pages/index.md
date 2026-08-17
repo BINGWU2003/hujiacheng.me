@@ -35,7 +35,7 @@ Learning: {React} {Vite} {Vitest} {NodeJS} <br>
     font-medium underline underline-offset-4 decoration-dotted
     hover:decoration-solid
   >
-    Skills ->
+    Agent Skills ->
   </a>
 </p>
 
