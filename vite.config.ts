@@ -153,6 +153,8 @@ export default defineConfig({
             D3: 'https://github.com/d3/d3',
             Next: 'https://github.com/vercel/next.js',
             UniApp: 'https://uniapp.dcloud.net.cn',
+            Python: 'https://www.python.org/',
+            NestJS: 'https://nestjs.com/',
           },
           imageOverrides: [
             ['https://www.javascript.com/', 'https://cdn-icons-png.flaticon.com/64/5968/5968292.png'],
