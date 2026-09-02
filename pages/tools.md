@@ -22,6 +22,10 @@ tools:
       link: 'https://github.com/Delppine1024/TGreen'
       desc: 'Typora 工具'
       icon: 'i-simple-icons-github'
+    - name: 'Navicat Crack'
+      link: 'https://github.com/BINGWU2003/NavicatCrack'
+      desc: 'Navicat 工具'
+      icon: 'i-simple-icons-github'
 ---
 
 <!-- @layout-full-width -->
