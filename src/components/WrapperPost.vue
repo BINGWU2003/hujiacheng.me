@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { formatDate, isDark } from '~/logics'
+import { formatDate } from '~/logics'
 
 const { frontmatter } = defineProps({
   frontmatter: {
@@ -82,10 +82,6 @@ const ArtComponent = computed(() => {
   }
   return undefined
 })
-
-const hasGiscus = computed(() => {
-  return route.path !== '/'
-})
 </script>
 
 <template>
@@ -140,22 +136,5 @@ const hasGiscus = computed(() => {
     >
       cd ..
     </RouterLink>
-  </div>
-  <div v-if="hasGiscus" class="prose m-auto slide-enter">
-    <Giscus
-      v-if="hasGiscus"
-      repo="BINGWU2003/hujiacheng.me"
-      repo-id="R_kgDOP33u0A"
-      category="Announcements"
-      category-id="DIC_kwDOP33u0M4Cv86m"
-      mapping="og:title"
-      term="Welcome to hujiacheng.me"
-      strict="1"
-      reactions-enabled="1"
-      emit-metadata="0"
-      input-position="top"
-      :theme="isDark ? 'transparent_dark' : 'light'"
-      lang="zh-CN"
-    />
   </div>
 </template>
