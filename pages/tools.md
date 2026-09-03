@@ -5,7 +5,7 @@ description: 我日常使用的工具与服务
 wrapperClass: 'text-center'
 art: dots
 tools:
-  开发工具:
+  桌面应用:
     - name: 'Gitkraken Crack'
       link: 'https://github.com/BINGWU2003/GitkrakenCrack'
       desc: 'gitkraken 工具'
@@ -20,12 +20,19 @@ tools:
       icon: 'i-simple-icons-github'
     - name: 'TGreen'
       link: 'https://github.com/Delppine1024/TGreen'
-      desc: 'Typora 工具'
+      desc: 'typora 工具'
       icon: 'i-simple-icons-github'
     - name: 'Navicat Crack'
       link: 'https://github.com/BINGWU2003/NavicatCrack'
-      desc: 'Navicat 工具'
+      desc: 'navicat 工具'
       icon: 'i-simple-icons-github'
+  开发工具:
+    - name: 'code-inspector'
+      link: 'https://github.com/zh-lx/code-inspector'
+      desc: '快速定位到源代码'
+      icon: 'i-simple-icons-github
+
+
 ---
 
 <!-- @layout-full-width -->
