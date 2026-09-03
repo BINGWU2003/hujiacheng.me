@@ -26,11 +26,12 @@ tools:
       link: 'https://github.com/BINGWU2003/NavicatCrack'
       desc: 'navicat 工具'
       icon: 'i-simple-icons-github'
+
   开发工具:
     - name: 'code-inspector'
       link: 'https://github.com/zh-lx/code-inspector'
       desc: '快速定位到源代码'
-      icon: 'i-simple-icons-github
+      icon: 'i-simple-icons-github'
 
 
 ---
