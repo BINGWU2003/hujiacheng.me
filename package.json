@@ -2,6 +2,9 @@
   "type": "module",
   "private": true,
   "packageManager": "pnpm@9.3.0",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "build": "cross-env NODE_ENV=production NODE_OPTIONS=\"--max-old-space-size=6144\" vite-ssg build",
     "dev": "vite --port 3333 --open",
@@ -9,6 +12,7 @@
     "static": "rimraf temp && degit antfu/static temp --force && esno scripts/copy-sponsors",
     "redirects": "esno scripts/redirects.ts",
     "lint": "eslint .",
+    "typecheck:config": "tsc --project tsconfig.vite.json",
     "compress": "esno scripts/img-compress-staged.ts",
     "prepare": "simple-git-hooks"
   },
@@ -20,8 +24,8 @@
     "matter-js": "^0.19.0",
     "nprogress": "^0.2.0",
     "shiki-magic-move": "^0.4.3",
-    "vue": "^3.4.37",
-    "vue-router": "4.2.5",
+    "vue": "3.5.18",
+    "vue-router": "4.4.3",
     "vue-router-better-scroller": "^0.0.0"
   },
   "devDependencies": {
@@ -39,9 +43,9 @@
     "@types/markdown-it-link-attributes": "^3.0.5",
     "@types/nprogress": "^0.2.3",
     "@types/prompts": "^2.4.9",
-    "@unhead/vue": "^1.9.16",
-    "@unocss/reset": "^0.61.9",
-    "@vitejs/plugin-vue": "^5.1.2",
+    "@unhead/vue": "^2.1.2",
+    "@unocss/reset": "^66.10.0",
+    "@vitejs/plugin-vue": "^6.0.8",
     "cross-env": "^7.0.3",
     "d3-hierarchy": "^3.1.2",
     "degit": "^2.8.4",
@@ -71,17 +75,26 @@
     "shiki": "^1.12.1",
     "simple-git": "^3.25.0",
     "simple-git-hooks": "^2.11.1",
-    "typescript": "^5.5.4",
-    "unocss": "^0.61.9",
+    "typescript": "^5.6.3",
+    "unocss": "^66.10.0",
     "unplugin-auto-import": "^0.17.8",
     "unplugin-icons": "^0.19.2",
     "unplugin-vue-components": "^0.27.3",
-    "unplugin-vue-markdown": "^0.26.2",
+    "unplugin-vue-markdown": "^32.1.1",
     "unplugin-vue-router": "^0.10.2",
-    "vite": "^5.4.0",
-    "vite-plugin-inspect": "^0.8.5",
-    "vite-ssg": "^0.23.8",
+    "vite": "^8.2.2",
+    "vite-plugin-inspect": "^12.0.2",
+    "vite-ssg": "^28.3.0",
     "vite-svg-loader": "^5.1.0"
+  },
+  "pnpm": {
+    "packageExtensions": {
+      "@unocss/inspector@66.10.0": {
+        "dependencies": {
+          "@devframes/hub": "0.9.12"
+        }
+      }
+    }
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"

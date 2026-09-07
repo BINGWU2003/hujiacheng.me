@@ -14,7 +14,9 @@
       "vite/client",
       "unplugin-vue-router/client"
     ],
+    "allowImportingTsExtensions": true,
     "strict": true,
+    "noEmit": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true

@@ -4,7 +4,7 @@ import type MarkdownIt from 'markdown-it'
 import type { RenderRule } from 'markdown-it/lib/renderer.mjs'
 import container from 'markdown-it-container'
 import { nanoid } from 'nanoid'
-import { extractTitle } from './preWrapper'
+import { extractTitle } from './preWrapper.ts'
 
 interface Options {
   codeCopyButtonTitle: string
@@ -119,7 +119,7 @@ function createCodePreview(md: MarkdownIt): ContainerArgs {
 
           if (sourceFileToken.type === 'inline') {
             source = fs.readFileSync(
-              path.resolve(__dirname, `../${sourceFile}.vue`),
+              path.resolve(import.meta.dirname, `../${sourceFile}.vue`),
               'utf-8',
             )
           }

@@ -1,5 +1,7 @@
 import { basename, dirname, resolve } from 'node:path'
 import { Buffer } from 'node:buffer'
+import type MarkdownIt from 'markdown-it'
+import type {} from 'vite-ssg'
 import { defineConfig } from 'vite'
 import fs from 'fs-extra'
 import Inspect from 'vite-plugin-inspect'
@@ -25,17 +27,17 @@ import TodoLists from 'markdown-it-todo-lists'
 // @ts-expect-error missing types
 import TOC from 'markdown-it-table-of-contents'
 import sharp from 'sharp'
-import { slugify } from './scripts/slugify'
-import { containerPlugin } from './src/plugins/containers'
-import { preWrapperPlugin } from './src/plugins/preWrapper'
-import { MarkdownTransform } from './src/plugins/markdownTransform'
+import { slugify } from './scripts/slugify.ts'
+import { containerPlugin } from './src/plugins/containers.ts'
+import { preWrapperPlugin } from './src/plugins/preWrapper.ts'
+import { MarkdownTransform } from './src/plugins/markdownTransform.ts'
 
 const promises: Promise<any>[] = []
 
 export default defineConfig({
   resolve: {
     alias: [
-      { find: '~/', replacement: `${resolve(__dirname, 'src')}/` },
+      { find: '~/', replacement: `${resolve(import.meta.dirname, 'src')}/` },
     ],
   },
   optimizeDeps: {
@@ -70,9 +72,6 @@ export default defineConfig({
 
     Vue({
       include: [/\.vue$/, /\.md$/],
-      script: {
-        defineModel: true,
-      },
     }),
 
     MarkdownTransform(),
@@ -88,10 +87,12 @@ export default defineConfig({
       exportFrontmatter: false,
       exposeFrontmatter: false,
       exposeExcerpt: false,
-      markdownItOptions: {
+      markdownOptions: {
         quotes: '""\'\'',
       },
-      async markdownItSetup(md) {
+      async markdownSetup(markdown) {
+        // markdown-exit supports markdown-it plugins at runtime, but their rule types differ.
+        const md = markdown as unknown as MarkdownIt
         md.use(await MarkdownItShiki({
           themes: {
             dark: 'vitesse-dark',
@@ -238,8 +239,7 @@ export default defineConfig({
 
   build: {
     target: 'esnext',
-    minify: 'esbuild',
-    rollupOptions: {
+    rolldownOptions: {
       onwarn(warning, next) {
         if (warning.code !== 'UNUSED_EXTERNAL_IMPORT')
           next(warning)

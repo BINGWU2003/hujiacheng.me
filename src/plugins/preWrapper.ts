@@ -22,7 +22,7 @@ export function preWrapperPlugin(md: MarkdownIt) {
 
     return (
       `<div class="language-${lang}${active}">${
-      fence(...args)
+        fence(...args)
       }</div>`
     )
   }
