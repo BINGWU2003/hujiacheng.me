@@ -40,6 +40,14 @@ tools:
       icon: 'i-simple-icons-github'
 
   开发工具:
+    - name: 'Vue.js Devtools'
+      link: 'https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd'
+      desc: 'Vue.js 应用调试工具'
+      icon: 'i-simple-icons-vuedotjs'
+    - name: 'React Developer Tools'
+      link: 'https://chromewebstore.google.com/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi'
+      desc: 'React 应用调试工具'
+      icon: 'i-simple-icons-react'
     - name: 'Code Inspector'
       link: 'https://github.com/zh-lx/code-inspector'
       desc: '快速定位到源代码'
