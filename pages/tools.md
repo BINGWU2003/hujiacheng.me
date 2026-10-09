@@ -6,6 +6,18 @@ wrapperClass: 'text-center'
 art: dots
 tools:
   桌面应用:
+    - name: 'FlClash'
+      link: 'https://github.com/chen08209/FlClash'
+      desc: '基于 Clash 的跨平台代理客户端'
+      icon: 'i-simple-icons-github'
+    - name: 'v2rayN'
+      link: 'https://github.com/2dust/v2rayN'
+      desc: '支持多种协议的代理客户端'
+      icon: 'i-simple-icons-github'
+    - name: 'Clash Verge Rev'
+      link: 'https://github.com/clash-verge-rev/clash-verge-rev'
+      desc: '基于 Mihomo 的跨平台代理客户端'
+      icon: 'i-simple-icons-github'
     - name: 'Gitkraken Crack'
       link: 'https://github.com/BINGWU2003/GitkrakenCrack'
       desc: 'gitkraken 工具'
@@ -28,7 +40,7 @@ tools:
       icon: 'i-simple-icons-github'
 
   开发工具:
-    - name: 'code-inspector'
+    - name: 'Code Inspector'
       link: 'https://github.com/zh-lx/code-inspector'
       desc: '快速定位到源代码'
       icon: 'i-simple-icons-github'
