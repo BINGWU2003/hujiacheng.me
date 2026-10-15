@@ -40,12 +40,8 @@ tools:
       icon: 'i-simple-icons-github'
 
   开发工具:
-    - name: 'Vue.js Devtools'
-      link: 'https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd'
-      desc: 'Vue.js 应用调试工具'
-      icon: 'i-simple-icons-vuedotjs'
-    - name: 'Vue DevTools (GitHub)'
-      link: 'https://github.com/vuejs/devtools'
+    - name: 'Vue DevTools'
+      link: 'https://devtools.vuejs.org/getting-started/installation'
       desc: 'Vue 官方开发调试工具'
       icon: 'i-simple-icons-vuedotjs'
     - name: 'Vite DevTools'
