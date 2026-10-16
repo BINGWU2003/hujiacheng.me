@@ -18,10 +18,6 @@ tools:
       link: 'https://github.com/clash-verge-rev/clash-verge-rev'
       desc: '基于 Mihomo 的跨平台代理客户端'
       icon: 'i-simple-icons-github'
-    - name: 'Gitkraken Crack'
-      link: 'https://github.com/bingwu-crack/GitkrakenCrack'
-      desc: 'gitkraken 工具'
-      icon: 'i-simple-icons-github'
     - name: 'Rebuild GitLens'
       link: 'https://github.com/aliveranme/Rebuild-gitlens'
       desc: 'vscode gitlens 插件工具'
@@ -34,6 +30,12 @@ tools:
       link: 'https://github.com/Delppine1024/TGreen'
       desc: 'typora 工具'
       icon: 'i-simple-icons-github'
+
+  crack:
+    - name: 'Gitkraken Crack'
+      link: 'https://github.com/bingwu-crack/GitkrakenCrack'
+      desc: 'gitkraken 工具'
+      icon: 'i-simple-icons-github'
     - name: 'Navicat Crack'
       link: 'https://github.com/bingwu-crack/NavicatCrack'
       desc: 'navicat 工具'
@@ -41,6 +43,10 @@ tools:
     - name: 'XTerminal Crack'
       link: 'https://github.com/bingwu-crack/XTerminalCrack'
       desc: 'xterminal 工具'
+      icon: 'i-simple-icons-github'
+    - name: 'Typora Crack'
+      link: 'https://github.com/bingwu-crack/TyporaCrack'
+      desc: 'typora 工具'
       icon: 'i-simple-icons-github'
 
   开发工具:
