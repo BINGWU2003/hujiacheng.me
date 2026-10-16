@@ -19,7 +19,7 @@ tools:
       desc: '基于 Mihomo 的跨平台代理客户端'
       icon: 'i-simple-icons-github'
     - name: 'Gitkraken Crack'
-      link: 'https://github.com/BINGWU2003/GitkrakenCrack'
+      link: 'https://github.com/bingwu-crack/GitkrakenCrack'
       desc: 'gitkraken 工具'
       icon: 'i-simple-icons-github'
     - name: 'Rebuild GitLens'
@@ -35,8 +35,12 @@ tools:
       desc: 'typora 工具'
       icon: 'i-simple-icons-github'
     - name: 'Navicat Crack'
-      link: 'https://github.com/BINGWU2003/NavicatCrack'
+      link: 'https://github.com/bingwu-crack/NavicatCrack'
       desc: 'navicat 工具'
+      icon: 'i-simple-icons-github'
+    - name: 'XTerminal Crack'
+      link: 'https://github.com/bingwu-crack/XTerminalCrack'
+      desc: 'xterminal 工具'
       icon: 'i-simple-icons-github'
 
   开发工具:
