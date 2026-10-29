@@ -82,12 +82,10 @@ navs:
       link: 'https://vueuse.org'
       desc: 'Vue Composition API 的常用工具集'
       icon: '/icons/vueuse.png'
-  
-
     - name: 'UI Lib Picker'
       link: 'https://ui-libs.vercel.app/'
       desc: 'Vue 和 Nuxt 组件库聚合，帮助筛选适合项目的 UI 库'
-      icon: '/icons/vue.png'
+      icon: '/icons/ui-lib-picker.png'
     - name: 'UniApp'
       link: 'https://uniapp.dcloud.net.cn/'
       desc: 'uni-app 是一个使用 Vue.js 开发所有前端应用的框架'
