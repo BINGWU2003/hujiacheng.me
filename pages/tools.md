@@ -58,22 +58,10 @@ tools:
       link: 'https://github.com/vitejs/devtools'
       desc: 'Vite 开发调试工具'
       icon: 'i-simple-icons-vite'
-    - name: 'Rollup Plugin Visualizer'
-      link: 'https://github.com/btd/rollup-plugin-visualizer'
-      desc: '可视化分析打包体积与依赖组成'
-      icon: 'i-simple-icons-rollupdotjs'
-    - name: 'Knip'
-      link: 'https://knip.dev/'
-      desc: '检测 JavaScript 和 TypeScript 项目中未使用的依赖、导出与文件'
-      icon: 'i-simple-icons-knip'
     - name: 'React Developer Tools'
       link: 'https://chromewebstore.google.com/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi'
       desc: 'React 应用调试工具'
       icon: 'i-simple-icons-react'
-    - name: 'Code Inspector'
-      link: 'https://github.com/zh-lx/code-inspector'
-      desc: '快速定位到源代码'
-      icon: 'i-simple-icons-github'
 
 
 ---

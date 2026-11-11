@@ -19,7 +19,7 @@ Learning: {Python} {NodeJS} {NestJS} <br>
     font-medium underline underline-offset-4 decoration-dotted
     hover:decoration-solid
   >
-    作品集 ->
+    作品 ->
   </RouterLink>
   <a
     href="https://hujiacheng-blog.netlify.app/"
