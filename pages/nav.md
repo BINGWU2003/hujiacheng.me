@@ -60,6 +60,18 @@ navs:
       link: 'https://npmx.dev/package/code-inspector-plugin'
       desc: '快速定位到源代码'
       icon: 'i-simple-icons-github'
+    - name: 'Faker'
+      link: 'https://npmx.dev/package/@faker-js/faker'
+      desc: '生成姓名、地址等模拟数据，用于开发和测试'
+      icon: 'i-simple-icons-github'
+    - name: 'Mock Service Worker'
+      link: 'https://npmx.dev/package/msw'
+      desc: '在浏览器和 Node.js 中拦截网络请求并返回模拟响应'
+      icon: 'i-simple-icons-github'
+    - name: 'Zod Schema Faker'
+      link: 'https://npmx.dev/package/zod-schema-faker'
+      desc: '根据 Zod schema 生成符合校验规则的模拟数据'
+      icon: 'i-simple-icons-github'
 
   图标库:
     - name: 'Iconify'
