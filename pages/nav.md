@@ -72,6 +72,10 @@ navs:
       link: 'https://npmx.dev/package/zod-schema-faker'
       desc: '根据 Zod schema 生成符合校验规则的模拟数据'
       icon: 'i-simple-icons-github'
+    - name: 'TimeMe.js'
+      link: 'https://npmx.dev/package/timeme.js'
+      desc: '精确统计用户在网页上的真实停留与交互时长，支持空闲和切屏自动暂停'
+      icon: 'i-simple-icons-github'
 
   图标库:
     - name: 'Iconify'
